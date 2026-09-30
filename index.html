@@ -534,5 +534,24 @@ document.addEventListener('change',function(ev){var t=ev.target;
 document.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&(ev.target.id==='cnn'||ev.target.id==='cnw')){ev.preventDefault();document.querySelector('[data-act="addCat"]').click()}});
 D.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.tagName==='INPUT'){ev.preventDefault();D.querySelector('[data-x="ok"]').click()}});
 load();render();
-})();
-</script></body></html>
+})();</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDV2-WjSSu0l9VVUv0sEaZjX...",
+    authDomain: "gestion-moliendas.firebaseapp.com",
+    projectId: "gestion-moliendas",
+    storageBucket: "gestion-moliendas.firebasestorage.app",
+    messagingSenderId: "6625604793",
+    appId: "1:6625604793:web:85fbdf0760a9e...",
+    measurementId: "G-YN6FYZWPRJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+</script>
+</body>
+</html>
