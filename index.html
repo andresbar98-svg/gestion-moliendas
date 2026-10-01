@@ -595,7 +595,7 @@ function bodHTML(t,p,q){var k=bnm(p.name),b=tBod(t,k),v=b!=null?b:'',lg=t&&b==nu
 function qRows(w,items,key,t){var by={},leg=[],h='';
  (items||[]).forEach(function(it){if(it.pid&&w.cat.some(function(p){return p.id===it.pid}))by[it.pid]=it;else leg.push(it)});
  w.cat.forEach(function(p){var it=by[p.id],v=it?(+it[key]||0):0;
-  h+='<div class="qr" data-ref="'+p.id+'"><label for="q_'+p.id+'"><span>'+esc(p.name.trim()||'(sin nombre)')+'</span><small>'+f(p.w,3)+' kg c/u</small></label><input id="q_'+p.id+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"'+(key==='qty'?' readonly tabindex="-1" aria-label="Cantidad producida (calculada: bodega actual menos bodega anterior)"':'')+'>'+(key==='qty'?bodHTML(t,p,v):'')+'</div>'});
+  h+='<div class="qr" data-ref="'+p.id+'"><label for="q_'+p.id+'"><span>'+esc(p.name.trim()||'(sin nombre)')+'</span><small>'+f(p.w,3)+' kg c/u</small></label><input id="q_'+p.id+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"'+(key==='qty'?(t?' aria-label="Cantidad producida (valor fijo: no cambia al editar las horas)"':' readonly tabindex="-1" aria-label="Cantidad producida (calculada: bodega actual menos bodega anterior)"'):'')+'>'+(key==='qty'?bodHTML(t,p,v):'')+'</div>'});
  leg.forEach(function(it,i){var v=+it[key]||0;
   h+='<div class="qr" data-leg="1" data-ln="'+esc(iN(it))+'" data-lw="'+(iW(it)||0)+'"'+(it.tk!=null?' data-ltk="'+(+it.tk||0)+'" data-lu="'+v+'"':'')+'><label for="q_l'+i+'"><span>'+esc(iN(it)||'Sin producto')+'</span><small>sin catálogo</small></label><input id="q_l'+i+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"></div>'});
  return h||'<p class="empty" style="padding:6px 0">No hay referencias. Créalas en Gestión de productos.</p>'}
@@ -620,11 +620,15 @@ function tForm(w){var t=nav.editT&&(w.t||[]).find(function(x){return x.id===nav.
  +'<div id="tform"><div class="fgrid"><label>Fecha de inicio<input id="tdate" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"'+ro+'></label><label>Hora inicio'+tp('tstart',sv,ch)+'</label><label>Hora fin'+tp('tend',t?t.end:'',false)+'</label></div>'
  +'<p class="qh">Cantidad producida por referencia</p><div class="ql" id="tql">'+qRows(w,t?t.items:null,'qty',t)+'</div></div>'
  +'<p class="tot" id="tprev"></p><p class="err" id="terr" role="alert"></p><div class="actions">'+(t?'<button class="btn g" type="button" data-act="cancelT">Cancelar</button>':'')+'<button class="btn" type="button" data-act="saveT">'+(t?'Guardar cambios':'Guardar turno')+'</button></div></section>'}
-function pvSync(){var low=[];document.querySelectorAll('#tql .qr[data-ref]').forEach(function(r){var bc=r.querySelector('.bcur'),bp=r.querySelector('.bp'),q=r.querySelector('.qi'),p=cp(r.dataset.ref);if(!bc||!bp||!q||!p)return;
+function pvSync(src){var low=[],ed=!!nav.editT,fromBod=!!(src&&src.classList&&src.classList.contains('bcur'));
+ document.querySelectorAll('#tql .qr[data-ref]').forEach(function(r){var bc=r.querySelector('.bcur'),bp=r.querySelector('.bp'),q=r.querySelector('.qi'),p=cp(r.dataset.ref);if(!bc||!bp||!q||!p)return;
  var pv=prevBod(nav.editT||null,bnm(p.name));bp.dataset.v=pv;bp.value=f(pv);bp.style.color=pv<0?'#EE9993':'';
- var raw=String(bc.value).trim();if(raw===''){if(!bc.dataset.legacy)q.value='';return}
- var n=parseInt(raw,10)||0;if(n<pv)low.push(p.name.trim());q.value=Math.max(0,n-pv)});return low}
-function tPrev(){var low=pvSync(),w=cur().w,el=$('tprev');if(!el)return;
+ /* Producción = valor maestro. Al EDITAR un turno nunca se recalcula (ni al cambiar fecha/horas ni al renderizar).
+    En un turno NUEVO solo se calcula cuando la persona digita la bodega actual. */
+ if(ed)return;
+ var raw=String(bc.value).trim();if(raw===''){if(fromBod&&!bc.dataset.legacy)q.value='';return}
+ var n=parseInt(raw,10)||0;if(n<pv)low.push(p.name.trim());if(fromBod)q.value=Math.max(0,n-pv)});return low}
+function tPrev(src){var low=pvSync(src),w=cur().w,el=$('tprev');if(!el)return;
  var date=$('tdate').value,st=tv('tstart'),en=tv('tend'),r=qCollect('tql','qty'),tu=0,tk=0;
  r.items.forEach(function(it){tu+=it.qty;tk+=it.qty*(+it.w||0)});
  var tot=(tu?'Total: '+f(tu)+' u · '+f(tk,2)+' kg. ':'')+(low.length?'Revisa: en '+low.join(', ')+' la bodega actual es menor que la anterior (producción 0). ':'');
@@ -664,19 +668,32 @@ function saveC(){var w=cur().w,er=$('cerr');function bad(m){er.textContent=m}
  if(old&&!canMod(old))return bad('Solo puedes modificar los registros que tú creaste.');
  if(old){old.date=date;old.time=tm;old.vh=vh;old.items=its}else w.cd.push({id:uid(),date:date,time:tm,vh:vh,items:its,by:opName(),creadoPor:opName(),createdAt:nowISO()});
  nav.editC=null;nav.cDate=date;save();cloudAfterForm();fsel='#ctime_h';render()}
+/* Saldo en bodega (u) al cierre de cada registro: parte del último conteo físico (bodega actual) guardado hasta ese momento,
+   suma la producción posterior y resta las salidas posteriores. Si el turno tiene su bodega actual, muestra exactamente ese valor. */
+function bodTL(){var L=[],c=cur();if(c.m)c.m.weeks.forEach(function(w){(w.t||[]).forEach(function(t){L.push({t:t,k:bodKey(w,t)})})});return L}
+function bodCL(){var L=[],c=cur();if(c.m)c.m.weeks.forEach(function(w){(w.cd||[]).forEach(function(g){L.push({c:g,k:cdKey(w,g)})})});return L}
+function bodNames(TL,CL){var N={};TL.forEach(function(e){(e.t.items||[]).forEach(function(it){N[bnm(iN(it))]=1});if(e.t.bods)Object.keys(e.t.bods).forEach(function(k){N[k]=1});if(e.t.bod!=null)N.pulverizada=1});
+ CL.forEach(function(e){(e.c.items||[]).forEach(function(it){N[bnm(iN(it))]=1})});return Object.keys(N)}
+function saldoAt(end,TL,CL,NM){var tot=0;NM.forEach(function(k){var anc=null;
+ TL.forEach(function(e){if(e.k<=end&&tBod(e.t,k)!=null&&(!anc||e.k>=anc.k))anc=e});
+ var bal=anc?tBod(anc.t,k):0,from=anc?anc.k:-Infinity;
+ TL.forEach(function(e){if(e.k>from&&e.k<=end)(e.t.items||[]).forEach(function(it){if(bnm(iN(it))===k)bal+=(+it.qty||0)})});
+ CL.forEach(function(e){if(e.k>from&&e.k<=end)(e.c.items||[]).forEach(function(it){if(bnm(iN(it))===k)bal-=(+it.u||0)})});
+ tot+=bal});return tot}
 function histRows(w){var R=[];
  (w.t||[]).forEach(function(t){R.push({k:'t',id:t.id,date:t.date,time:t.start,o:t})});
  w.cd.forEach(function(c){R.push({k:'c',id:c.id,date:c.date,time:c.time||'',o:c})});
  R.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:a.time<b.time?-1:a.time>b.time?1:0});return R}
 function histI(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w),pu=0,pk=0,cu=0,ck=0,h='',R=histRows(w).filter(function(r){return m==='w'||r.date===dv}),desc=nav.hs!=='asc';if(desc)R.reverse();
+ var TL=bodTL(),CL=bodCL(),NM=bodNames(TL,CL);
  R.forEach(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):x.items,q=isT?tU(x):cgU(x),kg=isT?tKg(x):cgKg(x);
   if(isT){pu+=q;pk+=kg}else{cu+=q;ck+=kg}
   h+='<tr><td><span class="tag '+(isT?'t':'c')+'">'+(isT?'Turno':'Salida')+'</span></td><td class="l">'+dlab(r.date)+(x.by?'<small>'+esc(x.by)+'</small>':'')+'</td>'
    +'<td>'+(isT?esc(f12(x.start))+' – '+esc(f12(x.end))+'<small>'+hl(tdur(x))+(hm(x.end)<=hm(x.start)?' · cruza medianoche':'')+'</small>':(r.time?esc(f12(r.time)):'–'))+'</td>'
-   +'<td class="l">'+its.map(function(it){var n=isT?+it.qty:+it.u;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+f(iw,3)+' kg c/u</small>':'')+'</span><b>'+f(n)+'</b></div>'}).join('')+'</td><td><b>'+f(q)+'</b></td><td>'+f(kg,2)+'</td>'
+   +'<td class="l">'+its.map(function(it){var n=isT?+it.qty:+it.u;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+f(iw,3)+' kg c/u</small>':'')+'</span><b>'+f(n)+'</b></div>'}).join('')+'</td>'+(function(){var sb=saldoAt(isT?bodKey(w,x):cdKey(w,x),TL,CL,NM);return'<td'+(sb<0?' class="neg"':'')+'><b>'+f(sb)+'</b>'+(isT?'':'<small>−'+f(q)+' u salida</small>')+'</td>'})()+'<td>'+f(kg,2)+'</td>'
    +'<td class="l">'+(isT?'':esc(x.vh||'–'))+'</td><td class="ac">'+(canMod(x)?'<button class="btn g s" type="button" data-act="'+(isT?'editT':'editC')+'" data-id="'+r.id+'">Editar</button>':(role==='owner'?'':'<small>Registro de '+esc(authOf(x)||'otro usuario')+'</small>'))+(canMod(x)?'<button class="btn d s" type="button" data-own="1" data-act="'+(isT?'delT':'delC')+'" data-id="'+r.id+'">Borrar</button>':'')+'</td></tr>'});
  if(!R.length)h='<tr><td colspan="8" style="text-align:center;color:var(--mu)">Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.')+'</td></tr>';
- return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Total u</th><th>Kilos</th><th class="l">Vehículo / Cliente</th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
+ return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Bodega<small class="hso">saldo al cerrar (u)</small></th><th>Kilos</th><th class="l">Vehículo / Cliente</th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
 function histIn(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w);
  return'<h2>Historial de turnos y cargues</h2><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la semana</option></select></label>'
  +(m==='d'?'<label>Día<input id="hd" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label>':'')+'</div><div id="hist">'+histI(w)+'</div>'}
@@ -776,14 +793,14 @@ document.addEventListener('input',function(ev){var t=ev.target;
  if(t.id==='cgw'){var wq=cur().w;wq.cw=Math.max(0,parseFloat(t.value)||0);save();updWeek()}
  else if(t.classList.contains('price')){var g=cur().w.g.find(function(x){return x.id===t.dataset.id});var pv=parseFloat(t.value)||0;if(cur().w.unit==='c')g.pc=pv;else g.price=pv;save();updLiq()}
  else if(t.closest('[data-pid]'))catIn(t);
- else if(t.closest('#tform'))tPrev();
+ else if(t.closest('#tform'))tPrev(t);
  else if(t.closest('#cform'))cPrev()});
 document.addEventListener('change',function(ev){var t=ev.target;
  if(t.id==='pdays'){var w1=cur().w;if(w1){t.value=pdays(w1);var pr=$('projres');if(pr)pr.innerHTML=projRes(w1)}return}
  if(t.id==='fs'&&D.dataset.auto==='1'&&t.value&&$('fe'))$('fe').value=iso(ad(t.value,6));
  if(t.id==='fe')D.dataset.auto='0';
  if(t.classList.contains('cnm')||t.classList.contains('cwt')){var pp=cp(t.closest('.cr').dataset.pid);if(pp)t.value=t.classList.contains('cnm')?pp.name:(pp.w||'');return}
- if(t.closest('#tform')){tPrev();return}
+ if(t.closest('#tform')){tPrev(t);return}
  if(t.closest('#cform')){cPrev();return}
  var w=cur().w;if(!w)return;
  if(t.id==='unitsel'){w.unit=t.value==='c'?'c':'k';save();fsel=w.unit==='c'?'#cgw':null;render();return}
@@ -939,7 +956,7 @@ document.addEventListener('click',function(ev){var t=ev.target.closest('[data-lg
   if(g==='out')logout();else if(g==='go')lgGo();
   else{lgMode=g;try{localStorage.setItem(MK,g)}catch(e){}lgPaint();$('lgIn').focus()}});
 $('login').addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.id==='lgIn'){ev.preventDefault();lgGo()}});
-var APP_VERSION='v1.0.6';window.APP_VERSION=APP_VERSION;
+var APP_VERSION='v1.0.7';window.APP_VERSION=APP_VERSION;
 ['appVer','lgVer'].forEach(function(i){var e=$(i);if(e)e.textContent='Gestión de moliendas · '+APP_VERSION});
 try{document.title='La Molienda '+APP_VERSION;console.info('La Molienda',APP_VERSION)}catch(e){}
 /* Pedir al navegador que NO borre los datos locales al liberar espacio o reiniciar */
