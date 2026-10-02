@@ -49,7 +49,10 @@ h1,h2,h3{font-family:var(--fn);margin:0}h1{font-size:32px}h2{font-size:24px}
 .btn.g{background:transparent;color:var(--ink);border:1px solid var(--ln)}.btn.d{background:transparent;color:var(--late);border:1px solid var(--late)}.btn.s{min-height:38px;padding:4px 12px;font-weight:500}
 .list{display:grid;gap:10px;margin:14px 0}
 .card{display:flex;align-items:center;gap:10px;background:var(--sf);border:1px solid var(--ln);border-left:6px solid var(--sig);border-radius:8px;padding:14px 16px;cursor:pointer}
-.card:hover{border-color:var(--st)}.card .t{flex:1;min-width:0}.card .n{font-family:var(--fn);font-size:26px;font-weight:600;line-height:1.1}.card .sm{font-size:13px;color:var(--mu)}
+.card:hover{border-color:var(--st)}
+.nowb{display:inline-block;vertical-align:middle;margin-left:10px;padding:3px 10px 4px;border-radius:999px;background:#1FA63A;color:#fff;font:700 14px/1 var(--fn);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 0 2px rgba(31,166,58,.3),0 0 10px rgba(31,166,58,.55)}
+.nowb.old{background:#6b7a84;box-shadow:none}
+.card.now{border-color:#1FA63A;border-left-color:#1FA63A!important;box-shadow:0 0 0 2px rgba(31,166,58,.35),0 4px 16px rgba(31,166,58,.25);background:linear-gradient(90deg,rgba(31,166,58,.14),transparent 70%),var(--gl)}.card .t{flex:1;min-width:0}.card .n{font-family:var(--fn);font-size:26px;font-weight:600;line-height:1.1}.card .sm{font-size:13px;color:var(--mu)}
 .empty{color:var(--mu);padding:20px 0}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border-top:2px solid var(--ink);margin:10px 0 18px}
 .stats div{padding:10px 8px 10px 0}.stats b{display:block;font:700 30px/1.1 var(--fn)}.stats span{font-size:13px;color:var(--mu)}
@@ -311,7 +314,11 @@ function ddiff(a,b){return Math.round((pd(b)-pd(a))/864e5)}
 function wdays(w){return ddiff(w.start,wend(w))+1}
 function wdn(w,d){return DN[(ad(w.start,d).getDay()+6)%7]}
 function sdy(x){return sd(pd(x))+' '+pd(x).getFullYear()}
-function wl(w){return 'Semana '+sd(pd(w.start))+' – '+sd(pd(wend(w)))}
+function wnum(w){var m=null;try{m=cur().m}catch(e){}
+ if(!m||!m.weeks||!m.weeks.some(function(x){return x.id===w.id})){m=null;(db.years||[]).forEach(function(y){y.mills.forEach(function(mm){if(!m&&mm.weeks.some(function(x){return x.id===w.id}))m=mm})})}
+ if(!m)return 1;var o=m.weeks.slice().sort(function(a,b){return a.start<b.start?-1:a.start>b.start?1:(a.id<b.id?-1:1)});
+ for(var i=0;i<o.length;i++)if(o[i].id===w.id)return i+1;return 1}
+function wl(w){return 'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sd(pd(wend(w)))}
 function mk(n){return{id:uid(),name:n,weeks:[]}}
 function eKg(e){return e.items.reduce(function(a,i){return a+i.qty*iW(i)},0)}
 function eU(e){return e.items.reduce(function(a,i){return a+i.qty},0)}
@@ -341,7 +348,10 @@ function opForm(){ask('Mi nombre','<p class="sm">Este nombre quedará registrado
 function save(){idx=null;bc={};if(role==='owner')return;if(!applying){var cw=cur().w;if(cw)stamp(cw)}try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){if(!window._lsWarn){window._lsWarn=1;alert('No se pudo guardar en este dispositivo (almacenamiento lleno o bloqueado). Tus cambios podrían perderse.')}}if(!applying)markDirty()}
 function cur(){var y=db.years.find(function(x){return x.id===nav.y}),m=y&&y.mills.find(function(x){return x.id===nav.m}),w=m&&m.weeks.find(function(x){return x.id===nav.w});return{y:y,m:m,w:w}}
 
-function card(act,id,name,sub,del,edit){return '<div class="card" data-act="'+act+'" data-id="'+id+'"><div class="t"><div class="n">'+esc(name)+'</div><div class="sm">'+sub+'</div></div>'
+function curWk(m){var r=null;((m&&m.weeks)||[]).forEach(function(x){if(!r||x.start>=r.start)r=x});return r}
+function isCurW(w){var m=null;try{m=cur().m}catch(e){}if(!m||!m.weeks||!m.weeks.some(function(x){return x.id===w.id})){m=null;(db.years||[]).forEach(function(y){y.mills.forEach(function(mm){if(!m&&mm.weeks.some(function(x){return x.id===w.id}))m=mm})})}var r=curWk(m);return !!(r&&r.id===w.id)}
+function nowB(){return '<span class="nowb">ACTUAL</span>'}
+function card(act,id,name,sub,del,edit,now){return '<div class="card'+(now?' now':'')+'" data-act="'+act+'" data-id="'+id+'"><div class="t"><div class="n">'+esc(name)+(now?nowB():'')+'</div><div class="sm">'+sub+'</div></div>'
  +(edit?'<button class="btn g s" data-act="editW" data-id="'+id+'">Editar</button>':'')+'<button class="btn d s" data-act="'+del+'" data-id="'+id+'" aria-label="Eliminar">Eliminar</button></div>'}
 
 function render(){
@@ -350,8 +360,8 @@ function render(){
  if(c.y)bc.push([c.y.name,1]);if(c.m&&role!=='owner')bc.push([c.m.name,2]);if(c.w)bc.push([wl(c.w),3]);
  var b=bc.map(function(x,i){return i===bc.length-1?'<b>'+esc(x[0])+'</b>':'<button data-go="'+x[1]+'">'+esc(x[0])+'</button>'}).join(' › ');
  if(c.w){h=weekView(c.w)}
- else if(c.m){h='<h2>Semanas · '+esc(c.m.name)+'</h2><div class="list">'+(c.m.weeks.length?c.m.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1}).map(function(w){return card('openW',w.id,wl(w),'Producido: '+f(wTot(w).k,2)+' kg | En Bodega: '+f(wTot(w).k-wTot(w).ck,2)+' kg'+lmHTML(w),'delW',1)}).join(''):'<p class="empty">Aún no hay semanas registradas.</p>')+'</div><button class="btn" data-act="addW">+ Nueva semana</button>'}
- else if(c.y){h='<h2>Molinos · '+esc(c.y.name)+'</h2><div class="list">'+(c.y.mills.length?c.y.mills.map(function(m){return card('openM',m.id,m.name,m.weeks.length+' semanas · '+f(mKg(m),2)+' kg','delM')}).join(''):'<p class="empty">Este año está limpio. Agrega el primer molino.</p>')+'</div><button class="btn" data-act="addM">+ Agregar Molino</button>'}
+ else if(c.m){h='<h2>Moliendas · '+esc(c.m.name)+'</h2><div class="list">'+(c.m.weeks.length?c.m.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1}).map(function(w){var cwk=curWk(c.m);return card('openW',w.id,wl(w),'Producido: '+f(wTot(w).k,2)+' kg | En Bodega: '+f(wTot(w).k-wTot(w).ck,2)+' kg'+lmHTML(w),'delW',1,cwk&&cwk.id===w.id)}).join(''):'<p class="empty">Aún no hay moliendas registradas.</p>')+'</div><button class="btn" data-act="addW">+ Nueva molienda</button>'}
+ else if(c.y){h='<h2>Molinos · '+esc(c.y.name)+'</h2><div class="list">'+(c.y.mills.length?c.y.mills.map(function(m){return card('openM',m.id,m.name,m.weeks.length+(m.weeks.length===1?' molienda · ':' moliendas · ')+f(mKg(m),2)+' kg','delM')}).join(''):'<p class="empty">Este año está limpio. Agrega el primer molino.</p>')+'</div><button class="btn" data-act="addM">+ Agregar Molino</button>'}
  else{h='<h2>Selecciona el año</h2><div class="list">'+visYears().slice().sort(function(a,b){return a.name<b.name?-1:1}).map(function(y){return card('openY',y.id,y.name,ySub(y),'delY')}).join('')+'</div><button class="btn" data-act="addY">+ Agregar Año</button>'}
  $('app').innerHTML='<nav class="bc" aria-label="Navegación">'+b+'</nav>'+h;
  lockUI();if($('tprev'))tPrev();
@@ -465,7 +475,7 @@ function ifBuild(cfg){
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;background:#06241A;border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.6)"></div>'
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;padding:0 18px 0 172px;display:flex;flex-direction:column;justify-content:center">'
   +'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>'
-  +'<div style="font:600 24px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>'
+  +'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>'
   +'<div style="position:absolute;left:60px;top:26px;width:150px;height:150px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
  /* Tarjeta de cifras (borde dorado) */
@@ -534,7 +544,7 @@ function shareInfo(cfg){
   },'image/png')}).catch(fail)}
 /* ---- Datos comunes ---- */
 function ifSlug(c,w,p){return p+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start}
-function ifHead(c,w,sec){return{title:c.m.name,line2:sdy(w.start)+' – '+sdy(wend(w)),secTitle:sec}}
+function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
 function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,
  k=[{v:f(T.k,2)+' kg',l:'Producido total · '+f(T.u)+' u',c:'#4DF06A'},{v:f(T.ck,2)+' kg',l:'Total salidas · '+f(T.cu)+' u',c:IF_Y},{v:f(bk,2)+' kg',l:'Disponible en bodega · '+f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B}];
  if(hasC)k.splice(1,0,{v:f(T.k/w.cw,2)+' cargas',l:'Total de cargas · '+f(w.cw,2)+' kg c/u',c:'#4DF06A'});return k}
@@ -563,7 +573,7 @@ function shareLiq(){var c=cur(),w=c.w;if(!w)return;
  var q=liqQ(w),t=0,pc=w.unit==='c',
  rows=w.g.map(function(g){var pr=gp(w,g),v=q*pr;t+=v;return[{b:g.name},{b:'$'+f(pr,2),s:pc?'por carga':'por kilo',c:IF_Y},{b:'$'+f(v,2),c:'#4DF06A'}]});
  var cfg=ifHead(c,w,'Liquidación de trabajadores');
- cfg.kpis=[{v:liqTxt(w),l:pc?'Total de cargas de la semana':'Kilaje total de la semana',c:'#4DF06A'}];
+ cfg.kpis=[{v:liqTxt(w),l:pc?'Total de cargas de la molienda':'Kilaje total de la molienda',c:'#4DF06A'}];
  cfg.cols=[{h:'Grupo',w:'1.3fr'},{h:pc?'Precio / carga':'Precio / kilo',w:'1fr'},{h:'Total a pagar',w:'1.1fr'}];
  cfg.rows=rows;cfg.empty='Aún no hay grupos de trabajadores.';
  cfg.file=ifSlug(c,w,'liquidacion');cfg.shareTitle='Liquidación de trabajadores';cfg.btn=document.querySelector('[data-act="shareLiq"]');
@@ -596,7 +606,7 @@ function cdI(w){var g={},ord=[],h='<h2>Detalle de cargues por día</h2><p class=
   h+='<div class="dg" data-date="'+d+'"><div class="cdh"><div class="cdt"><b>'+dlab(d)+'</b><span class="ds">'+cdSum(g[d])+'</span></div></div>'+g[d].map(cdRO).join('')+'</div>'});
  return h}
 function cdH(w){return'<section class="card2" id="cdsec">'+cdI(w)+'</section>'}
-function liqH(w){var h='<section class="card2" id="liqsec"><div class="cath"><h2>Liquidación de trabajadores</h2><button class="btn g ico" type="button" data-act="shareLiq" aria-label="Compartir liquidación" title="Compartir liquidación">'+SHI2+'</button></div><p class="sm" style="margin:6px 0 6px;color:var(--mu)">'+(w.unit==='c'?'Total de cargas de la semana':'Kilaje total de la semana')+' (automático): <b id="liqq" style="color:var(--ink)">'+liqTxt(w)+'</b><span id="liqn" style="color:var(--late)">'+liqNote(w)+'</span></p>';
+function liqH(w){var h='<section class="card2" id="liqsec"><div class="cath"><h2>Liquidación de trabajadores</h2><button class="btn g ico" type="button" data-act="shareLiq" aria-label="Compartir liquidación" title="Compartir liquidación">'+SHI2+'</button></div><p class="sm" style="margin:6px 0 6px;color:var(--mu)">'+(w.unit==='c'?'Total de cargas de la molienda':'Kilaje total de la molienda')+' (automático): <b id="liqq" style="color:var(--ink)">'+liqTxt(w)+'</b><span id="liqn" style="color:var(--late)">'+liqNote(w)+'</span></p>';
  w.g.forEach(function(g){h+='<div class="grp"><div class="gn">'+esc(g.name)+'<button class="btn d s" type="button" data-act="delG" data-id="'+g.id+'">Quitar</button></div><div><label for="p'+g.id+'">'+(w.unit==='c'?'Precio por carga ($)':'Precio por kilo ($)')+'</label><input id="p'+g.id+'" class="price" data-id="'+g.id+'" type="number" inputmode="decimal" step="any" min="0" value="'+(gp(w,g)||'')+'" placeholder="'+(w.unit==='c'?'Ej. 2200':'0')+'"></div><div class="gt"><span>Total a pagar</span><b data-t="'+g.id+'">$'+f(liqQ(w)*gp(w,g),2)+'</b></div></div>'});
  return h+'<button class="btn g" type="button" data-act="addG">+ Agregar Grupo de Trabajadores</button></section>'}
 function liqText(w){var q=liqQ(w),t=0,L=['*Liquidación de trabajadores*',cur().m.name+' · '+wl(w),(w.unit==='c'?'Total de cargas: ':'Kilaje total: ')+liqTxt(w),''];
@@ -625,7 +635,7 @@ function projRes(w){var r=projCalc(w);
 function projH(w){return'<section class="card2" id="projsec"><div class="cath"><h2>Proyección de producción</h2></div>'
  +'<div class="fgrid" style="max-width:260px"><label>Días proyectados de molienda<input id="pdays" type="number" inputmode="decimal" min="0.1" max="60" step="any" value="'+pdays(w)+'"></label></div>'
  +'<div id="projres">'+projRes(w)+'</div></section>'}
-function resView(w){return'<div class="sumh"><span class="sumt"><b>'+esc(cur().m.name)+'</b> · '+esc(wl(w))+'</span><button class="btn g ico" type="button" id="btnShareRes" data-act="shareRes" aria-label="Compartir resumen como imagen" title="Compartir resumen como imagen">'+SHI2+'</button></div><div class="stats" id="stats">'+statsI(w)+'</div><section class="card2" id="catbox" style="margin:0 0 18px">'+catRO(w)+'</section>'+blkH(w)+projH(w)+cdH(w)+'<section class="card2 consd" id="cons">'+consI(w)+'</section>'+liqH(w)}
+function resView(w){return'<div class="sumh"><span class="sumt"><b>'+esc(cur().m.name)+'</b> · '+esc(wl(w))+(isCurW(w)?nowB():'<span class="nowb old">ANTERIOR</span>')+'</span><button class="btn g ico" type="button" id="btnShareRes" data-act="shareRes" aria-label="Compartir resumen como imagen" title="Compartir resumen como imagen">'+SHI2+'</button></div><div class="stats" id="stats">'+statsI(w)+'</div><section class="card2" id="catbox" style="margin:0 0 18px">'+catRO(w)+'</section>'+blkH(w)+projH(w)+cdH(w)+'<section class="card2 consd" id="cons">'+consI(w)+'</section>'+liqH(w)}
 
 /* ===== Módulo independiente: Registro detallado operativo ===== */
 function isPulv(p){return/^\s*pulverizada\s*$/i.test(p&&p.name||'')}
@@ -692,7 +702,7 @@ function tPrev(src){var low=pvSync(src),w=cur().w,el=$('tprev');if(!el)return;
  var t={date:date,start:st,end:en},sg=segs(t,w),ms=sg.map(function(x){return x.min}),us=sg.map(function(){return 0}),nd=wdays(w),out=0,cross=sg.some(function(x){return x.d!==sg[0].d});
  r.items.forEach(function(it){alloc(it.qty,ms).forEach(function(v,i){us[i]+=v})});
  var parts=sg.map(function(g,i){if(g.d<0||g.d>=nd){out++;return null}return(cross?wdn(w,g.d)+' ':'')+SL[g.s]+': '+hl(g.min)+(tu>0?' · '+f(us[i])+' u':'')}).filter(Boolean);
- el.textContent=tot+'Duración '+hl(tdur(t))+(parts.length?' → '+parts.join(' | '):'')+(out?' · Las horas que pasan del cierre de la semana no se cuentan aquí.':'')}
+ el.textContent=tot+'Duración '+hl(tdur(t))+(parts.length?' → '+parts.join(' | '):'')+(out?' · Las horas que pasan del cierre de la molienda no se cuentan aquí.':'')}
 function saveT(){var w=cur().w,er=$('terr');function bad(m){er.textContent=m}
  var date=$('tdate').value,st=tv('tstart'),en=tv('tend'),r=qCollect('tql','qty');
  if(!date||date<w.start||date>wend(w))return bad('Elige una fecha dentro de la semana ('+wl(w)+').');
@@ -757,7 +767,7 @@ function histI(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w),pu=0,pk=0,cu=
  if(!R.length)h='<tr><td colspan="7" style="text-align:center;color:var(--mu)">Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.')+'</td></tr>';
  return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Bodega<small class="hso">saldo al cerrar (u)</small></th><th class="l">Vehículo / Cliente</th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
 function histIn(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w);
- return'<h2>Historial de turnos y cargues</h2><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la semana</option></select></label>'
+ return'<h2>Historial de turnos y cargues</h2><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la molienda</option></select></label>'
  +(m==='d'?'<label>Día<input id="hd" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label>':'')+'</div><div id="hist">'+histI(w)+'</div>'}
 function histH(w){return'<section class="card2" id="secHist">'+histIn(w)+'</section>'}
 function regView(w){
@@ -776,7 +786,7 @@ function updWeek(){var w=cur().w;
  ['tsel','csel'].forEach(function(id){var s=$(id);if(!s)return;for(var i=0;i<s.options.length;i++){var o=s.options[i],p=o.value&&o.value!=='_'?cp(o.value):null;if(p)o.textContent=(p.name.trim()||'(sin nombre)')+' · '+f(p.w,3)+' kg'}});
  syncCards();var h=$('hist');if(h)h.innerHTML=histI(w);tPrev();cPrev()}
 function tabs(){var m=nav.mode==='reg'?'reg':'res';
- return'<div class="tabs" role="tablist" aria-label="Vista de la semana"><button class="tab" type="button" role="tab" aria-selected="'+(m==='res')+'" data-act="tab" data-id="res">Pantalla principal</button><button class="tab" type="button" role="tab" aria-selected="'+(m==='reg')+'" data-act="tab" data-id="reg">Registro operativo</button></div>'}
+ return'<div class="tabs" role="tablist" aria-label="Vista de la molienda"><button class="tab" type="button" role="tab" aria-selected="'+(m==='res')+'" data-act="tab" data-id="res">Pantalla principal</button><button class="tab" type="button" role="tab" aria-selected="'+(m==='reg')+'" data-act="tab" data-id="reg">Registro operativo</button></div>'}
 function weekView(w){if(role==='owner')nav.mode='res';return(role==='owner'?'':tabs())+(nav.mode==='reg'?regView(w):resView(w))}
 
 function ask(title,body,okLabel,ok,del){
@@ -791,7 +801,7 @@ function liqNote(w){return(w.unit==='c'&&!(w.cw>0))?' · Falta ingresar los kilo
 function updLiq(){var w=cur().w,q=liqQ(w),t=0;w.g.forEach(function(g){var v=q*gp(w,g);t+=v;var el=document.querySelector('[data-t="'+g.id+'"]');if(el)el.textContent='$'+f(v,2)});var a=$('liqq'),b=$('liqn');if(a)a.textContent=liqTxt(w);if(b)b.textContent=liqNote(w)}
 
 function weekForm(w){var c=cur(),last=c.m.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1})[0],ds=w?w.start:last?iso(ad(wend(last),1)):mon(iso(new Date())),de=w?wend(w):iso(ad(ds,6));
- ask(w?'Editar semana':'Nueva semana',fld('Fecha en que inició','fs','type="date" value="'+ds+'"')+'<div style="height:12px"></div>'+fld('Fecha en que finalizó','fe','type="date" value="'+de+'"'),'Guardar',function(){
+ ask(w?'Editar molienda':'Nueva molienda',fld('Fecha en que inició','fs','type="date" value="'+ds+'"')+'<div style="height:12px"></div>'+fld('Fecha en que finalizó','fe','type="date" value="'+de+'"'),'Guardar',function(){
   var v=$('fs').value,e=$('fe').value;if(!v||!e)return'Elige la fecha de inicio y la de fin.';
   var n=ddiff(v,e)+1;if(n<1)return'La fecha final no puede ser anterior a la inicial.';if(n>31)return'El rango no puede superar 31 días.';
   var ov=c.m.weeks.find(function(x){return x!==w&&v<=wend(x)&&e>=x.start});if(ov)return'Se cruza con otra semana ('+wl(ov)+').';
@@ -819,9 +829,9 @@ document.addEventListener('click',function(ev){
  else if(a==='addM')nameForm('Nuevo molino','Nombre del molino','Ej. Espejo',function(v){c.y.mills.push(mk(v))});
  else if(a==='addW')weekForm();
  else if(a==='editW')weekForm(c.m.weeks.find(function(w){return w.id===id}));
- else if(a==='delY')conf('Eliminar año','Se borrarán todos sus molinos y semanas.',function(){db.years=db.years.filter(function(y){return y.id!==id})});
- else if(a==='delM')conf('Eliminar molino','Se borrarán todas sus semanas.',function(){c.y.mills=c.y.mills.filter(function(m){return m.id!==id})});
- else if(a==='delW')conf('Eliminar semana','Se borrarán sus registros y liquidación.',function(){c.m.weeks=c.m.weeks.filter(function(w){return w.id!==id})});
+ else if(a==='delY')conf('Eliminar año','Se borrarán todos sus molinos y moliendas.',function(){db.years=db.years.filter(function(y){return y.id!==id})});
+ else if(a==='delM')conf('Eliminar molino','Se borrarán todas sus moliendas.',function(){c.y.mills=c.y.mills.filter(function(m){return m.id!==id})});
+ else if(a==='delW')conf('Eliminar molienda','Se borrarán sus registros y liquidación.',function(){c.m.weeks=c.m.weeks.filter(function(w){return w.id!==id})});
  else if(a==='tab'){nav.mode=id==='reg'?'reg':'res';nav.editT=null;nav.editC=null;render();scrollTo(0,0);return}
  else if(a==='goReg'){nav.mode='reg';render();var el=$(id);if(el)el.scrollIntoView();else scrollTo(0,0);return}
  else if(a==='jump'){var el2=$(id);if(el2)el2.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
@@ -976,7 +986,7 @@ function h256(s){return sha256(unescape(encodeURIComponent(s)))}
 function findMill(code){var k=nk(code),r=null;if(!k)return null;db.years.forEach(function(y){y.mills.forEach(function(m){if(!r&&nk(m.name)===k)r=m.name})});return r}
 function ownMill(y){return y.mills.find(function(m){return nk(m.name)===OWN})}
 function visYears(){return role==='owner'?db.years.filter(function(y){return!!ownMill(y)}):db.years}
-function ySub(y){if(role!=='owner')return y.mills.length+' molinos';var m=ownMill(y);return m.weeks.length+' semanas · '+f(mKg(m),2)+' kg'}
+function ySub(y){if(role!=='owner')return y.mills.length+' molinos';var m=ownMill(y);return m.weeks.length+(m.weeks.length===1?' molienda · ':' moliendas · ')+f(mKg(m),2)+' kg'}
 function ownFix(){var y=nav.y&&db.years.find(function(x){return x.id===nav.y}),m=y&&ownMill(y);
   if(m)nav.m=m.id;else{nav.y=null;nav.m=null;nav.w=null}}
 function allow(a){if(role==='admin')return true;if(role==='owner')return!!OWNOK[a];if(role==='emp')return a==='delCat'||a==='delT'||a==='delC'||!/^del/.test(a||'');return false}
@@ -996,8 +1006,8 @@ function logout(){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK)}
 function lgWait(){try{var o=JSON.parse(localStorage.getItem(LK));return o&&o.until>Date.now()?Math.ceil((o.until-Date.now())/1000):0}catch(e){return 0}}
 function lgFail(){var o={n:0,until:0};try{o=JSON.parse(localStorage.getItem(LK))||o}catch(e){}o.n=(o.n||0)+1;if(o.n>=5){o.until=Date.now()+60000;o.n=0}try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
 function lgPaint(){var F={a:['Contraseña','type="password" autocomplete="current-password"','','Acceso total: leer, crear, editar y eliminar en todos los molinos, años y semanas.'],
-   o:['Código de ingreso','type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"','Nombre de tu molino','Solo lectura: eliges año y semana y puedes compartir el cierre.'],
-   e:['Tu nombre','type="text" autocomplete="name"','Ej. Juan Pérez','Eliges o creas el molino y la semana, y registras turnos y cargues.']}[lgMode];
+   o:['Código de ingreso','type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"','Nombre de tu molino','Solo lectura: eliges año y molienda y puedes compartir el cierre.'],
+   e:['Tu nombre','type="text" autocomplete="name"','Ej. Juan Pérez','Eliges o creas el molino y la molienda, y registras turnos y cargues.']}[lgMode];
   document.querySelectorAll('#login [data-lg]').forEach(function(b){if(b.classList.contains('tab'))b.setAttribute('aria-selected',String(b.dataset.lg===lgMode))});
   $('lgBody').innerHTML='<label for="lgIn">'+F[0]+'</label><input id="lgIn" '+F[1]+' placeholder="'+F[2]+'" maxlength="40"><p class="hint">'+F[3]+'</p>';$('lgErr').textContent=''}
 function lgGo(){var v=$('lgIn').value.trim(),er=$('lgErr');er.textContent='';
