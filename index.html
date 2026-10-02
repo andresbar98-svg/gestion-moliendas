@@ -479,6 +479,7 @@ function refRows(w){var P=prods(w),used={},rows=[];
   rows.push({name:c.name,w:+c.w||0,u:p?p.u:0,k:p?p.k:0,cu:p?p.cu:0,ck:p?p.ck:0})});
  P.forEach(function(p){if(!used[p.key]&&!w.cat.some(function(c){return String(c.name||'').trim().toLowerCase()===p.key}))rows.push({name:p.name,w:0,u:p.u,k:p.k,cu:p.cu,ck:p.ck})});
  return rows}
+function fdl(x){var d=pd(x),M=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];return pad2(d.getDate())+' de '+M[d.getMonth()]+' de '+d.getFullYear()}
 function sumCard(w){var c=cur(),T=wTot(w),bk=T.k-T.ck,R=refRows(w),E=function(x){return esc(x)};
  var G='#F2C230',M='#98A8B3',L='#2A3547',FC='\'Barlow Condensed\',\'Arial Narrow\',sans-serif',sm='font-size:12px;font-weight:400;color:'+M;
  var GR='#2EE66B',BL='#4FC3F7',hasC=w.unit==='c'&&w.cw>0,
@@ -490,8 +491,7 @@ var ic=(document.querySelector('link[rel="icon"][sizes="192x192"]')||{}).href||'
  var h='<div style="padding:22px 24px 18px;display:flex;align-items:center;gap:18px;border-bottom:1px solid '+L+'">'
   +(ic?'<img src="'+ic+'" alt="" style="width:76px;height:76px;display:block;flex:none">':'')
   +'<div style="min-width:0"><div style="font:700 36px/1.05 '+FC+';letter-spacing:.06em;text-transform:uppercase;color:'+G+'">'+E(c.m.name)+'</div>'
-  +'<div style="font-size:18px;margin-top:5px;color:#fff">'+E(wl(w))+'</div>'
-  +'<div style="font-size:14px;color:'+M+';margin-top:2px">'+E(sdy(w.start))+' – '+E(sdy(wend(w)))+'</div></div></div>'
+  +'<div style="font-size:18px;margin-top:6px;color:#fff">'+E(fdl(w.start))+' – '+E(fdl(wend(w)))+'</div></div></div>'
   +'<div style=\"padding:18px 24px 6px\">'
   +'<div style=\"display:grid;grid-template-columns:repeat('+top.length+',1fr);gap:14px 18px;margin-bottom:18px\">'+top.map(function(x){return'<div><div style=\"font:700 52px/1.05 '+FC+';color:'+x[2]+'\">'+E(x[0])+'</div><div style=\"font-size:15px;color:#E6ECF0\">'+E(x[1])+'</div></div>'}).join('')+'</div>'
   +'<div style=\"display:grid;grid-template-columns:repeat(2,1fr);gap:14px 18px\">'+bot.map(function(x){return'<div><div style=\"font:700 34px/1.1 '+FC+';color:'+x[2]+'\">'+E(x[0])+'</div><div style=\"font-size:14px;color:#E6ECF0\">'+E(x[1])+'</div></div>'}).join('')+'</div></div>'
@@ -514,7 +514,7 @@ function shareRes(){
  var btn=$('btnShareRes');if(btn){btn.disabled=true;btn.style.opacity='.5'}
  var node=sumCard(w);document.body.appendChild(node);
  function cleanup(){if(node.parentNode)document.body.removeChild(node);if(btn){btn.disabled=false;btn.style.opacity=''}}
- var fname='resumen-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start+'.png',tx='La Molienda · '+c.m.name+' · '+wl(w);
+ var fname='resumen-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start+'.png';
  function dl(blob){var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},4000)}
  var go=function(){html2canvas(node,{backgroundColor:'#ffffff',scale:2,useCORS:true}).then(function(canvas){
   cleanup();
@@ -522,7 +522,7 @@ function shareRes(){
    if(!blob){alert('No se pudo generar la imagen. Inténtalo de nuevo.');return}
    var file;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
    if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
-    navigator.share({files:[file],title:'Resumen de la molienda',text:tx}).catch(function(e){if(!e||e.name!=='AbortError')dl(blob)})
+    navigator.share({files:[file]}).catch(function(e){if(!e||e.name!=='AbortError')dl(blob)})
    }else dl(blob)
   },'image/png')}).catch(function(){cleanup();alert('No se pudo generar la imagen. Inténtalo de nuevo.')})};
  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(go,go)}
