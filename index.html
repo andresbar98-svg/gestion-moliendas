@@ -461,7 +461,9 @@ function ifImg(k,st){return'<img src="'+IFD[k]+'" alt="" style="position:absolut
 function ifCell(c,i,al){
  if(c==null)c='';
  var o=(typeof c==='object')?c:{b:c},first=i===0,col=o.c||(first?'#fff':'#fff');
- var inner=o.h!=null?o.h:('<div style="font:700 '+(first?29:32)+'px/1.04 '+IF_FC+';color:'+col+';word-break:break-word">'+esc(o.b)+'</div>'
+ var big=o.nw?(String(o.b).length>9?28:(String(o.b).length>8?30:32)):(first?29:32),
+  bst=o.nw?'white-space:nowrap;word-break:keep-all;overflow-wrap:normal':'word-break:break-word',
+  inner=o.h!=null?o.h:('<div style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';'+bst+'">'+esc(o.b)+'</div>'+(o.u?'<div style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';white-space:nowrap">'+esc(o.u)+'</div>':'')
   +(o.s?'<div style="font:500 16px/1.2 Barlow,Arial,sans-serif;color:'+IF_M+';margin-top:2px;white-space:nowrap">'+esc(o.s)+'</div>':'')+(o.s2?'<div style="font:500 16px/1.2 Barlow,Arial,sans-serif;color:'+IF_M+';margin-top:1px;white-space:nowrap">'+esc(o.s2)+'</div>':'')+(o.x||''));
  return'<div style="box-sizing:border-box;min-width:0;padding:10px 11px;text-align:'+(first?'left':al)+';'+(i>=2?'border-left:2px solid #1B8C32;':'')+'">'+inner+'</div>'}
 function ifBuild(cfg){
@@ -562,9 +564,9 @@ function shareCons(){var c=cur(),w=c.w;if(!w)return;
  (w.cd||[]).forEach(function(cg){(cg.items||[]).forEach(function(it){var u=+it.u||0,kk=iKg(it);if(!(u||kk))return;var key=(iN(it)||'Sin producto').toLowerCase(),o=DB[key]||(DB[key]={}),d=o[cg.date]||(o[cg.date]={u:0,k:0});d.u+=u;d.k+=kk})});
  var rows=P.map(function(p){var bu=p.u-p.cu,bkg=p.k-p.ck,nc=Object.keys(p.cs).length,tp=bu>0?p.u*(bkg/bu):p.k,dd=DB[p.key]||{},ks=Object.keys(dd).sort();tk+=tp;
   var sub=ks.length?'<div style="margin-top:8px;padding-top:7px;border-top:1px solid #1B8C32">'+ks.map(function(d,i){return'<div style="margin-top:'+(i?6:0)+'px;white-space:nowrap"><div style="font:500 15px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+esc(dlab(d))+'</div><div style="font:600 15px/1.15 Barlow,Arial,sans-serif;color:#fff">'+esc(f(dd[d].u)+' u · '+f(dd[d].k,2)+' kg')+'</div></div>'}).join('')+'</div>':'';
-  return{cells:[{b:p.name,s:bu>0?'prom. '+f(bkg/bu,2)+' kg c/u':''},{b:f(p.u)+' u',s:f(p.k,2)+' kg',c:IF_Y},{b:f(p.cu)+' u',s:nc?f(p.ck,2)+' kg':'–',s2:nc?nc+' cargue'+(nc>1?'s':''):'',x:sub},{b:f(bu)+' u',s:f(bkg,2)+' kg',c:bu<0?IF_R:'#fff'},{b:fz(tp,2)+(tp?' kg':''),c:IF_Y}]}});
+  return{cells:[{b:p.name,s:bu>0?'prom. '+f(bkg/bu,2)+' kg c/u':''},{b:f(p.u)+' u',s:f(p.k,2)+' kg',c:IF_Y},{b:f(p.cu)+' u',s:nc?f(p.ck,2)+' kg':'–',s2:nc?nc+' cargue'+(nc>1?'s':''):'',x:sub},{b:f(bu)+' u',s:f(bkg,2)+' kg',c:bu<0?IF_R:'#fff'},{b:fz(tp,2),u:tp?'kg':'',nw:1,c:IF_Y}]}});
  var cfg=ifHead(c,w,'Inventario detallado');
- cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.05fr'},{h:'Producido',w:'.95fr'},{h:'Salidas',w:'1.4fr',al:'center'},{h:'En bodega',w:'.95fr'},{h:'Total kilos',w:'.95fr'}];
+ cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.05fr'},{h:'Producido',w:'.95fr'},{h:'Salidas',w:'1.25fr',al:'center'},{h:'En bodega',w:'.85fr'},{h:'Total kilos',w:'1.1fr'}];
  cfg.rows=rows;cfg.empty='Registra producción en los bloques para ver los productos aquí.';
  cfg.file=ifSlug(c,w,'consolidado');cfg.shareTitle='Consolidado de cierre';cfg.btn=$('btnShareCons');
  shareInfo(cfg)}
