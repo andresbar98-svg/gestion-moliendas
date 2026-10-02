@@ -395,7 +395,7 @@ function consI(w){var P=prods(w),T=wTot(w),bk=T.k-T.ck,tk=0,h='<div style="displ
    +'<td>'+(nc?'<b>'+f(p.cu)+' u</b><small>'+f(p.ck,2)+' kg · '+nc+' cargue'+(nc>1?'s':'')+'</small><div class="sdl">'+ks.map(function(d){return'<div><span>'+dlab(d)+'</span><span>'+f(dd[d].u)+' u · '+f(dd[d].k,2)+' kg</span></div>'}).join('')+'</div>':'<small>–</small>')+'</td>'
    +'<td'+(bu<0?' class="neg"':'')+'><b>'+f(bu)+' u</b><small>'+f(bkg,2)+' kg</small></td>'
    +'<td class="tkc"><b>'+fz(tp,2)+(tp?' kg':'')+'</b></td></tr>'});
- var foot='<tr><td>GRAN TOTAL MOLIENDA'+(w.unit==='c'?'<small>'+(w.cw>0?f(T.k/w.cw,2):'-')+' cargas</small>':'')+'</td><td><b>'+f(T.u)+' u</b><small>'+f(T.k,2)+' kg</small></td><td><b>'+f(T.cu)+' u</b><small>'+f(T.ck,2)+' kg</small></td><td'+(bk<0?' class="neg"':'')+'><b>'+f(T.u-T.cu)+' u</b><small>'+f(bk,2)+' kg</small></td><td class="tkc"><b>'+fz(tk,2)+' kg</b></td></tr>';
+ var foot='<tr><td>GRAN TOTAL MOLIENDA</td><td></td><td></td><td></td><td class=\"tkc\"><b>'+fz(tk,2)+' kg</b>'+(w.unit==='c'?'<b style=\"display:block;margin-top:2px\">'+(w.cw>0?f(T.k/w.cw,2):'-')+' cargas</b>':'')+'</td></tr>';
  return h+'</tbody><tfoot>'+foot+'</tfoot></table></div>'}
 function shareCons(){
  if(typeof html2canvas==='undefined'){alert('No se pudo cargar la herramienta para generar la imagen. Revisa tu conexión a internet e inténtalo de nuevo.');return}
