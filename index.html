@@ -632,7 +632,10 @@ function pvSync(src){var low=[],ed=!!nav.editT,fromBod=!!(src&&src.classList&&sr
  var pv=prevBod(nav.editT||null,bnm(p.name));bp.dataset.v=pv;bp.value=f(pv);bp.style.color=pv<0?'#EE9993':'';
  /* Producción = valor maestro. Al EDITAR un turno nunca se recalcula (ni al cambiar fecha/horas ni al renderizar).
     En un turno NUEVO solo se calcula cuando la persona digita la bodega actual. */
- if(ed)return;
+ if(ed){var fromQ=!!(src&&src.classList&&src.classList.contains('qi')&&r.contains(src));
+  if(fromQ){var qn=parseInt(String(q.value).trim(),10)||0;bc.value=(qn>0||String(bc.value).trim()!=='')?(pv+qn):'';delete bc.dataset.legacy}
+  else if(fromBod&&String(bc.value).trim()!==''){var bn=parseInt(String(bc.value).trim(),10);if(bn>=0)q.value=Math.max(0,bn-pv)}
+  return}
  var raw=String(bc.value).trim();if(raw===''){if(fromBod&&!bc.dataset.legacy)q.value='';return}
  var n=parseInt(raw,10)||0;if(n<pv)low.push(p.name.trim());if(fromBod)q.value=Math.max(0,n-pv)});return low}
 function tPrev(src){var low=pvSync(src),w=cur().w,el=$('tprev');if(!el)return;
@@ -652,6 +655,7 @@ function saveT(){var w=cur().w,er=$('terr');function bad(m){er.textContent=m}
  if(r.bad)return bad('Las cantidades deben ser números enteros, sin negativos.');
  var bods={},hb=false,bb=false;document.querySelectorAll('#tql .qr[data-ref] .bcur').forEach(function(bi){var raw=String(bi.value).trim();if(raw==='')return;var n=parseInt(raw,10);if(!(n>=0)||String(n)!==raw){bb=true;return}var pr=cp(bi.closest('.qr').dataset.ref);if(pr){bods[bnm(pr.name)]=n;hb=true}});
  if(bb)return bad('La bodega actual debe ser un número entero, sin negativos.');
+ if(nav.editT)r.items.forEach(function(it){var pr=it.pid&&cp(it.pid);if(!pr)return;var k=bnm(pr.name);if(bods[k]==null){bods[k]=prevBod(nav.editT,k)+it.qty;hb=true}});
  if(!r.items.length&&!hb)return bad('Ingresa la bodega actual (conteo físico) de al menos una referencia.');
  var old=nav.editT&&w.t.find(function(x){return x.id===nav.editT}),rec={id:old?old.id:uid(),date:date,start:st,end:en,items:r.items,by:(old&&old.by)||(opName()),creadoPor:old?(old.creadoPor||old.by):opName(),createdAt:old?old.createdAt:nowISO()};
  if(old&&!canMod(old))return bad('Solo puedes modificar los registros que tú creaste.');
