@@ -504,40 +504,40 @@ function ifBuild(cfg){
   +ifImg('tl','left:0;top:0;width:'+Math.round(141*.7)+'px;height:auto')
   +ifImg('tr','right:0;top:4px;width:'+Math.round(302*.7)+'px;height:auto')
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;background:#06241A;border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.6)"></div>'
-  +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;padding:0 18px 0 172px;display:flex;flex-direction:column;justify-content:center">'
+  +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;padding:0 18px 0 180px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">'
   +'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>'
   +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="font:500 21px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:2px;white-space:nowrap">'+esc(cfg.l2b||'')+'</div></div>'
   :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
-  +'<div style="position:absolute;left:60px;top:26px;width:150px;height:150px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
+  +'<div style="position:absolute;left:56px;top:35px;width:160px;height:160px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
  /* Tarjeta de cifras (borde dorado) */
  var nl=Math.ceil(K.length/2),L=K.slice(0,nl),R=K.slice(nl);
- function kp(x,i,big,wd){var fs=Math.max(30,Math.min(big?62:50,Math.floor(wd/(Math.max(String(x.v).length,1)*.5))));return'<div style="margin-bottom:8px"><div style="font:700 '+fs+'px/1 '+IF_FC+';color:'+x.c+';white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.45)">'+esc(x.v)+'</div><div style="display:flex;align-items:center;gap:8px;font:500 20px/1.15 Barlow,Arial,sans-serif;color:#fff;margin-top:3px">'+(x.i?ifIco(x.i,x.c,26,2.3):'')+'<span style="min-width:0">'+esc(x.l)+'</span></div></div>'}
+ function kp(x,i,big,wd){var fs=Math.max(30,Math.min(big?62:50,Math.floor(wd/(Math.max(String(x.v).length,1)*.5))));return'<div><div style="font:700 '+fs+'px/1 '+IF_FC+';color:'+x.c+';white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.45)">'+esc(x.v)+'</div><div style="display:flex;align-items:center;gap:8px;font:500 20px/1.15 Barlow,Arial,sans-serif;color:#fff;margin-top:3px">'+(x.i?ifIco(x.i,x.c,26,2.3):'')+'<span style="min-width:0">'+esc(x.l)+'</span></div></div>'}
  if(K.length){
-  h+='<div style="position:relative;margin:0 22px;padding:3px;border-radius:30px;background:#E8B923;box-shadow:0 6px 22px rgba(0,0,0,.55)"><div style="border-radius:27px;background:#062315;border:3px solid #1FA63A;padding:16px 20px 10px;display:flex;align-items:center">'
-   +'<div style="flex:1 1 52%;min-width:0">'+L.map(function(x,i){return kp(x,i,i===0,R.length?300:600)}).join('')+'</div>'
-   +(R.length?'<div style="width:2px;align-self:stretch;background:#1B8C32;margin:0 18px"></div><div style="flex:1 1 44%;min-width:0">'+R.map(function(x){return kp(x,1,false,270)}).join('')+'</div>':'')
+  h+='<div style="position:relative;margin:0 22px;padding:3px;border-radius:30px;background:#E8B923;box-shadow:0 6px 22px rgba(0,0,0,.55)"><div style="border-radius:27px;background:#062315;border:3px solid #1FA63A;padding:18px 20px;display:flex;align-items:center;justify-content:center">'
+   +'<div style="flex:1 1 52%;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px">'+L.map(function(x,i){return kp(x,i,i===0,R.length?300:600)}).join('')+'</div>'
+   +(R.length?'<div style="width:2px;align-self:stretch;background:#1B8C32;margin:0 18px"></div><div style="flex:1 1 44%;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px">'+R.map(function(x){return kp(x,1,false,270)}).join('')+'</div>':'')
    +'</div></div>'}
  /* Etiqueta de sección */
- h+='<div style="position:relative;z-index:3;margin:-4px 0 0 14px"><span style="display:inline-block;padding:5px 30px 6px;border-radius:26px;background:linear-gradient(180deg,#FFD21F,#F59E0B);border:3px solid #0A2A12;box-shadow:0 0 0 2px #F2B705;font:700 29px/1.1 '+IF_FC+';color:#14200A">'+esc(cfg.secTitle||'')+'</span></div>';
+ h+='<div style="position:relative;z-index:3;margin:-4px 0 0 14px;display:flex"><span style="box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 30px 3px;text-align:center;white-space:nowrap;border-radius:26px;background:linear-gradient(180deg,#FFD21F,#F59E0B);border:3px solid #0A2A12;box-shadow:0 0 0 2px #F2B705;font:700 29px/1 '+IF_FC+';color:#14200A">'+esc(cfg.secTitle||'')+'</span></div>';
  /* Tabla */
- h+='<div style="position:relative;z-index:2;margin:-17px 22px 0;border:3px solid '+IF_G+';border-radius:24px;background:#002B15;overflow:hidden;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.55)">'
+ h+='<div style="position:relative;z-index:2;margin:-14px 22px 0;border:3px solid '+IF_G+';border-radius:24px;background:#002B15;overflow:hidden;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.55)">'
   +'<div style="display:grid;grid-template-columns:'+tpl+';background:linear-gradient(180deg,#014C1D,#012B15);border-bottom:3px solid '+IF_G+'">'
   +cols.map(function(c,i){var first=i===0,ic=IFH[String(c.h).toLowerCase()],ha=first?'left':(c.al||'center');
-   return'<div style="box-sizing:border-box;min-width:0;padding:'+(first?'22px 8px 20px 12px':'20px 4px 18px')+';font:700 22px/1.05 '+IF_FC+';color:#fff;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;text-align:'+ha+';display:flex;flex-direction:'+(first?'row':'column')+';gap:'+(first?'10px':'9px')+';justify-content:'+(first?'flex-start':'center')+';align-items:center'+(i>=1?';border-left:2px solid '+IF_G:'')+'">'+(ic?ifIco(ic,'#DFFCC0',first?32:36,2.2):'')+'<span>'+esc(c.h)+'</span></div>'}).join('')+'</div>';
+   return'<div style="box-sizing:border-box;min-width:0;padding:'+(first?'21px 8px 21px 12px':'19px 4px')+';font:700 22px/1.05 '+IF_FC+';color:#fff;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;text-align:'+ha+';display:flex;flex-direction:'+(first?'row':'column')+';gap:'+(first?'10px':'9px')+';justify-content:'+(first?'flex-start':'center')+';align-items:center'+(i>=1?';border-left:2px solid '+IF_G:'')+'">'+(ic?ifIco(ic,'#DFFCC0',first?32:36,2.2):'')+'<span>'+esc(c.h)+'</span></div>'}).join('')+'</div>';
  var rows=cfg.rows||[];
  if(!rows.length)h+='<div style="padding:18px;text-align:center;font:500 20px Barlow,Arial,sans-serif;color:'+IF_M+'">'+esc(cfg.empty||'Sin datos para mostrar.')+'</div>';
  rows.forEach(function(r,ri){
   var cells=r.cells||r,bb=(ri<rows.length-1||cfg.foot)?'border-bottom:2px solid '+IF_G+';':'';
   h+='<div style="'+bb+'"><div style="display:grid;grid-template-columns:'+tpl+'">'+cells.map(function(c,i){return ifCell(c,i,(cols[i]&&cols[i].al)||'right')}).join('')+'</div>'
    +(r.sub?'<div style="padding:4px 12px 10px;background:#04180B">'+r.sub+'</div>':'')+'</div>'});
- if(cfg.foot)h+='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:linear-gradient(180deg,#0F5A24,#0A3A18)"><div style="font:700 25px/1.1 '+IF_FC+';color:'+IF_Y+';text-transform:uppercase">'+esc(cfg.foot.label)+'</div><div style="text-align:right"><div style="font:700 40px/1 '+IF_FC+';color:'+IF_Y+'">'+esc(cfg.foot.value)+'</div>'+(cfg.foot.sub?'<div style="font:600 24px/1.1 '+IF_FC+';color:#fff;margin-top:2px">'+esc(cfg.foot.sub)+'</div>':'')+'</div></div>';
+ if(cfg.foot)h+='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;background:linear-gradient(180deg,#0F5A24,#0A3A18)"><div style="font:700 25px/1.1 '+IF_FC+';color:'+IF_Y+';text-transform:uppercase">'+esc(cfg.foot.label)+'</div><div style="text-align:right"><div style="font:700 40px/1 '+IF_FC+';color:'+IF_Y+'">'+esc(cfg.foot.value)+'</div>'+(cfg.foot.sub?'<div style="font:600 24px/1.1 '+IF_FC+';color:#fff;margin-top:2px">'+esc(cfg.foot.sub)+'</div>':'')+'</div></div>';
  h+='</div>';
  /* Decoración inferior + firma fija */
  h+='<div style="position:relative;height:104px;margin-top:-14px">'
   +ifImg('bl','left:0;top:0;width:'+Math.round(459*.62)+'px;height:auto')
   +ifImg('br','right:0;top:0;width:'+Math.round(464*.62)+'px;height:auto')+'</div>'
-  +'<div style="position:relative;z-index:3;margin:0 22px;border-top:2px solid #1B8C32;padding:13px 0 18px;display:flex;align-items:center;justify-content:center;gap:12px">'
+  +'<div style="position:relative;z-index:3;margin:0 22px;border-top:2px solid #1B8C32;padding:16px 0;display:flex;align-items:center;justify-content:center;gap:12px">'
   +(window.AMBY_LOGO?'<img src="'+window.AMBY_LOGO+'" alt="" style="width:38px;height:auto;display:block">':'')
   +'<span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div>';
  el.innerHTML=h;return el}
