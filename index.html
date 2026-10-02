@@ -964,7 +964,7 @@ document.addEventListener('click',function(ev){var t=ev.target.closest('[data-lg
   if(g==='out')logout();else if(g==='go')lgGo();
   else{lgMode=g;try{localStorage.setItem(MK,g)}catch(e){}lgPaint();$('lgIn').focus()}});
 $('login').addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.id==='lgIn'){ev.preventDefault();lgGo()}});
-var APP_VERSION='v1.0.8';window.APP_VERSION=APP_VERSION;
+var APP_VERSION='v1.0.9';window.APP_VERSION=APP_VERSION;
 ['appVer','lgVer'].forEach(function(i){var e=$(i);if(e)e.textContent='Gestión de moliendas · '+APP_VERSION});
 try{document.title='La Molienda '+APP_VERSION;console.info('La Molienda',APP_VERSION)}catch(e){}
 /* Pedir al navegador que NO borre los datos locales al liberar espacio o reiniciar */
@@ -1004,4 +1004,30 @@ window.addEventListener('pagehide',flushBg);
  setInterval(check,600000);setTimeout(function(){check(true)},4000);
 })();
 })();
-</script></body></html>
+</script>
+<script>
+/* ===== PWA / modo offline (GitHub Pages u otro hosting https). Dentro de Apps Script no aplica. ===== */
+(function(){
+ if(window.google&&google.script&&google.script.run)return;
+ var https=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
+ /* Manifest generado en el momento (Blob) con start_url y scope absolutos, para poder instalar la app */
+ try{var l=document.querySelector('link[rel="manifest"]');
+  if(l&&/^data:application\/json;base64,/.test(l.href)){var m=JSON.parse(atob(l.href.split(',')[1])),b=new URL('./',location.href).href;
+   m.start_url=b;m.scope=b;m.id=b;l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}))}}catch(e){}
+ /* Aviso de nueva versión: compara APP_VERSION con el index.html publicado (revalida con ETag, casi no gasta datos) */
+ var shown=false,busy=false,last=0;
+ function bar(v){if(shown)return;shown=true;var d=document.createElement('div');d.id='upd';d.setAttribute('role','alert');
+  var t=document.createElement('span');t.textContent='Hay una nueva versión ('+v+').';
+  var k=document.createElement('button');k.type='button';k.className='btn s';k.textContent='Actualizar';k.addEventListener('click',function(){location.reload()});
+  d.appendChild(t);d.appendChild(k);document.body.appendChild(d)}
+ function check(force){if(shown||busy||!navigator.onLine||!https)return;var n=Date.now();if(!force&&n-last<120000)return;busy=true;last=n;
+  fetch(location.href.split('#')[0],{cache:'no-cache',credentials:'same-origin'}).then(function(r){return r.ok?r.text():''}).then(function(h){busy=false;
+   var x=/var APP_VERSION='([^']+)'/.exec(h);if(x&&x[1]!==window.APP_VERSION)bar(x[1])}).catch(function(){busy=false})}
+ document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check()});
+ window.addEventListener('online',function(){check(true)});
+ setInterval(check,600000);setTimeout(function(){check(true)},5000);
+ /* Service Worker: los navegadores NO permiten registrarlo desde Blob/data:, necesita el archivo sw.js (se crea una sola vez) */
+ if(https&&'serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('Service Worker no disponible:',e)});
+})();
+</script>
+</body></html>
