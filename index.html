@@ -88,7 +88,7 @@ td b{font:700 20px var(--fn)}td small{display:block;font-size:12px;color:var(--m
 .it{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px;display:grid;gap:8px}.cd .it input,.cd .it select{background:var(--bg)}
 .itr{display:flex;gap:6px;align-items:center}.itr select{flex:1;min-width:0}.itr .x{min-height:0;height:40px;width:40px;padding:0;flex:none}
 .cdtot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--ln);padding-top:8px;font-weight:600}.cdtot b{font:700 22px var(--fn)}
-.cr{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:6px;align-items:center;margin-bottom:6px}.cr .x{min-height:0;height:38px;padding:0}.crh{color:var(--mu);font-size:13px;margin-bottom:4px}.cr.add{grid-template-columns:minmax(0,1fr) 96px auto;margin-top:10px}.cr.add .btn{min-height:44px}#caterr{min-height:0;margin:4px 0 0}#caterr:empty{display:none}.cath{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}#catbox{border-left:6px solid var(--st)}.chips{display:flex;flex-wrap:wrap;gap:8px}
+.cr{display:grid;grid-template-columns:minmax(0,1fr) 96px 40px;gap:6px;align-items:center;margin-bottom:6px}.cr .x{min-height:0;height:38px;padding:0}.crh{color:var(--mu);font-size:13px;margin-bottom:4px}.cr.add{grid-template-columns:minmax(0,1fr) 96px auto;margin-top:10px}.cr.add .btn{min-height:44px}#caterr{min-height:0;margin:4px 0 0}#caterr:empty{display:none}.cath{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}#catbox{border-left:6px solid var(--st)}.chips{display:flex;flex-wrap:wrap;gap:8px}
 
 /* ===== Fondo con foto y colores ===== */
 :root{--gl:rgba(255,255,255,.9);--teal:#0F7C7C;--cane:#5E9A25;--pan:#C9782B;--gold:#F2C230}
@@ -710,9 +710,9 @@ function qCollect(rootId,key){var out=[],bad=false,root=$(rootId);
   else{it={pid:null,name:r.dataset.ln,w:+r.dataset.lw||0};if(r.dataset.ltk!=null&&q===+r.dataset.lu)it.tk=+r.dataset.ltk}
   it[key]=q;out.push(it)});
  return{items:out,bad:bad}}
-function catHTML(w){var n=w.cat.length,h='<div class="cath"><h2>Gestión de productos</h2></div><p class="sm" style="margin:2px 0 6px;color:var(--mu)">Escribe cada referencia con sus kilos por unidad y toca «+ Agregar». Cualquier cambio se guarda y se refleja al instante en los cálculos y en el Inventario detallado.</p>';
+function catHTML(w){var n=w.cat.length,h='<div class="cath"><h2>Gestión de productos</h2></div><p class="sm" style="margin:2px 0 6px;color:var(--mu)">Escribe cada referencia con sus kilos por unidad y toca «+ Agregar». Cualquier cambio se guarda y se refleja al instante en los cálculos y en el Inventario detallado. Solo la última referencia se puede eliminar (✕), y únicamente si aún no tiene movimientos.</p>';
  h+='<div class="unitrow"><label>Unidad de liquidación<select id="unitsel" aria-label="Unidad"><option value="k"'+(w.unit!=='c'?' selected':'')+'>Kilos</option><option value="c"'+(w.unit==='c'?' selected':'')+'>Cargas</option></select></label>'+(w.unit==='c'?'<label>Kilos por carga<input id="cgw" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej. 65" value="'+(w.cw||'')+'"></label>':'')+'</div>';
- if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span></div>'+w.cat.map(function(p){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+(p.w||'')+'" aria-label="Kilos por unidad">'+'</div>'}).join('');
+ if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span><span></span></div>'+w.cat.map(function(p,ix){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+(p.w||'')+'" aria-label="Kilos por unidad">'+(ix===w.cat.length-1&&(canMod(p)||role==='owner')?'<button class="btn d s x" type="button" data-own="1" data-act="delCat" data-id="'+p.id+'" aria-label="Eliminar '+esc(p.name)+'" title="Eliminar la última referencia">✕</button>':'<span></span>')+'</div>'}).join('');
  return h+'<div class="cr add"><input id="cnn" placeholder="Referencia" aria-label="Nombre de la nueva referencia" autocomplete="off"><input id="cnw" type="number" inputmode="decimal" min="0" step="any" placeholder="Kilos" aria-label="Kilos por unidad"><button class="btn s" type="button" data-act="addCat">+ Agregar</button></div><p class="err" id="caterr" role="alert"></p>'}
 function tForm(w){var t=nav.editT&&(w.t||[]).find(function(x){return x.id===nav.editT}),le=t?null:lastEnd(w),ch=!!le&&!nav.tUnlock,
  dv=t?t.date:le?le.date:(nav.tDate||defDate(w)),sv=t?t.start:le?le.time:'',ro=ch?' readonly':'',note='';
@@ -896,6 +896,13 @@ document.addEventListener('click',function(ev){
   if(catDup(nn)){er.textContent='Ya existe una referencia con ese nombre.';return}
   if(!(nw>0)){er.textContent='Ingresa unos kilos por unidad mayores a 0.';return}
   c.w.cat.push({id:uid(),name:nn,w:nw,creadoPor:opName(),createdAt:nowISO()});save();fsel='#cnn'}
+ else if(a==='delCat'){var w0=c.w,lst=w0&&w0.cat[w0.cat.length-1];if(!lst||lst.id!==id)return;
+  var nk=String(lst.name||'').trim().toLowerCase(),hit=function(it){return it&&(it.pid===id||(!it.pid&&String(it.name||'').trim().toLowerCase()===nk))},
+   mov=(w0.t||[]).some(function(t){return(t.items||[]).some(hit)})
+    ||(w0.cd||[]).some(function(x){return(x.items||[]).some(hit)})
+    ||Object.keys(w0.e||{}).some(function(k){return((w0.e[k]&&w0.e[k].items)||[]).some(hit)});
+  if(mov){alert('No es posible eliminar este producto porque ya tiene movimientos registrados en esta molienda');return}
+  freeze(id);save();cloudAfterForm()}
  else if(a==='addG')nameForm('Nuevo grupo','Nombre del grupo','Ej. Cargadores',function(v){c.w.g.push({id:uid(),name:v,price:0,pc:0})});
  else if(a==='delG'){c.w.g=c.w.g.filter(function(g){return g.id!==id});save()}
  render();if(a.slice(0,4)==='open')scrollTo(0,0)});
