@@ -592,8 +592,8 @@ function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,
 function shareRes(){var c=cur(),w=c.w;if(!w)return;
  var rows=refRows(w).map(function(r){var bu=r.u-r.cu,bk=r.k-r.ck;
   return[{img:1,b:r.name,s:r.w?f(r.w,3)+' kg c/u':''},{b:f(r.u)+' u',s:f(r.k,2)+' kg',c:IF_Y},{b:f(r.cu)+' u',s:f(r.ck,2)+' kg'},{b:f(bu)+' u',s:f(bk,2)+' kg',c:bu<0?IF_R:'#fff'}]});
- var cfg=ifHead(c,w,'Producción por referencia');
- cfg.kpis=ifKpis(w);cfg.cols=[{h:'Referencia',w:'1.15fr'},{h:'Producido',w:'1.05fr',al:'center'},{h:'Salidas',w:'.95fr',al:'center'},{h:'Bodega',w:'1fr',al:'center'}];
+ var cfg=ifHead(c,w,'Producción por producto');
+ cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.15fr'},{h:'Producido',w:'1.05fr',al:'center'},{h:'Salidas',w:'.95fr',al:'center'},{h:'Bodega',w:'1fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Aún no hay referencias.';cfg.file=ifSlug(c,w,'resumen');cfg.shareTitle='Resumen de producción';cfg.btn=$('btnShareRes');
  shareInfo(cfg)}
 /* ---- 2) Consolidado de cierre ---- */
