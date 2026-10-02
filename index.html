@@ -465,7 +465,7 @@ function ifCell(c,i,al){
   bst=o.nw?'white-space:nowrap;word-break:keep-all;overflow-wrap:normal':'word-break:break-word',
   inner=o.h!=null?o.h:('<div style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';'+bst+'">'+esc(o.b)+'</div>'+(o.u?'<div style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';white-space:nowrap">'+esc(o.u)+'</div>':'')
   +(o.s?'<div style="font:500 16px/1.2 Barlow,Arial,sans-serif;color:'+IF_M+';margin-top:2px;white-space:nowrap">'+esc(o.s)+'</div>':'')+(o.s2?'<div style="font:500 16px/1.2 Barlow,Arial,sans-serif;color:'+IF_M+';margin-top:1px;white-space:nowrap">'+esc(o.s2)+'</div>':'')+(o.x||''));
- return'<div style="box-sizing:border-box;min-width:0;padding:10px 11px;text-align:'+(first?'left':al)+';'+(i>=2?'border-left:2px solid #1B8C32;':'')+'">'+inner+'</div>'}
+ return'<div style="box-sizing:border-box;min-width:0;padding:10px 11px;display:flex;flex-direction:column;justify-content:center;text-align:'+(first?'left':al)+';'+(i>=2?'border-left:2px solid #1B8C32;':'')+'">'+inner+'</div>'}
 function ifBuild(cfg){
  var el=document.createElement('div'),W=720,K=cfg.kpis||[],cols=cfg.cols||[],tpl=cols.map(function(c){return'minmax(0,'+(c.w||'1fr')+')'}).join(' ');
  el.style.cssText='position:absolute;left:-99999px;top:0;width:'+W+'px;box-sizing:border-box;overflow:hidden;background:linear-gradient(180deg,#03140C 0%,#020D08 55%,#010805 100%);color:#fff;font-family:Barlow,"Segoe UI",Arial,sans-serif;line-height:1.2';
@@ -477,7 +477,8 @@ function ifBuild(cfg){
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;background:#06241A;border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.6)"></div>'
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;padding:0 18px 0 172px;display:flex;flex-direction:column;justify-content:center">'
   +'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>'
-  +'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>'
+  +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="font:500 21px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:2px;white-space:nowrap">'+esc(cfg.l2b||'')+'</div></div>'
+  :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
   +'<div style="position:absolute;left:60px;top:26px;width:150px;height:150px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
  /* Tarjeta de cifras (borde dorado) */
@@ -546,7 +547,7 @@ function shareInfo(cfg){
   },'image/png')}).catch(fail)}
 /* ---- Datos comunes ---- */
 function ifSlug(c,w,p){return p+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start}
-function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
+function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),l2a:'Molienda '+wnum(w),l2b:sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
 function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,
  k=[{v:f(T.k,2)+' kg',l:'Producido total · '+f(T.u)+' u',c:'#4DF06A'},{v:f(T.ck,2)+' kg',l:'Total salidas · '+f(T.cu)+' u',c:IF_Y},{v:f(bk,2)+' kg',l:'Disponible en bodega · '+f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B}];
  if(hasC)k.splice(1,0,{v:f(T.k/w.cw,2)+' cargas',l:'Total de cargas · '+f(w.cw,2)+' kg c/u',c:'#4DF06A'});return k}
@@ -566,7 +567,7 @@ function shareCons(){var c=cur(),w=c.w;if(!w)return;
   var sub=ks.length?'<div style="margin-top:8px;padding-top:7px;border-top:1px solid #1B8C32">'+ks.map(function(d,i){return'<div style="margin-top:'+(i?6:0)+'px;white-space:nowrap"><div style="font:500 15px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+esc(dlab(d))+'</div><div style="font:600 15px/1.15 Barlow,Arial,sans-serif;color:#fff">'+esc(f(dd[d].u)+' u · '+f(dd[d].k,2)+' kg')+'</div></div>'}).join('')+'</div>':'';
   return{cells:[{b:p.name,s:bu>0?'prom. '+f(bkg/bu,2)+' kg c/u':''},{b:f(p.u)+' u',s:f(p.k,2)+' kg',c:IF_Y},{b:f(p.cu)+' u',s:nc?f(p.ck,2)+' kg':'–',s2:nc?nc+' cargue'+(nc>1?'s':''):'',x:sub},{b:f(bu)+' u',s:f(bkg,2)+' kg',c:bu<0?IF_R:'#fff'},{b:fz(tp,2),u:tp?'kg':'',nw:1,c:IF_Y}]}});
  var cfg=ifHead(c,w,'Inventario detallado');
- cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.05fr'},{h:'Producido',w:'.95fr'},{h:'Salidas',w:'1.25fr',al:'center'},{h:'En bodega',w:'.85fr'},{h:'Total kilos',w:'1.1fr'}];
+ cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.05fr'},{h:'Producido',w:'.95fr'},{h:'Salidas',w:'1.25fr',al:'center'},{h:'En bodega',w:'.85fr'},{h:'Total kilos',w:'1.1fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Registra producción en los bloques para ver los productos aquí.';
  cfg.file=ifSlug(c,w,'consolidado');cfg.shareTitle='Consolidado de cierre';cfg.btn=$('btnShareCons');
  shareInfo(cfg)}
