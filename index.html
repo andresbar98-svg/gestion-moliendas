@@ -88,7 +88,7 @@ td b{font:700 20px var(--fn)}td small{display:block;font-size:12px;color:var(--m
 .it{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px;display:grid;gap:8px}.cd .it input,.cd .it select{background:var(--bg)}
 .itr{display:flex;gap:6px;align-items:center}.itr select{flex:1;min-width:0}.itr .x{min-height:0;height:40px;width:40px;padding:0;flex:none}
 .cdtot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--ln);padding-top:8px;font-weight:600}.cdtot b{font:700 22px var(--fn)}
-.cr{display:grid;grid-template-columns:minmax(0,1fr) 96px 40px;gap:6px;align-items:center;margin-bottom:6px}.cr .x{min-height:0;height:38px;padding:0}.crh{color:var(--mu);font-size:13px;margin-bottom:4px}.cr.add{grid-template-columns:minmax(0,1fr) 96px auto;margin-top:10px}.cr.add .btn{min-height:44px}#caterr{min-height:0;margin:4px 0 0}#caterr:empty{display:none}.cath{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}#catbox{border-left:6px solid var(--st)}.chips{display:flex;flex-wrap:wrap;gap:8px}
+.cr{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:6px;align-items:center;margin-bottom:6px}.cr .x{min-height:0;height:38px;padding:0}.crh{color:var(--mu);font-size:13px;margin-bottom:4px}.cr.add{grid-template-columns:minmax(0,1fr) 96px auto;margin-top:10px}.cr.add .btn{min-height:44px}#caterr{min-height:0;margin:4px 0 0}#caterr:empty{display:none}.cath{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap}#catbox{border-left:6px solid var(--st)}.chips{display:flex;flex-wrap:wrap;gap:8px}
 
 /* ===== Fondo con foto y colores ===== */
 :root{--gl:rgba(255,255,255,.9);--teal:#0F7C7C;--cane:#5E9A25;--pan:#C9782B;--gold:#F2C230}
@@ -327,7 +327,7 @@ function mKg(m){return m.weeks.reduce(function(a,w){return a+wKg(w)},0)}
 function load(){try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
  if(!db||!db.years)db={years:[{id:uid(),name:'2026',mills:[mk('Espejo'),mk('Cabuya')]}]}
  var oldCat=db.cat||[];
- db.years.forEach(function(y){y.mills.forEach(function(m){m.weeks.forEach(function(w){if(!db.pv&&Array.isArray(w.cat)&&!w.cat.some(isPulv))w.cat.push({id:uid(),name:'Pulverizada',w:0});w.cd=w.cd||[];w.e=w.e||{};w.t=(w.t||[]).map(function(t){return t.items?t:{id:t.id,date:t.date,start:t.start,end:t.end,items:[{pid:t.pid,name:t.name,w:t.w,qty:t.qty}]}});if(w.unit!=='c')w.unit='k';w.cw=+w.cw||0;(w.g||[]).forEach(function(g){g.pc=+g.pc||0});if(!w.end)w.end=iso(ad(w.start,6));
+ db.years.forEach(function(y){y.mills.forEach(function(m){m.weeks.forEach(function(w){w.cd=w.cd||[];w.e=w.e||{};w.t=(w.t||[]).map(function(t){return t.items?t:{id:t.id,date:t.date,start:t.start,end:t.end,items:[{pid:t.pid,name:t.name,w:t.w,qty:t.qty}]}});if(w.unit!=='c')w.unit='k';w.cw=+w.cw||0;(w.g||[]).forEach(function(g){g.pc=+g.pc||0});if(!w.end)w.end=iso(ad(w.start,6));
   if(!w.cat){var mp={};w.cat=oldCat.map(function(q){var n={id:uid(),name:q.name,w:q.w};mp[q.id]=n.id;return n});
    w.cd.forEach(function(c){(c.items||[]).forEach(function(it){if(it.pid)it.pid=mp[it.pid]||null})});
    Object.keys(w.e).forEach(function(k){w.e[k].items.forEach(function(it){if(it.pid)it.pid=mp[it.pid]||null})});
@@ -710,9 +710,9 @@ function qCollect(rootId,key){var out=[],bad=false,root=$(rootId);
   else{it={pid:null,name:r.dataset.ln,w:+r.dataset.lw||0};if(r.dataset.ltk!=null&&q===+r.dataset.lu)it.tk=+r.dataset.ltk}
   it[key]=q;out.push(it)});
  return{items:out,bad:bad}}
-function catHTML(w){var n=w.cat.length,h='<div class="cath"><h2>Gestión de productos</h2></div><p class="sm" style="margin:2px 0 6px;color:var(--mu)">Agrega o edita las referencias (Pastilla, Bloque…) y los kilos de cada unidad. La pantalla principal las muestra al instante.</p>';
+function catHTML(w){var n=w.cat.length,h='<div class="cath"><h2>Gestión de productos</h2></div><p class="sm" style="margin:2px 0 6px;color:var(--mu)">Escribe cada referencia con sus kilos por unidad y toca «+ Agregar». Cualquier cambio se guarda y se refleja al instante en los cálculos y en el Inventario detallado.</p>';
  h+='<div class="unitrow"><label>Unidad de liquidación<select id="unitsel" aria-label="Unidad"><option value="k"'+(w.unit!=='c'?' selected':'')+'>Kilos</option><option value="c"'+(w.unit==='c'?' selected':'')+'>Cargas</option></select></label>'+(w.unit==='c'?'<label>Kilos por carga<input id="cgw" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej. 65" value="'+(w.cw||'')+'"></label>':'')+'</div>';
- if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span><span></span></div>'+w.cat.map(function(p){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+(p.w||'')+'" aria-label="Kilos por unidad">'+(canMod(p)||role==='owner'?'<button class="btn d s x" type="button" data-own="1" data-act="delCat" data-id="'+p.id+'" aria-label="Eliminar '+esc(p.name)+'">✕</button>':'<span></span>')+'</div>'}).join('');
+ if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span></div>'+w.cat.map(function(p){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+(p.w||'')+'" aria-label="Kilos por unidad">'+'</div>'}).join('');
  return h+'<div class="cr add"><input id="cnn" placeholder="Referencia" aria-label="Nombre de la nueva referencia" autocomplete="off"><input id="cnw" type="number" inputmode="decimal" min="0" step="any" placeholder="Kilos" aria-label="Kilos por unidad"><button class="btn s" type="button" data-act="addCat">+ Agregar</button></div><p class="err" id="caterr" role="alert"></p>'}
 function tForm(w){var t=nav.editT&&(w.t||[]).find(function(x){return x.id===nav.editT}),le=t?null:lastEnd(w),ch=!!le&&!nav.tUnlock,
  dv=t?t.date:le?le.date:(nav.tDate||defDate(w)),sv=t?t.start:le?le.time:'',ro=ch?' readonly':'',note='';
@@ -850,7 +850,7 @@ function weekForm(w){var c=cur(),last=c.m.weeks.slice().sort(function(a,b){retur
    if(w.cd.some(function(x){return x.date<v||x.date>e}))return'Hay cargues con fecha fuera de ese rango.';
    if((w.t||[]).some(function(x){return x.date<v||x.date>e}))return'Hay turnos con fecha fuera de ese rango.';
    w.e=ne;w.start=v;w.end=e;stamp(w)}
-  else c.m.weeks.push({id:uid(),start:v,end:e,e:{},t:[],tpl:null,cd:[],unit:last&&last.unit==='c'?'c':'k',cw:last?(+last.cw||0):0,cat:last?last.cat.map(function(q){return{id:uid(),name:q.name,w:q.w,creadoPor:q.creadoPor,createdAt:q.createdAt}}):[{id:uid(),name:'Pulverizada',w:0}],g:last?last.g.map(function(g){return{id:uid(),name:g.name,price:g.price,pc:g.pc||0}}):[{id:uid(),name:'Colinches',price:0,pc:0},{id:uid(),name:'Prenseros',price:0,pc:0}]});stamp(c.m.weeks[c.m.weeks.length-1]);save()});
+  else c.m.weeks.push({id:uid(),start:v,end:e,e:{},t:[],tpl:null,cd:[],unit:last&&last.unit==='c'?'c':'k',cw:last?(+last.cw||0):0,cat:[],g:last?last.g.map(function(g){return{id:uid(),name:g.name,price:g.price,pc:g.pc||0}}):[{id:uid(),name:'Colinches',price:0,pc:0},{id:uid(),name:'Prenseros',price:0,pc:0}]});stamp(c.m.weeks[c.m.weeks.length-1]);save()});
  D.dataset.auto=w?'0':'1'}
 function nameForm(title,label,ph,fn){ask(title,fld(label,'fn','type="text" placeholder="'+ph+'"'),'Crear',function(){var v=$('fn').value.trim();if(!v)return'Escribe un nombre.';var r=fn(v);if(r)return r;save()})}
 function conf(title,msg,fn){ask(title,'<p>'+msg+'</p>','Eliminar',function(){fn();save();cloudAfterForm()})}
@@ -896,7 +896,6 @@ document.addEventListener('click',function(ev){
   if(catDup(nn)){er.textContent='Ya existe una referencia con ese nombre.';return}
   if(!(nw>0)){er.textContent='Ingresa unos kilos por unidad mayores a 0.';return}
   c.w.cat.push({id:uid(),name:nn,w:nw,creadoPor:opName(),createdAt:nowISO()});save();fsel='#cnn'}
- else if(a==='delCat')conf('Eliminar referencia','Los turnos, bloques y cargues ya registrados conservan su nombre y peso actuales.',function(){freeze(id)});
  else if(a==='addG')nameForm('Nuevo grupo','Nombre del grupo','Ej. Cargadores',function(v){c.w.g.push({id:uid(),name:v,price:0,pc:0})});
  else if(a==='delG'){c.w.g=c.w.g.filter(function(g){return g.id!==id});save()}
  render();if(a.slice(0,4)==='open')scrollTo(0,0)});
