@@ -492,7 +492,16 @@ function ifProdKey(name){
  else f='cuadrada';
  return IFP_FILE[f]}
 var IF_G='#35D84A',IF_Y='#FFD21F',IF_B='#4FC3F7',IF_R='#FF8A80',IF_M='#B9D3C2',IF_FC="'Barlow Condensed','Arial Narrow',sans-serif";
-function ifImg(k,st){return'<img src="'+IFD[k]+'" alt="" style="position:absolute;display:block;'+st+'">'}
+/* Decoraciones inferiores: se precalientan con el borde superior difuminado (el recorte deja de verse como una línea dura bajo la tabla) */
+var IFDF={};
+function ifDecoPrep(){['bl','br'].forEach(function(k){try{var im=new Image();im.onload=function(){try{
+  var w=im.naturalWidth,h=im.naturalHeight,cv=document.createElement('canvas');cv.width=w;cv.height=h;var g=cv.getContext('2d');
+  g.drawImage(im,0,0);g.globalCompositeOperation='destination-in';
+  var gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.2,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,1)');
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+  IFDF[k]=cv.toDataURL('image/png')}catch(e){}};im.src=IFD[k]}catch(e){}})}
+ifDecoPrep();
+function ifImg(k,st){return'<img src="'+(IFDF[k]||IFD[k])+'" alt="" style="position:absolute;display:block;'+st+'">'}
 /* celda: texto, o {b:principal, s:secundario, c:color, h:html libre} */
 var IFI={
  sprout:'<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
@@ -539,7 +548,20 @@ function ifTitleImg(nm,ts){try{var sc=2,fs=ts*sc,pad=12*sc,ext=5*sc,cv=document.
 function ifTitleHTML(nm,ts){var t=ifTitleImg(nm,ts);
  if(!t)return'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>';
  return'<img data-ttl="'+esc(nm)+'" data-ts="'+ts+'" alt="" src="'+t.src+'" style="display:block;margin-left:-12px;margin-bottom:-19px;width:'+t.w+'px;height:'+t.h+'px">'}
-function ifRetitle(node){var im=node.querySelector('[data-ttl]');if(!im)return;var t=ifTitleImg(im.getAttribute('data-ttl'),+im.getAttribute('data-ts'));if(t){im.src=t.src;im.style.width=t.w+'px';im.style.height=t.h+'px'}}
+/* Recuadro del título con ancho autorregulable: ancho = zona del escudo (150) + texto más largo + 25px de relleno derecho.
+   Crece hacia la derecha hasta dejar 30px de margen con el borde del lienzo (720). Se mide con las fuentes ya cargadas. */
+function ifHeadFit(node){try{
+ var bx=node.querySelector('[data-hbox]'),tx=node.querySelector('[data-htxt]');if(!bx||!tx)return;
+ var LEFT=92,CW=720,MR=30,LEAD=150,PR=25,MIN=300,max=CW-MR-LEFT,mw=0;
+ bx.style.width=tx.style.width='2000px';   /* ancho holgado para medir el contenido real sin que se comprima */
+ var av=max-LEAD-PR;   /* espacio máximo para el texto */
+ [].slice.call(tx.children).forEach(function(c){var r=c.getBoundingClientRect(),w=r.width;
+  if(c.hasAttribute('data-ttl')){w-=24;   /* el rótulo dorado trae 12px transparentes por lado */
+   if(w>av){var f=(av+24)/r.width;c.style.width=Math.round(r.width*f)+'px';c.style.height=Math.round(r.height*f)+'px';w=av}}   /* nombre extraordinariamente largo: se reduce levemente para seguir en 1 línea */
+  if(w>mw)mw=w});
+ var w=Math.max(MIN,Math.min(max,Math.ceil(LEAD+mw+PR)));
+ bx.style.width=tx.style.width=w+'px'}catch(e){}}
+function ifRetitle(node){[].slice.call(node.querySelectorAll('[data-ttl]')).forEach(function(im){var t=ifTitleImg(im.getAttribute('data-ttl'),+im.getAttribute('data-ts'));if(t){im.src=t.src;im.style.width=t.w+'px';im.style.height=t.h+'px'}})}
 /* Fondo ambiental: follaje de cañaduzal desenfocado + luz solar difusa (se dibuja una sola vez en un canvas) */
 var IFBG=null;
 function ifBg(){if(IFBG!==null)return IFBG;IFBG='';
@@ -575,15 +597,21 @@ function ifBuild(cfg){
  var el=document.createElement('div'),W=720,K=cfg.kpis||[],cols=cfg.cols||[],tpl=cols.map(function(c){return'minmax(0,'+(c.w||'1fr')+')'}).join(' ');
  el.style.cssText='position:absolute;left:-99999px;top:0;width:'+W+'px;box-sizing:border-box;overflow:hidden;background:'+(ifBg()?'#03140C url('+ifBg()+') center top/cover no-repeat':'linear-gradient(180deg,#03140C 0%,#020D08 55%,#010805 100%)')+';color:#fff;font-family:Barlow,"Segoe UI",Arial,sans-serif;line-height:1.2';
  var nm=String(cfg.title||''),ts=Math.max(32,Math.min(68,Math.floor(255/(Math.max(nm.length,1)*.46))));
+ var wds=nm.trim().split(/\s+/).filter(Boolean),ttl;
+ if(wds.length>3){   /* nombre de más de 3 palabras: 1.ª línea = 3 primeras palabras (grande), 2.ª = el resto (algo menor) */
+  var l1=wds.slice(0,3).join(' ').toUpperCase(),l2=wds.slice(3).join(' ').toUpperCase(),
+   t1=Math.max(32,Math.min(40,Math.floor(255/(l1.length*.46)))),t2=Math.round(t1*.78);
+  ttl=ifTitleHTML(l1,t1).replace('margin-bottom:-19px','margin-bottom:-15px')+ifTitleHTML(l2,t2)}
+ else ttl=ifTitleHTML(nm.toUpperCase(),ts);
  /* Cabecera */
  var h='<div style="position:relative;height:206px">'
   +ifImg('tl','left:0;top:0;width:'+Math.round(141*.7)+'px;height:auto')
   +'<div style="position:absolute;right:-14px;top:0;width:270px;height:230px;border-radius:50%;background:radial-gradient(ellipse at 50% 45%,rgba(255,216,120,.34),rgba(255,216,120,0) 68%)"></div>'
   +'<div style="position:absolute;right:16px;top:138px;width:196px;height:52px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
   +ifImg('tr','right:0;top:4px;width:'+Math.round(302*.7)+'px;height:auto')
-  +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;background:rgba(4,38,22,.80);border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 0 24px 4px rgba(57,255,90,.45),0 6px 22px rgba(0,0,0,.6)"></div>'
-  +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;padding:0 18px 10px 150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left">'
-  +ifTitleHTML(nm.toUpperCase(),ts)
+  +'<div data-hbox="1" style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;background:rgba(4,38,22,.80);border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 0 24px 4px rgba(57,255,90,.45),0 6px 22px rgba(0,0,0,.6)"></div>'
+  +'<div data-htxt="1" style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;padding:0 25px 10px 150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left">'
+  +ttl
   +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:5px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="display:flex;align-items:center;gap:10px;font:500 23px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:2px;white-space:nowrap">'+ifIco('calendar','#E9F5EC',28,2)+'<span>'+esc(cfg.l2b||'')+'</span></div></div>'
   :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
   +'<div style="position:absolute;left:56px;top:35px;width:160px;height:160px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
@@ -619,13 +647,13 @@ function ifBuild(cfg){
  /* Pie auto-ajustable: la firma queda a 15px de la tabla y las decoraciones de las esquinas se superponen
     (posición absoluta, no suman altura). La altura de la tarjeta = fin de la tabla + 15px + logo + firma. */
  h+='<div style="position:relative;margin-top:15px">'
-  +ifImg('bl','left:0;top:-29px;width:'+Math.round(459*.62)+'px;height:auto')
-  +'<div style="position:absolute;right:-10px;top:-69px;width:310px;height:170px;border-radius:50%;background:radial-gradient(ellipse at 50% 55%,rgba(255,216,120,.30),rgba(255,216,120,0) 68%)"></div>'
-  +'<div style="position:absolute;right:14px;top:33px;width:250px;height:44px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
-  +ifImg('br','right:0;top:-29px;width:'+Math.round(464*.62)+'px;height:auto')
+  +ifImg('bl','left:0;top:-9px;width:'+Math.round(459*.62)+'px;height:auto')
+  +'<div style="position:absolute;right:-10px;top:-49px;width:310px;height:170px;border-radius:50%;background:radial-gradient(ellipse at 50% 55%,rgba(255,216,120,.30),rgba(255,216,120,0) 68%)"></div>'
+  +'<div style="position:absolute;right:14px;top:53px;width:250px;height:44px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
+  +ifImg('br','right:0;top:-9px;width:'+Math.round(464*.62)+'px;height:auto')
   +'<div style="position:relative;z-index:3;margin:0 22px">'
   +(window.AMBY_LOGO?(function(){var L=ifLogoImg();return L?'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+L.src+'" alt="" style="display:block;width:100px;height:100px;margin:'+L.m+'px 0"></div>':'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+window.AMBY_LOGO+'" alt="" style="width:64px;height:auto;display:block"></div>'})():'<div style="height:73px"></div>')
-  +'<div style="border-top:2px solid #1B8C32;padding:9px 0 12px;text-align:center"><span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div></div></div>';
+  +'<div style="padding:11px 0 12px;text-align:center"><span style="position:relative;display:inline-block;font:600 21px/1.1 Barlow,Arial,sans-serif;color:#F2F7F3;letter-spacing:.04em"><span style="position:absolute;left:-40px;right:-40px;top:-12px;bottom:-12px;background:radial-gradient(ellipse closest-side at 50% 50%,rgba(0,0,0,.7) 0%,rgba(0,0,0,.5) 55%,rgba(0,0,0,0) 100%)"></span><span style="position:relative;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 8px rgba(0,0,0,.8)">'+esc(CRED)+'</span></span></div></div></div>';
  el.innerHTML=h;return el}
 /* Hoja de respaldo (iOS exige un toque directo del usuario para abrir el menú nativo) */
 function ifSheet(blob,file,cfg,fname){
@@ -656,7 +684,7 @@ function shareInfo(cfg){
  var imgs=[].slice.call(node.querySelectorAll('img')).map(function(i){return i.complete&&i.naturalWidth?Promise.resolve():new Promise(function(r){i.onload=i.onerror=r})}),
   fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 30px "Barlow Condensed"'),document.fonts.load('600 20px Barlow'),document.fonts.load('400 20px Barlow')]).catch(function(){}):Promise.resolve();
  Promise.all(imgs.concat([fl,(document.fonts&&document.fonts.ready)||Promise.resolve()])).then(function(){
-  ifRetitle(node);ifFit(node);
+  ifRetitle(node);ifHeadFit(node);ifFit(node);
   return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false,width:720,height:Math.ceil(node.getBoundingClientRect().height),windowWidth:720})}).then(function(canvas){
   cleanup();
   canvas.toBlob(function(blob){
@@ -680,7 +708,7 @@ function shareRender(cfg){return new Promise(function(resolve,reject){
  var imgs=[].slice.call(node.querySelectorAll('img')).map(function(i){return i.complete&&i.naturalWidth?Promise.resolve():new Promise(function(r){i.onload=i.onerror=r})}),
   fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 30px "Barlow Condensed"'),document.fonts.load('600 20px Barlow'),document.fonts.load('400 20px Barlow')]).catch(function(){}):Promise.resolve();
  Promise.all(imgs.concat([fl,(document.fonts&&document.fonts.ready)||Promise.resolve()])).then(function(){
-  ifRetitle(node);ifFit(node);return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false,width:720,height:Math.ceil(node.getBoundingClientRect().height),windowWidth:720})}).then(function(canvas){
+  ifRetitle(node);ifHeadFit(node);ifFit(node);return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false,width:720,height:Math.ceil(node.getBoundingClientRect().height),windowWidth:720})}).then(function(canvas){
   cleanup();
   canvas.toBlob(function(blob){
    var fname=(cfg.file||'reporte')+'.png',file;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
