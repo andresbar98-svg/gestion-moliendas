@@ -538,7 +538,7 @@ function ifTitleImg(nm,ts){try{var sc=2,fs=ts*sc,pad=12*sc,ext=5*sc,cv=document.
   return{src:cv.toDataURL('image/png'),w:Math.round(cv.width/sc),h:Math.round(cv.height/sc)}}catch(e){return null}}
 function ifTitleHTML(nm,ts){var t=ifTitleImg(nm,ts);
  if(!t)return'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>';
- return'<img data-ttl="'+esc(nm)+'" data-ts="'+ts+'" alt="" src="'+t.src+'" style="display:block;width:'+t.w+'px;height:'+t.h+'px">'}
+ return'<img data-ttl="'+esc(nm)+'" data-ts="'+ts+'" alt="" src="'+t.src+'" style="display:block;margin-left:-12px;width:'+t.w+'px;height:'+t.h+'px">'}
 function ifRetitle(node){var im=node.querySelector('[data-ttl]');if(!im)return;var t=ifTitleImg(im.getAttribute('data-ttl'),+im.getAttribute('data-ts'));if(t){im.src=t.src;im.style.width=t.w+'px';im.style.height=t.h+'px'}}
 /* Fondo ambiental: follaje de cañaduzal desenfocado + luz solar difusa (se dibuja una sola vez en un canvas) */
 var IFBG=null;
@@ -569,20 +569,24 @@ function ifBuild(cfg){
   +'<div style="position:absolute;right:16px;top:138px;width:196px;height:52px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
   +ifImg('tr','right:0;top:4px;width:'+Math.round(302*.7)+'px;height:auto')
   +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;background:rgba(4,38,22,.80);border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 0 24px 4px rgba(57,255,90,.45),0 6px 22px rgba(0,0,0,.6)"></div>'
-  +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;padding:0 18px 0 180px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">'
+  +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;padding:0 18px 10px 150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left">'
   +ifTitleHTML(nm.toUpperCase(),ts)
   +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="display:flex;align-items:center;gap:10px;font:500 23px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:4px;white-space:nowrap">'+ifIco('calendar','#E9F5EC',28,2)+'<span>'+esc(cfg.l2b||'')+'</span></div></div>'
   :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
   +'<div style="position:absolute;left:56px;top:35px;width:160px;height:160px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
  /* Tarjeta de cifras (borde dorado) */
- var nl=Math.ceil(K.length/2),L=K.slice(0,nl),R=K.slice(nl);
- function kp(x,i,big,wd){var ic=x.i?(big?58:46):0,fs=Math.max(30,Math.min(big?62:50,Math.floor((wd-(ic?ic+12:0))/(Math.max(String(x.v).length,1)*.5))));return'<div style="display:flex;align-items:center;gap:12px">'+(ic?ifIco(x.i,x.c,ic,2.1):'')+'<div style="min-width:0"><div style="font:700 '+fs+'px/1 '+IF_FC+';color:'+x.c+';white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.45)">'+esc(x.v)+'</div><div style="font:500 20px/1.15 Barlow,Arial,sans-serif;color:#fff;margin-top:3px">'+esc(x.l)+'</div></div></div>'}
- function kb(x,wd,big){var c=x.c||'#fff';return'<div style="box-sizing:border-box;border:3px solid '+c+';border-radius:24px;background:rgba(3,28,16,.80);box-shadow:0 0 0 1px '+ifRgba(c,.35)+',0 0 20px 4px '+ifRgba(c,.55)+';padding:12px 16px">'+kp(x,0,big,wd)+'</div>'}
+ var L=K.slice(0,1),R=K.slice(1);
+ function kb(x,big){var c=x.c||'#fff',ic=x.i?(big?64:46):0,
+  ql=function(t,fs,col,mt){return'<div data-fit="'+fs+'" data-min="14" style="font:700 '+fs+'px/1.1 '+IF_FC+';color:'+col+';margin-top:'+mt+'px;white-space:nowrap">'+esc(t)+'</div>'},
+  q=(x.q?ql('= '+x.q,big?34:26,'#fff',big?8:4):'')+(x.q2?ql(x.q2,big?24:20,c,5):'');
+  return'<div style="box-sizing:border-box;flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:'+(big?16:12)+'px;border:3px solid '+c+';border-radius:24px;background:rgba(3,28,16,.80);box-shadow:0 0 0 1px '+ifRgba(c,.35)+',0 0 20px 4px '+ifRgba(c,.55)+';padding:'+(big?'18px 18px':'12px 14px')+'">'
+   +(ic?ifIco(x.i,c,ic,2.1):'')
+   +'<div style="min-width:0;flex:1 1 auto"><div data-fit="'+(big?64:46)+'" data-min="22" style="font:700 '+(big?64:46)+'px/1 '+IF_FC+';color:'+c+';white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.45)">'+esc(x.v)+'</div><div style="font:500 '+(big?23:20)+'px/1.15 Barlow,Arial,sans-serif;color:#fff;margin-top:4px">'+esc(x.l)+'</div>'+q+'</div></div>'}
  if(K.length){
-  h+='<div style="position:relative;margin:0 22px;display:flex;align-items:center;gap:16px">'
-   +'<div style="flex:1 1 52%;min-width:0;display:flex;flex-direction:column;gap:16px">'+L.map(function(x,i){return kb(x,R.length?290:600,i===0)}).join('')+'</div>'
-   +(R.length?'<div style="flex:1 1 44%;min-width:0;display:flex;flex-direction:column;gap:16px">'+R.map(function(x){return kb(x,250,false)}).join('')+'</div>':'')
+  h+='<div style="position:relative;margin:0 22px;display:flex;align-items:stretch;gap:16px">'
+   +'<div style="flex:1 1 54%;min-width:0;display:flex">'+L.map(function(x){return kb(x,true)}).join('')+'</div>'
+   +(R.length?'<div style="flex:1 1 42%;min-width:0;display:flex;flex-direction:column;gap:16px">'+R.map(function(x){return kb(x,false)}).join('')+'</div>':'')
    +'</div>'}
  /* Etiqueta de sección */
  h+='<div style="position:relative;z-index:3;margin:16px 0 0 14px;display:flex"><span style="box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;height:52px;gap:10px;padding:0 30px 3px;text-align:center;white-space:nowrap;border-radius:26px;background:linear-gradient(180deg,#FFD21F,#F59E0B);border:3px solid #0A2A12;box-shadow:0 0 0 2px #F2B705;font:700 29px/1 '+IF_FC+';color:#14200A">'+ifIco('clip','#14200A',32,2.4)+esc(cfg.secTitle||'')+'</span></div>';
@@ -600,14 +604,14 @@ function ifBuild(cfg){
  if(cfg.foot)h+='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;background:linear-gradient(180deg,#0F5A24,#0A3A18)"><div style="font:700 25px/1.1 '+IF_FC+';color:'+IF_Y+';text-transform:uppercase">'+esc(cfg.foot.label)+'</div><div style="text-align:right"><div style="font:700 40px/1 '+IF_FC+';color:'+IF_Y+'">'+esc(cfg.foot.value)+'</div>'+(cfg.foot.sub?'<div style="font:600 24px/1.1 '+IF_FC+';color:#fff;margin-top:2px">'+esc(cfg.foot.sub)+'</div>':'')+'</div></div>';
  h+='</div>';
  /* Decoración inferior + firma fija */
- h+='<div style="position:relative;height:104px;margin-top:-14px">'
+ h+='<div style="position:relative;height:98px;margin-top:-14px">'
   +ifImg('bl','left:0;top:0;width:'+Math.round(459*.62)+'px;height:auto')
   +'<div style="position:absolute;right:-10px;top:-40px;width:310px;height:170px;border-radius:50%;background:radial-gradient(ellipse at 50% 55%,rgba(255,216,120,.30),rgba(255,216,120,0) 68%)"></div>'
   +'<div style="position:absolute;right:14px;top:62px;width:250px;height:44px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
   +ifImg('br','right:0;top:0;width:'+Math.round(464*.62)+'px;height:auto')+'</div>'
   +'<div style="position:relative;z-index:3;margin:0 22px">'
-  +(window.AMBY_LOGO?'<div style="display:flex;justify-content:center;margin-bottom:8px"><img src="'+window.AMBY_LOGO+'" alt="" style="width:64px;height:auto;display:block"></div>':'')
-  +'<div style="border-top:2px solid #1B8C32;padding:14px 0 20px;text-align:center"><span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div></div>';
+  +(window.AMBY_LOGO?'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+window.AMBY_LOGO+'" alt="" style="width:64px;height:auto;display:block"></div>':'')
+  +'<div style="border-top:2px solid #1B8C32;padding:9px 0 12px;text-align:center"><span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div></div>';
  el.innerHTML=h;return el}
 /* Hoja de respaldo (iOS exige un toque directo del usuario para abrir el menú nativo) */
 function ifSheet(blob,file,cfg,fname){
@@ -683,8 +687,9 @@ function sharePrep(){if(shBusy)return;
 function ifSlug(c,w,p){return p+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start}
 function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),l2a:'Molienda '+wnum(w),l2b:sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
 function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,
- k=[{v:f(T.k,2)+' kg',l:'Producido total · '+f(T.u)+' u',c:'#4DF06A',i:'sprout'},{v:f(T.ck,2)+' kg',l:'Total salidas · '+f(T.cu)+' u',c:IF_Y,i:'truck'},{v:f(bk,2)+' kg',l:'Disponible en bodega · '+f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B,i:'warehouse'}];
- if(hasC)k.splice(1,0,{v:f(T.k/w.cw,2)+' cargas',l:'Total de cargas · '+f(w.cw,2)+' kg c/u',c:'#4DF06A',i:'box'});return k}
+ p={v:f(T.k,2)+' kg',l:'Producido total',q:f(T.u)+' u',c:'#4DF06A',i:'sprout'};
+ if(hasC)p.q2=f(T.k/w.cw,2)+' cargas · '+f(w.cw,2)+' kg c/u';
+ return[p,{v:f(bk,2)+' kg',l:'Disponible en bodega',q:f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B,i:'warehouse'},{v:f(T.ck,2)+' kg',l:'Total salidas',q:f(T.cu)+' u',c:IF_Y,i:'truck'}]}
 /* ---- 1) Resumen ---- */
 function cfgRes(){var c=cur(),w=c.w;if(!w)return null;
  var rows=refRows(w).map(function(r){var bu=r.u-r.cu,bk=r.k-r.ck;
@@ -726,10 +731,10 @@ function cfgHist(){var c=cur(),w=c.w;if(!w)return null;
  var rows=R.map(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):(x.items||[]);
   if(isT){pu+=tU(x);pk+=tKg(x)}else{cu+=cgU(x);ck+=cgKg(x)}
   var tm=isT?f12p(x.start)+' – '+f12p(x.end):(r.time?f12p(r.time):''),vh=(!isT&&x.vh&&String(x.vh).trim())?String(x.vh).trim():'';
-  var ln=its.map(function(it){var n=isT?+it.qty:+it.u,iw=iW(it);return'<div style="margin:3px 0"><div style="font:700 23px/1.1 '+IF_FC+';color:#fff">'+esc(iN(it)||'Sin producto')+'</div><div style="font:500 17px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+f(n)+' u · '+f(isT?n*iw:iKg(it),2)+' kg</div></div>'}).join('');
+  var ln=its.map(function(it){var n=isT?+it.qty:+it.u,iw=iW(it);var tk=ifProdKey(iN(it)),th=IFD[tk]?'<img src="'+IFD[tk]+'" alt="" style="width:42px;height:42px;flex:0 0 42px;display:block;object-fit:contain">':'';return'<div style="margin:4px 0;display:flex;align-items:center;gap:8px">'+th+'<div style="min-width:0"><div style="font:700 23px/1.1 '+IF_FC+';color:#fff">'+esc(iN(it)||'Sin producto')+'</div><div style="font:500 17px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+f(n)+' u · '+f(isT?n*iw:iKg(it),2)+' kg</div></div></div>'}).join('');
   return[{b:dlab(r.date),s:tm},{b:isT?'Turno':'Salida',c:isT?IF_Y:'#4DF06A',s:vh?'Vehículo '+vh:''},{h:ln}]});
  var cfg=ifHead(c,w,'Historial');
- cfg.kpis=[{v:f(pk,2)+' kg',l:'Producido · '+f(pu)+' u',c:'#4DF06A',i:'sprout'},{v:f(ck,2)+' kg',l:'Salidas · '+f(cu)+' u',c:IF_Y,i:'truck'}];
+ cfg.kpis=[{v:f(pk,2)+' kg',l:'Producido total',q:f(pu)+' u',c:'#4DF06A',i:'sprout'},{v:f(ck,2)+' kg',l:'Total salidas',q:f(cu)+' u',c:IF_Y,i:'truck'}];
  cfg.cols=[{h:'Fecha',w:'1fr',al:'left'},{h:'Tipo',w:'.85fr',al:'center'},{h:'Referencias',w:'1.5fr',al:'left'}];
  cfg.rows=rows;cfg.empty='Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.');
  cfg.file=ifSlug(c,w,'historial');cfg.shareTitle='Historial de turnos y cargues';cfg.btn=document.querySelector('[data-act="shareHist"]');
