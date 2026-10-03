@@ -683,11 +683,13 @@ function bnm(x){return String(x||'').trim().toLowerCase()}
 function bodKey(w,t){return ddiff('2000-01-01',w.start)*1440+tEndAbs(t,w)}
 function tBod(t,k){if(!t)return null;if(t.bods&&t.bods[k]!=null)return t.bods[k];if(k==='pulverizada'&&t.bod!=null)return t.bod;return null}
 function cdKey(w,c){return ddiff('2000-01-01',c.date)*1440+hm(c.time)}
+/* Cada molienda (semana) arranca en ceros: la bodega NO se arrastra de moliendas anteriores. Solo cuentan los registros de la molienda abierta. */
+function bodWeeks(c){return c&&c.w?[c.w]:[]}
 function prevBod(excl,k){var c=cur(),lim=null,prod=0,sal=0;
- /* Bodega anterior = Total producido histórico − Total salidas registradas (todas las semanas de la molienda).
+ /* Bodega anterior = Total producido − Total salidas registradas, SOLO de la molienda actual (una molienda nueva parte en 0).
     Al editar un turno solo cuenta lo registrado antes de que termine ese turno. */
  if(excl){var ew=c.w&&c.w.t.find(function(x){return x.id===excl});if(ew)lim=bodKey(c.w,ew)}
- if(c.m)c.m.weeks.forEach(function(w){
+ bodWeeks(c).forEach(function(w){
   (w.t||[]).forEach(function(t){if(t.id===excl)return;if(lim!=null&&bodKey(w,t)>=lim)return;
    (t.items||[]).forEach(function(it){if(bnm(iN(it))===k)prod+=(+it.qty||0)})});
   (w.cd||[]).forEach(function(cg){if(lim!=null&&cdKey(w,cg)>lim)return;
@@ -777,8 +779,8 @@ function saveC(){var w=cur().w,er=$('cerr');function bad(m){er.textContent=m}
  nav.editC=null;nav.cDate=date;save();cloudAfterForm();fsel='#ctime_h';render()}
 /* Saldo en bodega (u) al cierre de cada registro: parte del último conteo físico (bodega actual) guardado hasta ese momento,
    suma la producción posterior y resta las salidas posteriores. Si el turno tiene su bodega actual, muestra exactamente ese valor. */
-function bodTL(){var L=[],c=cur();if(c.m)c.m.weeks.forEach(function(w){(w.t||[]).forEach(function(t){L.push({t:t,k:bodKey(w,t)})})});return L}
-function bodCL(){var L=[],c=cur();if(c.m)c.m.weeks.forEach(function(w){(w.cd||[]).forEach(function(g){L.push({c:g,k:cdKey(w,g)})})});return L}
+function bodTL(){var L=[],c=cur();bodWeeks(c).forEach(function(w){(w.t||[]).forEach(function(t){L.push({t:t,k:bodKey(w,t)})})});return L}
+function bodCL(){var L=[],c=cur();bodWeeks(c).forEach(function(w){(w.cd||[]).forEach(function(g){L.push({c:g,k:cdKey(w,g)})})});return L}
 function bodNames(TL,CL){var N={};TL.forEach(function(e){(e.t.items||[]).forEach(function(it){N[bnm(iN(it))]=1});if(e.t.bods)Object.keys(e.t.bods).forEach(function(k){N[k]=1});if(e.t.bod!=null)N.pulverizada=1});
  CL.forEach(function(e){(e.c.items||[]).forEach(function(it){N[bnm(iN(it))]=1})});return Object.keys(N)}
 function saldoAt(end,TL,CL,NM){var tot=0;NM.forEach(function(k){var anc=null;
