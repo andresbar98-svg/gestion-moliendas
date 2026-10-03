@@ -252,6 +252,9 @@ table.ctab tfoot td.neg b{color:#EE9993}
 #stk .tst{flex:none;flex-wrap:nowrap;gap:6px}
 #stk .cst{padding:4px 9px;min-height:32px;font-size:12px;gap:6px;white-space:nowrap}
 #stk .cst i{width:8px;height:8px}
+#ub.ub{flex-wrap:nowrap;margin:6px 0 8px;padding:4px 10px;gap:8px;font-size:13px}
+#ub #who{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ub .btn{flex:none;min-height:32px;padding:4px 12px;font-size:13px;white-space:nowrap}
 #nav:empty{display:none}
 #nav .tabs{margin:8px 0 0}#nav .tabs.sec{margin-top:6px}
 .tab[aria-selected="true"]{background:linear-gradient(135deg,#1B8C32,#2E9A6B);color:#fff}
@@ -263,7 +266,7 @@ table.ctab tfoot td.neg b{color:#EE9993}
  <div class="sp-l"><div class="sp-bar" aria-hidden="true"></div><span>Loading<span class="sp-d" aria-hidden="true"></span></span></div>
 </div>
 
-<div class="wrap"><div class="ub" id="ub" hidden><span id="who"></span><button id="btnName" class="btn g s" type="button" data-act="setName"></button><button class="btn g s" type="button" data-lg="out">Cerrar sesión</button></div><div id="stk"><div class="top"><h1>Gestión de moliendas</h1><div class="tst"><span id="netSt" class="cst net" role="status" aria-live="polite"></span><button id="cloudSt" class="cst" type="button" data-act="cloudNow" aria-live="polite"></button></div></div><div id="nav"></div></div><div id="app"></div><footer class="appver" id="appVer" style="margin:22px 0 8px;text-align:center;font-size:12px;color:var(--mu)"></footer></div>
+<div class="wrap"><div class="ub" id="ub" hidden><span id="who"></span><button class="btn g s" type="button" data-lg="out">Cerrar sesión</button></div><div id="stk"><div class="top"><h1>Gestión de moliendas</h1><div class="tst"><span id="netSt" class="cst net" role="status" aria-live="polite"></span><button id="cloudSt" class="cst" type="button" data-act="cloudNow" aria-live="polite"></button></div></div><div id="nav"></div></div><div id="app"></div><footer class="appver" id="appVer" style="margin:22px 0 8px;text-align:center;font-size:12px;color:var(--mu)"></footer></div>
 <dialog id="dlg"></dialog>
 <div id="login"><div class="lgc"><h1>Gestión de moliendas</h1><p class="sm" style="margin:0;color:var(--mu)">Inicia sesión para continuar</p>
 <div class="tabs" role="tablist" aria-label="Tipo de acceso"><button class="tab" type="button" role="tab" data-lg="a">Propietario</button><button class="tab" type="button" role="tab" data-lg="o">Dueño de molino</button><button class="tab" type="button" role="tab" data-lg="e">Empleado</button></div>
@@ -849,9 +852,9 @@ function tabs(){var m=nav.mode==='reg'?'reg':'res';
 var SECS=[['gp','Productos'],['secTurnos','Turnos'],['secCargues','Cargues'],['secHist','Historial']];
 function secBar(){var s=nav.sec||'gp';return'<div class="tabs sec" role="tablist" aria-label="Sección de registro">'+SECS.map(function(x){return'<button class="tab" type="button" role="tab" aria-selected="'+(x[0]===s)+'" data-act="sec" data-id="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>'}
 function applySec(){var s=nav.sec||'gp';SECS.forEach(function(x){var e=$(x[0]);if(e)e.classList.toggle('sec-off',x[0]!==s)})}
-var NK='pestaña_activa';
-function saveNav(){if(!role)return;try{localStorage.setItem(NK,JSON.stringify({r:role,y:nav.y||null,m:nav.m||null,w:nav.w||null,mode:nav.mode==='reg'?'reg':'res',sec:nav.sec||'gp'}))}catch(e){}}
-function restoreNav(){try{var o=JSON.parse(localStorage.getItem(NK));if(!o||o.r!==role)return;
+var NAVK='pestaña_activa';
+function saveNav(){if(!role)return;try{localStorage.setItem(NAVK,JSON.stringify({r:role,y:nav.y||null,m:nav.m||null,w:nav.w||null,mode:nav.mode==='reg'?'reg':'res',sec:nav.sec||'gp'}))}catch(e){}}
+function restoreNav(){try{var o=JSON.parse(localStorage.getItem(NAVK));if(!o||o.r!==role)return;
  var y=db.years.find(function(x){return x.id===o.y});if(!y)return;
  var m=y.mills.find(function(x){return x.id===o.m}),w=m&&m.weeks.find(function(x){return x.id===o.w});
  nav.y=y.id;if(!m)return;nav.m=m.id;if(!w)return;nav.w=w.id;
@@ -1071,14 +1074,13 @@ function lockUI(){if(role==='admin')return;var A=$('app');
    A.querySelectorAll('[data-act^="del"],[data-act^="edit"],[data-act^="add"],[data-act^="save"],[data-act^="cloud"],[data-act^="cancel"],[data-act="goReg"],[data-act="unlockT"],[data-act="lockT"]').forEach(function(e){e.remove()})}
   else A.querySelectorAll('[data-act^="del"]:not([data-own="1"])').forEach(function(e){e.remove()})}
 function paintWho(){var u=$('ub'),w=$('who');if(!role){u.hidden=true;return}u.hidden=false;
-  var bn=$('btnName');if(bn){bn.hidden=role!=='admin';bn.textContent='Nombre: '+(opName()||'—')}
   w.innerHTML=role==='admin'?'<b>Propietario</b> · acceso total':role==='owner'?'<b>Molino '+esc(ME)+'</b> · solo lectura':'<b>Empleado:</b> '+esc(ME)}
 function putSess(o){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK);(o.r==='admin'?sessionStorage:localStorage).setItem(SK,JSON.stringify(o))}catch(e){}}
 function startSess(r,v,noSave){role=r;ME=v;OWN=r==='owner'?nk(v):'';if(!noSave)putSess({r:r,v:v});nav={};
   if(r==='emp'){var y=db.years.find(function(x){return x.name===String(new Date().getFullYear())});if(y)nav.y=y.id}
   if(noSave)restoreNav();/* al refrescar: vuelve a la última pestaña */
   document.body.classList.remove('locked');paintWho();render();scrollTo(0,0)}
-function logout(){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK);localStorage.removeItem(NK)}catch(e){}
+function logout(){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK);localStorage.removeItem(NAVK)}catch(e){}
   role=null;OWN='';ME='';nav={};if(D.open)D.close();$('app').innerHTML='';$('nav').innerHTML='';paintWho();document.body.classList.add('locked');lgPaint()}
 function lgWait(){try{var o=JSON.parse(localStorage.getItem(LK));return o&&o.until>Date.now()?Math.ceil((o.until-Date.now())/1000):0}catch(e){return 0}}
 function lgFail(){var o={n:0,until:0};try{o=JSON.parse(localStorage.getItem(LK))||o}catch(e){}o.n=(o.n||0)+1;if(o.n>=5){o.until=Date.now()+60000;o.n=0}try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
