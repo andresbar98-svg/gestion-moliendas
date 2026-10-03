@@ -434,7 +434,7 @@ function pad2(n){return String(n).padStart(2,'0')}
 function f12(s){if(!s)return'';var m=hm(s),h=Math.floor(m/60)%24,mi=m%60;return(h%12||12)+':'+pad2(mi)+' '+(h<12?'a.m.':'p.m.')}
 function tp(id,v,dis){var h='',m='',a='',d=dis?' disabled':'';if(v){var x=hm(v),H=Math.floor(x/60)%24;h=String(H%12||12);m=pad2(x%60);a=H<12?'am':'pm'}
  var o='<option value="">--</option>';for(var i=1;i<=12;i++)o+='<option value="'+i+'"'+(String(i)===h?' selected':'')+'>'+i+'</option>';
- var om='<option value="">--</option>';for(var j=0;j<60;j++)om+='<option value="'+pad2(j)+'"'+(pad2(j)===m?' selected':'')+'>'+pad2(j)+'</option>';
+ var om='',mn=[];for(var j=0;j<60;j+=5)mn.push(j);if(m!==''&&mn.indexOf(+m)<0){mn.push(+m);mn.sort(function(x,y){return x-y})}/* minutos de 5 en 5, sin opción vacía; si un dato guardado trae un minuto fuera de la rejilla se conserva para no alterarlo */for(var q=0;q<mn.length;q++)om+='<option value="'+pad2(mn[q])+'"'+(pad2(mn[q])===m?' selected':'')+'>'+pad2(mn[q])+'</option>';
  return'<span class="tp"><select id="'+id+'_h" aria-label="Hora"'+d+'>'+o+'</select><select id="'+id+'_m" aria-label="Minutos"'+d+'>'+om+'</select><select id="'+id+'_a" aria-label="a.m. o p.m."'+d+'><option value="">--</option><option value="am"'+(a==='am'?' selected':'')+'>a.m.</option><option value="pm"'+(a==='pm'?' selected':'')+'>p.m.</option></select></span>'}
 function tv(id){var h=$(id+'_h'),m=$(id+'_m'),a=$(id+'_a');if(!h||!h.value||!m.value||!a.value)return'';var H=(+h.value)%12+(a.value==='pm'?12:0);return pad2(H)+':'+m.value}
 function tItems(t){return t.items||[]}
