@@ -500,12 +500,14 @@ var IFI={
  warehouse:'<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect x="6" y="10" width="12" height="12"/>',
  box:'<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
  gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ calendar:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+ clip:'<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
  tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
  cash:'<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/>',
  scale:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'};
-var IFH={'producto':'box','producido':'gear','salidas':'truck','en bodega':'warehouse','bodega':'warehouse','total kilos':'scale','grupo':'users','precio / kilo':'tag','precio / carga':'tag','total a pagar':'cash'};
+var IFH={'producto':'box','producido':'gear','salidas':'truck','en bodega':'warehouse','bodega':'warehouse','total kilos':'scale','grupo':'users','precio / kilo':'tag','precio / carga':'tag','total a pagar':'cash','fecha':'calendar','tipo':'clip','referencias':'box'};
 function ifIco(n,c,z,st){return IFI[n]?'<svg xmlns="http://www.w3.org/2000/svg" width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="'+(st||2.2)+'" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:0 0 auto">'+IFI[n]+'</svg>':''}
 function ifCell(c,i,al){
  if(c==null)c='';
@@ -530,7 +532,7 @@ function ifBuild(cfg){
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;background:#06241A;border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.6)"></div>'
   +'<div style="position:absolute;left:92px;top:40px;width:560px;height:150px;box-sizing:border-box;padding:0 18px 0 180px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">'
   +'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>'
-  +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="font:500 21px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:2px;white-space:nowrap">'+esc(cfg.l2b||'')+'</div></div>'
+  +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="display:flex;align-items:center;gap:10px;font:500 23px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:4px;white-space:nowrap">'+ifIco('calendar','#E9F5EC',28,2)+'<span>'+esc(cfg.l2b||'')+'</span></div></div>'
   :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
   +'<div style="position:absolute;left:56px;top:35px;width:160px;height:160px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
@@ -543,7 +545,7 @@ function ifBuild(cfg){
    +(R.length?'<div style="width:2px;align-self:stretch;background:#1B8C32;margin:0 18px"></div><div style="flex:1 1 44%;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px">'+R.map(function(x){return kp(x,1,false,270)}).join('')+'</div>':'')
    +'</div></div>'}
  /* Etiqueta de sección */
- h+='<div style="position:relative;z-index:3;margin:-4px 0 0 14px;display:flex"><span style="box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 30px 3px;text-align:center;white-space:nowrap;border-radius:26px;background:linear-gradient(180deg,#FFD21F,#F59E0B);border:3px solid #0A2A12;box-shadow:0 0 0 2px #F2B705;font:700 29px/1 '+IF_FC+';color:#14200A">'+esc(cfg.secTitle||'')+'</span></div>';
+ h+='<div style="position:relative;z-index:3;margin:-4px 0 0 14px;display:flex"><span style="box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;height:52px;gap:10px;padding:0 30px 3px;text-align:center;white-space:nowrap;border-radius:26px;background:linear-gradient(180deg,#FFD21F,#F59E0B);border:3px solid #0A2A12;box-shadow:0 0 0 2px #F2B705;font:700 29px/1 '+IF_FC+';color:#14200A">'+ifIco('clip','#14200A',32,2.4)+esc(cfg.secTitle||'')+'</span></div>';
  /* Tabla */
  h+='<div style="position:relative;z-index:2;margin:-14px 22px 0;border:3px solid '+IF_G+';border-radius:24px;background:#002B15;overflow:hidden;box-shadow:0 0 0 2px #0A5A22,0 6px 22px rgba(0,0,0,.55)">'
   +'<div style="display:grid;grid-template-columns:'+tpl+';background:linear-gradient(180deg,#014C1D,#012B15);border-bottom:3px solid '+IF_G+'">'
@@ -630,9 +632,9 @@ function shareGo(key,mk){var cfg=mk();if(!cfg)return;var p=SHP[key];
   var u=URL.createObjectURL(p.blob),a=document.createElement('a');a.href=u;a.download=p.fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);return}
  shareInfo(cfg)}   /* aún no estaba lista (o cambió): se genera ahora, como antes */
 function sharePrepSoon(){clearTimeout(shT);var c;try{c=cur()}catch(e){return}
- if(!role||!c.w||nav.mode==='reg'||typeof html2canvas==='undefined'||!navigator.share)return;shT=setTimeout(sharePrep,900)}
+ if(!role||!c.w||typeof html2canvas==='undefined'||!navigator.share)return;shT=setTimeout(sharePrep,900)}
 function sharePrep(){if(shBusy)return;
- var J=[['res',cfgRes,'shareRes'],['cons',cfgCons,'shareCons'],['liq',cfgLiq,'shareLiq']].filter(function(j){return document.querySelector('[data-act="'+j[2]+'"]')});
+ var J=[['res',cfgRes,'shareRes'],['cons',cfgCons,'shareCons'],['liq',cfgLiq,'shareLiq'],['hist',cfgHist,'shareHist']].filter(function(j){return document.querySelector('[data-act="'+j[2]+'"]')&&(j[0]!=='hist'||nav.sec==='secHist')});
  for(var i=0;i<J.length;i++){var key=J[i][0],cfg=J[i][1]();if(!cfg)continue;var sig=shSig(cfg);if(SHP[key]&&SHP[key].sig===sig)continue;
   shBusy=true;(function(key,cfg,sig){shareRender(cfg).then(function(r){SHP[key]={sig:sig,blob:r.blob,file:r.file,fname:r.fname}},function(){SHP[key]={sig:sig,fail:1}}).then(function(){shBusy=false;sharePrepSoon()})})(key,cfg,sig);return}}
 /* ---- Datos comunes ---- */
@@ -668,13 +670,29 @@ function cfgLiq(){var c=cur(),w=c.w;if(!w)return null;
  var q=liqQ(w),t=0,pc=w.unit==='c',
  rows=w.g.map(function(g){var pr=gp(w,g),v=q*pr;t+=v;return[{b:g.name,ic:'user'},{b:'$'+f(pr,2),s:pc?'por carga':'por kilo',c:IF_Y},{b:'$'+f(v,2),c:'#4DF06A'}]});
  var cfg=ifHead(c,w,'Liquidación de trabajadores');
- cfg.kpis=[{v:liqTxt(w),l:pc?'Total de cargas de la molienda':'Kilaje total de la molienda',c:'#4DF06A'}];
+ cfg.kpis=[{v:liqTxt(w),l:pc?'Total de cargas de la molienda':'Kilaje total de la molienda',c:'#4DF06A',i:pc?'box':'scale'}];
  cfg.cols=[{h:'Grupo',w:'1.3fr'},{h:pc?'Precio / carga':'Precio / kilo',w:'1fr'},{h:'Total a pagar',w:'1.1fr'}];
  cfg.rows=rows;cfg.empty='Aún no hay grupos de trabajadores.';
  cfg.file=ifSlug(c,w,'liquidacion');cfg.shareTitle='Liquidación de trabajadores';cfg.btn=document.querySelector('[data-act="shareLiq"]');
  cfg.fallback=shareLiqTxt;
  return cfg}
 function shareLiq(){shareGo('liq',cfgLiq)}
+/* ---- 4) Historial de turnos y cargues ---- */
+function cfgHist(){var c=cur(),w=c.w;if(!w)return null;
+ var m=nav.hf==='d'?'d':'w',dv=nav.hd||defDate(w),desc=nav.hs!=='asc',pu=0,pk=0,cu=0,ck=0,
+  R=histRows(w).filter(function(r){return m==='w'||r.date===dv});if(desc)R.reverse();
+ var rows=R.map(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):(x.items||[]);
+  if(isT){pu+=tU(x);pk+=tKg(x)}else{cu+=cgU(x);ck+=cgKg(x)}
+  var tm=isT?f12p(x.start)+' – '+f12p(x.end):(r.time?f12p(r.time):''),vh=(!isT&&x.vh&&String(x.vh).trim())?String(x.vh).trim():'';
+  var ln=its.map(function(it){var n=isT?+it.qty:+it.u,iw=iW(it);return'<div style="margin:3px 0"><div style="font:700 23px/1.1 '+IF_FC+';color:#fff">'+esc(iN(it)||'Sin producto')+'</div><div style="font:500 17px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+f(n)+' u · '+f(isT?n*iw:iKg(it),2)+' kg</div></div>'}).join('');
+  return[{b:dlab(r.date),s:tm},{b:isT?'Turno':'Salida',c:isT?IF_Y:'#4DF06A',s:vh?'Vehículo '+vh:''},{h:ln}]});
+ var cfg=ifHead(c,w,'Historial');
+ cfg.kpis=[{v:f(pk,2)+' kg',l:'Producido · '+f(pu)+' u',c:'#4DF06A',i:'sprout'},{v:f(ck,2)+' kg',l:'Salidas · '+f(cu)+' u',c:IF_Y,i:'truck'}];
+ cfg.cols=[{h:'Fecha',w:'1fr',al:'left'},{h:'Tipo',w:'.85fr',al:'center'},{h:'Referencias',w:'1.5fr',al:'left'}];
+ cfg.rows=rows;cfg.empty='Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.');
+ cfg.file=ifSlug(c,w,'historial');cfg.shareTitle='Historial de turnos y cargues';cfg.btn=document.querySelector('[data-act="shareHist"]');
+ return cfg}
+function shareHist(){shareGo('hist',cfgHist)}
 /* ===== Pantalla principal (solo lectura) ===== */
 function catRO(w){var n=w.cat.length;
  return'<p class="sm" style="margin:0;color:var(--mu)">Solo lectura · '+(w.unit==='c'?'Liquidación por cargas'+(w.cw>0?' de '+f(w.cw,2)+' kg':''):'Liquidación por kilos')+'</p>'
@@ -865,7 +883,7 @@ function histI(w){var m=nav.hf==='d'?'d':'w',dv=nav.hd||defDate(w),pu=0,pk=0,cu=
  if(!R.length)h='<tr><td colspan="6" style="text-align:center;color:var(--mu)">Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.')+'</td></tr>';
  return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Bodega<small class="hso">saldo al cerrar (u)</small></th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
 function histIn(w){var m=nav.hf==='d'?'d':'w',dv=nav.hd||defDate(w);
- return'<h2>Historial de turnos y cargues</h2><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la molienda</option></select></label>'
+ return'<div class="cath"><h2>Historial de turnos y cargues</h2><button class="btn g ico" type="button" data-act="shareHist" aria-label="Compartir historial como imagen" title="Compartir historial como imagen">'+SHI2+'</button></div><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la molienda</option></select></label>'
  +(m==='d'?'<label>Día<input id="hd" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label>':'')+'</div><div id="hist">'+histI(w)+'</div>'}
 function histH(w){return'<section class="card2" id="secHist">'+histIn(w)+'</section>'}
 function regView(w){
@@ -942,18 +960,19 @@ document.addEventListener('click',function(ev){
  else if(a==='delW')conf('Eliminar molienda','Se borrarán sus registros y liquidación.',function(){c.m.weeks=c.m.weeks.filter(function(w){return w.id!==id})});
  else if(a==='tab'){nav.mode=id==='reg'?'reg':'res';nav.editT=null;nav.editC=null;render();scrollTo(0,0);return}
  else if(a==='goReg'){nav.mode='reg';if(SECS.some(function(x){return x[0]===id}))nav.sec=id;render();scrollTo(0,0);return}
- else if(a==='sec'){nav.sec=id;document.querySelectorAll('#nav .tabs.sec .tab').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.id===id))});applySec();saveNav();scrollTo(0,0);return}
+ else if(a==='sec'){nav.sec=id;document.querySelectorAll('#nav .tabs.sec .tab').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.id===id))});applySec();saveNav();sharePrepSoon();scrollTo(0,0);return}
  else if(a==='jump'){var el2=$(id);if(el2)el2.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
  else if(a==='cell'){cellView(+ds.d,+ds.s);return}
  else if(a==='shareRes'){ev.preventDefault();shareRes();return}
  else if(a==='shareCons'){ev.preventDefault();shareCons();return}
  else if(a==='shareLiq'){ev.preventDefault();shareLiq();return}
+ else if(a==='shareHist'){ev.preventDefault();shareHist();return}
  else if(a==='copyLiq'){copyLiq(t);return}
  else if(a==='saveT'){saveT();return}
  else if(a==='cancelT'){nav.editT=null}
  else if(a==='unlockT'){nav.tUnlock=true;fsel='#tstart_h'}
  else if(a==='lockT'){nav.tUnlock=false;fsel='#tend_h'}
- else if(a==='histSort'){nav.hs=nav.hs==='asc'?'desc':'asc';var hh=$('hist');if(hh)hh.innerHTML=histI(cur().w);return}
+ else if(a==='histSort'){nav.hs=nav.hs==='asc'?'desc':'asc';var hh=$('hist');if(hh)hh.innerHTML=histI(cur().w);sharePrepSoon();return}
  else if(a==='editT'){nav.editT=id;nav.sec='secTurnos';render();scrollTo(0,0);return}
  else if(a==='delT')conf('Eliminar turno','Se quita este turno y sus horas y cantidades se descuentan de los bloques.',function(){c.w.t=c.w.t.filter(function(x){return x.id!==id});if(nav.editT===id)nav.editT=null});
  else if(a==='saveC'){saveC();return}
@@ -991,8 +1010,8 @@ document.addEventListener('change',function(ev){var t=ev.target;
  if(t.closest('#cform')){cPrev();return}
  var w=cur().w;if(!w)return;
  if(t.id==='unitsel'){w.unit=t.value==='c'?'c':'k';save();fsel=w.unit==='c'?'#cgw':null;render();return}
- if(t.id==='hf'){nav.hf=t.value==='w'?'w':'d';$('secHist').innerHTML=histIn(w);return}
- if(t.id==='hd'){nav.hd=t.value;$('secHist').innerHTML=histIn(w)}});
+ if(t.id==='hf'){nav.hf=t.value==='w'?'w':'d';$('secHist').innerHTML=histIn(w);sharePrepSoon();return}
+ if(t.id==='hd'){nav.hd=t.value;$('secHist').innerHTML=histIn(w);sharePrepSoon()}});
 document.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&(ev.target.id==='cnn'||ev.target.id==='cnw')){ev.preventDefault();document.querySelector('[data-act="addCat"]').click()}});
 D.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.tagName==='INPUT'){ev.preventDefault();D.querySelector('[data-x="ok"]').click()}});
 /* ===== Firebase Firestore: guardado en la nube + sincronización en tiempo real ===== */
