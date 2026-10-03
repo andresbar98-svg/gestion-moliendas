@@ -500,8 +500,12 @@ var IFI={
  warehouse:'<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect x="6" y="10" width="12" height="12"/>',
  box:'<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
  gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+ tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
+ cash:'<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01"/><path d="M18 12h.01"/>',
  scale:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>'};
-var IFH={'producto':'box','producido':'gear','salidas':'truck','en bodega':'warehouse','bodega':'warehouse','total kilos':'scale'};
+var IFH={'producto':'box','producido':'gear','salidas':'truck','en bodega':'warehouse','bodega':'warehouse','total kilos':'scale','grupo':'users','precio / kilo':'tag','precio / carga':'tag','total a pagar':'cash'};
 function ifIco(n,c,z,st){return IFI[n]?'<svg xmlns="http://www.w3.org/2000/svg" width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="'+(st||2.2)+'" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:0 0 auto">'+IFI[n]+'</svg>':''}
 function ifCell(c,i,al){
  if(c==null)c='';
@@ -510,10 +514,10 @@ function ifCell(c,i,al){
   bst=o.nw?'white-space:nowrap;word-break:keep-all;overflow-wrap:normal':'white-space:nowrap',
   fit=function(fs,min){return' data-fit="'+fs+'" data-min="'+(min||12)+'"'},
   sm=function(t,sz){return'<div'+fit(sz,11)+' style="font:500 '+sz+'px/1.2 '+(first?IF_FC:'Barlow,Arial,sans-serif')+';color:'+IF_M+';margin-top:2px;white-space:nowrap">'+esc(t)+'</div>'},
-  pk=first&&o.img&&o.b?ifProdKey(o.b):null,
+  pk=first&&o.img&&o.b?ifProdKey(o.b):null,uic=first&&o.ic?ifIco(o.ic,'#DFFCC0',34,2.2):'',
   main=o.h!=null?o.h:('<div'+fit(big,16)+' style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';'+bst+'">'+esc(o.b)+'</div>'+(o.u?'<div data-kg="1" style="font:700 '+big+'px/1.04 '+IF_FC+';color:'+col+';white-space:nowrap;text-align:center">'+esc(o.u)+'</div>':'')
    +(o.s?sm(o.s,first?15:16):'')+(o.s2?sm(o.s2,16):'')),
-  inner=(pk&&IFD[pk])?'<div style="display:flex;align-items:center;gap:7px;min-width:0"><img src="'+IFD[pk]+'" alt="" style="width:40px;height:40px;flex:0 0 40px;display:block;object-fit:contain"><div style="flex:1 1 auto;min-width:0;text-align:left">'+main+'</div></div>'+(o.x||''):main+(o.x||'');
+  inner=(pk&&IFD[pk])?'<div style="display:flex;align-items:center;gap:7px;min-width:0"><img src="'+IFD[pk]+'" alt="" style="width:40px;height:40px;flex:0 0 40px;display:block;object-fit:contain"><div style="flex:1 1 auto;min-width:0;text-align:left">'+main+'</div></div>'+(o.x||''):(uic?'<div style="display:flex;align-items:center;gap:8px;min-width:0">'+uic+'<div style="flex:1 1 auto;min-width:0;text-align:left">'+main+'</div></div>'+(o.x||''):main+(o.x||''));
  return'<div style="box-sizing:border-box;min-width:0;align-self:stretch;padding:16px '+(first?'6px 16px 10px':'8px 16px')+';display:flex;flex-direction:column;justify-content:center;text-align:'+(first?'left':al)+';'+(i>=1?'border-left:2px solid '+IF_G+';':'')+'">'+inner+'</div>'}
 function ifBuild(cfg){
  var el=document.createElement('div'),W=720,K=cfg.kpis||[],cols=cfg.cols||[],tpl=cols.map(function(c){return'minmax(0,'+(c.w||'1fr')+')'}).join(' ');
@@ -662,7 +666,7 @@ function shareCons(){shareGo('cons',cfgCons)}
 /* ---- 3) Liquidación de trabajadores ---- */
 function cfgLiq(){var c=cur(),w=c.w;if(!w)return null;
  var q=liqQ(w),t=0,pc=w.unit==='c',
- rows=w.g.map(function(g){var pr=gp(w,g),v=q*pr;t+=v;return[{b:g.name},{b:'$'+f(pr,2),s:pc?'por carga':'por kilo',c:IF_Y},{b:'$'+f(v,2),c:'#4DF06A'}]});
+ rows=w.g.map(function(g){var pr=gp(w,g),v=q*pr;t+=v;return[{b:g.name,ic:'user'},{b:'$'+f(pr,2),s:pc?'por carga':'por kilo',c:IF_Y},{b:'$'+f(v,2),c:'#4DF06A'}]});
  var cfg=ifHead(c,w,'Liquidación de trabajadores');
  cfg.kpis=[{v:liqTxt(w),l:pc?'Total de cargas de la molienda':'Kilaje total de la molienda',c:'#4DF06A'}];
  cfg.cols=[{h:'Grupo',w:'1.3fr'},{h:pc?'Precio / carga':'Precio / kilo',w:'1fr'},{h:'Total a pagar',w:'1.1fr'}];
@@ -902,7 +906,7 @@ function liqQ(w){return w.unit==='c'?(w.cw>0?wKg(w)/w.cw:0):wKg(w)}
 function gp(w,g){return w.unit==='c'?(+g.pc||0):(+g.price||0)}
 function liqTxt(w){return w.unit==='c'?(w.cw>0?fc(liqQ(w))+' cargas':'-'):f(wKg(w),2)+' kg'}
 function liqNote(w){return(w.unit==='c'&&!(w.cw>0))?' · Falta ingresar los kilos por carga (en Configuración de Referencias)':''}
-function updLiq(){var w=cur().w,q=liqQ(w),t=0;w.g.forEach(function(g){var v=q*gp(w,g);t+=v;var el=document.querySelector('[data-t="'+g.id+'"]');if(el)el.textContent='$'+f(v,2)});var a=$('liqq'),b=$('liqn');if(a)a.textContent=liqTxt(w);if(b)b.textContent=liqNote(w)}
+function updLiq(){sharePrepSoon();var w=cur().w,q=liqQ(w),t=0;w.g.forEach(function(g){var v=q*gp(w,g);t+=v;var el=document.querySelector('[data-t="'+g.id+'"]');if(el)el.textContent='$'+f(v,2)});var a=$('liqq'),b=$('liqn');if(a)a.textContent=liqTxt(w);if(b)b.textContent=liqNote(w)}
 
 function weekForm(w){var c=cur(),last=c.m.weeks.slice().sort(function(a,b){return a.start<b.start?1:-1})[0],ds=w?w.start:last?iso(ad(wend(last),1)):mon(iso(new Date())),de=w?wend(w):iso(ad(ds,6));
  ask(w?'Editar molienda':'Nueva molienda',fld('Fecha en que inició','fs','type="date" value="'+ds+'"')+'<div style="height:12px"></div>'+fld('Fecha en que finalizó','fe','type="date" value="'+de+'"'),'Guardar',function(){
