@@ -246,6 +246,11 @@ table.ctab tfoot td.neg b{color:#EE9993}
 @supports (overflow:clip){html,body,.wrap{overflow-x:clip}}
 #stk{position:sticky;top:0;z-index:1000;margin:0 -16px 10px;padding:8px 16px;background:rgba(4,24,30,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(0,0,0,.35)}
 #stk .top h1{font-size:20px;line-height:1.2;color:#fff}
+#stk .top{flex-wrap:nowrap;gap:8px}
+#stk .top h1{flex:1 1 auto;min-width:0;font-size:17px;line-height:1.15}
+#stk .tst{flex:none;flex-wrap:nowrap;gap:6px}
+#stk .cst{padding:4px 9px;min-height:32px;font-size:12px;gap:6px;white-space:nowrap}
+#stk .cst i{width:8px;height:8px}
 #nav:empty{display:none}
 #nav .tabs{margin:8px 0 0}#nav .tabs.sec{margin-top:6px}
 .tab[aria-selected="true"]{background:linear-gradient(135deg,#1B8C32,#2E9A6B);color:#fff}
@@ -374,7 +379,7 @@ function render(){
  else if(c.y){h='<h2>Molinos · '+esc(c.y.name)+'</h2><div class="list">'+(c.y.mills.length?c.y.mills.map(function(m){return card('openM',m.id,m.name,m.weeks.length+(m.weeks.length===1?' molienda · ':' moliendas · ')+f(mKg(m),2)+' kg','delM')}).join(''):'<p class="empty">Este año está limpio. Agrega el primer molino.</p>')+'</div><button class="btn" data-act="addM">+ Agregar Molino</button>'}
  else{h='<h2>Selecciona el año</h2><div class="list">'+visYears().slice().sort(function(a,b){return a.name<b.name?-1:1}).map(function(y){return card('openY',y.id,y.name,ySub(y),'delY')}).join('')+'</div><button class="btn" data-act="addY">+ Agregar Año</button>'}
  $('app').innerHTML='<nav class="bc" aria-label="Navegación">'+b+'</nav>'+h;
- $('nav').innerHTML=(c.w&&role!=='owner')?tabs()+(nav.mode==='reg'?secBar():''):'';applySec();
+ $('nav').innerHTML=(c.w&&role!=='owner')?tabs()+(nav.mode==='reg'?secBar():''):'';applySec();saveNav();
  lockUI();if($('tprev'))tPrev();
  if(fsel){var fe=document.querySelector(fsel);if(fe)fe.focus();fsel=null}
 }
@@ -843,6 +848,13 @@ function tabs(){var m=nav.mode==='reg'?'reg':'res';
 var SECS=[['gp','Productos'],['secTurnos','Turnos'],['secCargues','Cargues'],['secHist','Historial']];
 function secBar(){var s=nav.sec||'gp';return'<div class="tabs sec" role="tablist" aria-label="Sección de registro">'+SECS.map(function(x){return'<button class="tab" type="button" role="tab" aria-selected="'+(x[0]===s)+'" data-act="sec" data-id="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>'}
 function applySec(){var s=nav.sec||'gp';SECS.forEach(function(x){var e=$(x[0]);if(e)e.classList.toggle('sec-off',x[0]!==s)})}
+var NK='pestaña_activa';
+function saveNav(){if(!role)return;try{localStorage.setItem(NK,JSON.stringify({r:role,y:nav.y||null,m:nav.m||null,w:nav.w||null,mode:nav.mode==='reg'?'reg':'res',sec:nav.sec||'gp'}))}catch(e){}}
+function restoreNav(){try{var o=JSON.parse(localStorage.getItem(NK));if(!o||o.r!==role)return;
+ var y=db.years.find(function(x){return x.id===o.y});if(!y)return;
+ var m=y.mills.find(function(x){return x.id===o.m}),w=m&&m.weeks.find(function(x){return x.id===o.w});
+ nav.y=y.id;if(!m)return;nav.m=m.id;if(!w)return;nav.w=w.id;
+ nav.mode=o.mode==='reg'?'reg':'res';nav.sec=SECS.some(function(x){return x[0]===o.sec})?o.sec:'gp'}catch(e){}}
 function weekView(w){if(role==='owner')nav.mode='res';return nav.mode==='reg'?regView(w):resView(w)}
 
 function ask(title,body,okLabel,ok,del){
@@ -890,7 +902,7 @@ document.addEventListener('click',function(ev){
  else if(a==='delW')conf('Eliminar molienda','Se borrarán sus registros y liquidación.',function(){c.m.weeks=c.m.weeks.filter(function(w){return w.id!==id})});
  else if(a==='tab'){nav.mode=id==='reg'?'reg':'res';nav.editT=null;nav.editC=null;render();scrollTo(0,0);return}
  else if(a==='goReg'){nav.mode='reg';if(SECS.some(function(x){return x[0]===id}))nav.sec=id;render();scrollTo(0,0);return}
- else if(a==='sec'){nav.sec=id;document.querySelectorAll('#nav .tabs.sec .tab').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.id===id))});applySec();scrollTo(0,0);return}
+ else if(a==='sec'){nav.sec=id;document.querySelectorAll('#nav .tabs.sec .tab').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.id===id))});applySec();saveNav();scrollTo(0,0);return}
  else if(a==='jump'){var el2=$(id);if(el2)el2.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
  else if(a==='cell'){cellView(+ds.d,+ds.s);return}
  else if(a==='shareRes'){shareRes();return}
@@ -951,10 +963,10 @@ function fbCfg(){var b=window.FIREBASE_CONFIG||{},sv=fbSaved(),o={};FBK.forEach(
 var CFG=fbCfg(),DEV='',cref=null,cloudOn=false,first=false,dirty=false,applying=false,pending=null,pushT=null,offlineOk=false,loadingFb=false,stS='connecting',lastOk=null,errMsg='';
 try{DEV=localStorage.getItem(CK+'-dev')||'';if(!DEV){DEV=uid();localStorage.setItem(CK+'-dev',DEV)}}catch(e){DEV=uid()}
 function setSt(s,m){stS=s;if(m)errMsg=m;paintSt()}
-function paintNet(){var el=$('netSt');if(!el)return;var on=navigator.onLine,t=on?'En línea':'Sin conexión · Modo local';el.className='cst net '+(on?'ok':'bad');el.innerHTML='<i></i><span>'+t+'</span>';el.setAttribute('aria-label','Internet: '+t)}
+function paintNet(){var el=$('netSt');if(!el)return;var on=navigator.onLine,t=on?'En línea':'Sin conexión · Modo local',sh=on?'En línea':'Sin conexión';el.className='cst net '+(on?'ok':'bad');el.innerHTML='<i></i><span>'+sh+'</span>';el.title=t;el.setAttribute('aria-label','Internet: '+t)}
 function paintSt(){paintNet();var el=$('cloudSt');if(!el)return;
  var T={off:['Nube sin configurar','off'],connecting:['Conectando a la nube…','wait'],synced:['Nube conectada (Firebase)','ok'],dirty:['Cambios sin subir a la nube','wait'],saving:['Guardando en la nube…','wait'],offline:['Sin conexión · se subirá al reconectar','wait'],pending:['Hay cambios nuevos · toca para verlos','new'],error:[errMsg||'Error con la nube · toca para reintentar','bad']}[stS]||['','off'];
- var lg=$('lgSt');if(lg)lg.textContent='Nube: '+T[0];el.className='cst '+T[1];el.innerHTML='<i></i><span>'+esc(T[0])+'</span>';el.setAttribute('aria-label','Nube: '+T[0])}
+ var lg=$('lgSt');if(lg)lg.textContent='Nube: '+T[0];var sh=stS==='error'?'Nube · error':stS==='pending'?'Nube · nuevos':'Nube';/* texto corto; el detalle queda en el color del punto, el título y aria-label */el.className='cst '+T[1];el.innerHTML='<i></i><span>'+esc(sh)+'</span>';el.title=T[0];el.setAttribute('aria-label','Nube: '+T[0])}
 function cloudErr(e){var c=e&&e.code||'';if(c==='permission-denied')return'Sin permiso en Firestore · revisa las reglas';if(c==='unavailable')return'Sin conexión con la nube';if(c==='resource-exhausted'||c==='invalid-argument')return'Datos demasiado grandes o cuota agotada';return'Error de nube: '+(c||(e&&e.message)||'desconocido')}
 function flagD(v){try{if(v)localStorage.setItem(CK+'-dirty','1');else localStorage.removeItem(CK+'-dirty')}catch(e){}}
 function markDirty(){dirty=true;flagD(1);if(!cloudOn){paintSt();return}setSt(navigator.onLine?'dirty':'offline');if(first){clearTimeout(pushT);pushT=setTimeout(cloudPush,2500)}}
@@ -1063,8 +1075,9 @@ function paintWho(){var u=$('ub'),w=$('who');if(!role){u.hidden=true;return}u.hi
 function putSess(o){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK);(o.r==='admin'?sessionStorage:localStorage).setItem(SK,JSON.stringify(o))}catch(e){}}
 function startSess(r,v,noSave){role=r;ME=v;OWN=r==='owner'?nk(v):'';if(!noSave)putSess({r:r,v:v});nav={};
   if(r==='emp'){var y=db.years.find(function(x){return x.name===String(new Date().getFullYear())});if(y)nav.y=y.id}
+  if(noSave)restoreNav();/* al refrescar: vuelve a la última pestaña */
   document.body.classList.remove('locked');paintWho();render();scrollTo(0,0)}
-function logout(){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK)}catch(e){}
+function logout(){try{sessionStorage.removeItem(SK);localStorage.removeItem(SK);localStorage.removeItem(NK)}catch(e){}
   role=null;OWN='';ME='';nav={};if(D.open)D.close();$('app').innerHTML='';$('nav').innerHTML='';paintWho();document.body.classList.add('locked');lgPaint()}
 function lgWait(){try{var o=JSON.parse(localStorage.getItem(LK));return o&&o.until>Date.now()?Math.ceil((o.until-Date.now())/1000):0}catch(e){return 0}}
 function lgFail(){var o={n:0,until:0};try{o=JSON.parse(localStorage.getItem(LK))||o}catch(e){}o.n=(o.n||0)+1;if(o.n>=5){o.until=Date.now()+60000;o.n=0}try{localStorage.setItem(LK,JSON.stringify(o))}catch(e){}}
