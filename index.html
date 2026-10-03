@@ -275,7 +275,7 @@ table.ctab tfoot td.neg b{color:#EE9993}
 /* ===== Control de la pantalla de carga: se oculta con fade-out cuando la interfaz y los datos están listos ===== */
 (function(){
  var sp=document.getElementById('splash-screen');if(!sp)return;
- try{var li=sp.querySelector('img');if(li)window.AMBY_LOGO=li.src}catch(e){}
+ try{var li=sp.querySelector('img');if(li){window.AMBY_LOGO=li.src;window.AMBY_LOGO_EL=li}}catch(e){}
  var t0=Date.now(),MIN=1500,MAX=8000,loaded=document.readyState==='complete',cloud=false,done=false,mo=null;
  function settled(){var c=document.getElementById('cloudSt');
   if(!navigator.onLine)return true;                       /* sin internet: se usan los datos locales */
@@ -538,7 +538,7 @@ function ifTitleImg(nm,ts){try{var sc=2,fs=ts*sc,pad=12*sc,ext=5*sc,cv=document.
   return{src:cv.toDataURL('image/png'),w:Math.round(cv.width/sc),h:Math.round(cv.height/sc)}}catch(e){return null}}
 function ifTitleHTML(nm,ts){var t=ifTitleImg(nm,ts);
  if(!t)return'<div style="font:700 '+ts+'px/1 '+IF_FC+';color:'+IF_Y+';letter-spacing:.02em;white-space:nowrap;text-shadow:0 3px 0 #B86E00,0 0 16px rgba(255,200,0,.35)">'+esc(nm)+'</div>';
- return'<img data-ttl="'+esc(nm)+'" data-ts="'+ts+'" alt="" src="'+t.src+'" style="display:block;margin-left:-12px;width:'+t.w+'px;height:'+t.h+'px">'}
+ return'<img data-ttl="'+esc(nm)+'" data-ts="'+ts+'" alt="" src="'+t.src+'" style="display:block;margin-left:-12px;margin-bottom:-19px;width:'+t.w+'px;height:'+t.h+'px">'}
 function ifRetitle(node){var im=node.querySelector('[data-ttl]');if(!im)return;var t=ifTitleImg(im.getAttribute('data-ttl'),+im.getAttribute('data-ts'));if(t){im.src=t.src;im.style.width=t.w+'px';im.style.height=t.h+'px'}}
 /* Fondo ambiental: follaje de cañaduzal desenfocado + luz solar difusa (se dibuja una sola vez en un canvas) */
 var IFBG=null;
@@ -558,6 +558,19 @@ function ifBg(){if(IFBG!==null)return IFBG;IFBG='';
   g.fillStyle='rgba(0,16,6,.10)';g.fillRect(0,0,720,1280);
   IFBG=cv.toDataURL('image/jpeg',.85)}catch(e){IFBG=''}
  return IFBG}
+/* Logo del pie: círculo oscuro difuminado + logo con sombra, compuesto en un canvas (html2canvas no admite filter/drop-shadow) */
+var IFLG=null;
+function ifLogoImg(){if(IFLG)return IFLG;
+ try{var im=window.AMBY_LOGO_EL;if(!im||!im.complete||!im.naturalWidth)return null;
+  var sc=3,S=100,R=48,lw=64,lh=Math.round(lw*im.naturalHeight/im.naturalWidth*10)/10,cv=document.createElement('canvas');cv.width=S*sc;cv.height=S*sc;
+  var ctx=cv.getContext('2d'),cx=S*sc/2,cy=S*sc/2;
+  var gr=ctx.createRadialGradient(cx,cy,2*sc,cx,cy,R*sc);
+  gr.addColorStop(0,'rgba(0,0,0,0.9)');gr.addColorStop(0.6,'rgba(0,0,0,0.55)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,R*sc,0,Math.PI*2);ctx.fill();
+  ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=10*sc;
+  ctx.drawImage(im,cx-lw*sc/2,cy-lh*sc/2,lw*sc,lh*sc);ctx.shadowBlur=0;
+  IFLG={src:cv.toDataURL('image/png'),m:Math.round((S-lh)/2*10)/-10}}catch(e){IFLG=null}
+ return IFLG}
 function ifBuild(cfg){
  var el=document.createElement('div'),W=720,K=cfg.kpis||[],cols=cfg.cols||[],tpl=cols.map(function(c){return'minmax(0,'+(c.w||'1fr')+')'}).join(' ');
  el.style.cssText='position:absolute;left:-99999px;top:0;width:'+W+'px;box-sizing:border-box;overflow:hidden;background:'+(ifBg()?'#03140C url('+ifBg()+') center top/cover no-repeat':'linear-gradient(180deg,#03140C 0%,#020D08 55%,#010805 100%)')+';color:#fff;font-family:Barlow,"Segoe UI",Arial,sans-serif;line-height:1.2';
@@ -571,7 +584,7 @@ function ifBuild(cfg){
   +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;background:rgba(4,38,22,.80);border:3px solid '+IF_G+';border-radius:30px;box-shadow:0 0 0 2px #0A5A22,0 0 24px 4px rgba(57,255,90,.45),0 6px 22px rgba(0,0,0,.6)"></div>'
   +'<div style="position:absolute;left:92px;top:32px;width:560px;height:166px;box-sizing:border-box;padding:0 18px 10px 150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left">'
   +ifTitleHTML(nm.toUpperCase(),ts)
-  +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:6px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="display:flex;align-items:center;gap:10px;font:500 23px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:4px;white-space:nowrap">'+ifIco('calendar','#E9F5EC',28,2)+'<span>'+esc(cfg.l2b||'')+'</span></div></div>'
+  +(cfg.l2a?'<div style="font:700 32px/1.05 '+IF_FC+';color:#fff;margin-top:5px;white-space:nowrap;letter-spacing:.01em">'+esc(cfg.l2a)+'</div><div style="display:flex;align-items:center;gap:10px;font:500 23px/1.1 Barlow,Arial,sans-serif;color:#E9F5EC;margin-top:2px;white-space:nowrap">'+ifIco('calendar','#E9F5EC',28,2)+'<span>'+esc(cfg.l2b||'')+'</span></div></div>'
   :'<div style="font:600 '+Math.max(17,Math.min(24,Math.floor(370/(Math.max(String(cfg.line2||'').length,1)*.5))))+'px/1.1 Barlow,Arial,sans-serif;color:#fff;margin-top:8px;white-space:nowrap">'+esc(cfg.line2||'')+'</div></div>')
   +'<div style="position:absolute;left:56px;top:35px;width:160px;height:160px;border-radius:50%;box-sizing:border-box;border:5px solid #F2B705;background:#0a2a14;box-shadow:0 0 0 3px #0A5A22,0 4px 14px rgba(0,0,0,.6);overflow:hidden">'
   +'<img src="'+IFD.badge+'" alt="" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:50%"></div></div>';
@@ -603,15 +616,16 @@ function ifBuild(cfg){
    +(r.sub?'<div style="padding:4px 12px 10px;background:#04180B">'+r.sub+'</div>':'')+'</div>'});
  if(cfg.foot)h+='<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;background:linear-gradient(180deg,#0F5A24,#0A3A18)"><div style="font:700 25px/1.1 '+IF_FC+';color:'+IF_Y+';text-transform:uppercase">'+esc(cfg.foot.label)+'</div><div style="text-align:right"><div style="font:700 40px/1 '+IF_FC+';color:'+IF_Y+'">'+esc(cfg.foot.value)+'</div>'+(cfg.foot.sub?'<div style="font:600 24px/1.1 '+IF_FC+';color:#fff;margin-top:2px">'+esc(cfg.foot.sub)+'</div>':'')+'</div></div>';
  h+='</div>';
- /* Decoración inferior + firma fija */
- h+='<div style="position:relative;height:98px;margin-top:-14px">'
-  +ifImg('bl','left:0;top:0;width:'+Math.round(459*.62)+'px;height:auto')
-  +'<div style="position:absolute;right:-10px;top:-40px;width:310px;height:170px;border-radius:50%;background:radial-gradient(ellipse at 50% 55%,rgba(255,216,120,.30),rgba(255,216,120,0) 68%)"></div>'
-  +'<div style="position:absolute;right:14px;top:62px;width:250px;height:44px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
-  +ifImg('br','right:0;top:0;width:'+Math.round(464*.62)+'px;height:auto')+'</div>'
+ /* Pie auto-ajustable: la firma queda a 15px de la tabla y las decoraciones de las esquinas se superponen
+    (posición absoluta, no suman altura). La altura de la tarjeta = fin de la tabla + 15px + logo + firma. */
+ h+='<div style="position:relative;margin-top:15px">'
+  +ifImg('bl','left:0;top:-29px;width:'+Math.round(459*.62)+'px;height:auto')
+  +'<div style="position:absolute;right:-10px;top:-69px;width:310px;height:170px;border-radius:50%;background:radial-gradient(ellipse at 50% 55%,rgba(255,216,120,.30),rgba(255,216,120,0) 68%)"></div>'
+  +'<div style="position:absolute;right:14px;top:33px;width:250px;height:44px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)"></div>'
+  +ifImg('br','right:0;top:-29px;width:'+Math.round(464*.62)+'px;height:auto')
   +'<div style="position:relative;z-index:3;margin:0 22px">'
-  +(window.AMBY_LOGO?'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+window.AMBY_LOGO+'" alt="" style="width:64px;height:auto;display:block"></div>':'')
-  +'<div style="border-top:2px solid #1B8C32;padding:9px 0 12px;text-align:center"><span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div></div>';
+  +(window.AMBY_LOGO?(function(){var L=ifLogoImg();return L?'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+L.src+'" alt="" style="display:block;width:100px;height:100px;margin:'+L.m+'px 0"></div>':'<div style="display:flex;justify-content:center;margin-bottom:4px"><img src="'+window.AMBY_LOGO+'" alt="" style="width:64px;height:auto;display:block"></div>'})():'<div style="height:73px"></div>')
+  +'<div style="border-top:2px solid #1B8C32;padding:9px 0 12px;text-align:center"><span style="font:600 21px/1.1 Barlow,Arial,sans-serif;color:#E3EDE6;letter-spacing:.04em">'+esc(CRED)+'</span></div></div></div>';
  el.innerHTML=h;return el}
 /* Hoja de respaldo (iOS exige un toque directo del usuario para abrir el menú nativo) */
 function ifSheet(blob,file,cfg,fname){
@@ -643,7 +657,7 @@ function shareInfo(cfg){
   fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 30px "Barlow Condensed"'),document.fonts.load('600 20px Barlow'),document.fonts.load('400 20px Barlow')]).catch(function(){}):Promise.resolve();
  Promise.all(imgs.concat([fl,(document.fonts&&document.fonts.ready)||Promise.resolve()])).then(function(){
   ifRetitle(node);ifFit(node);
-  return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false})}).then(function(canvas){
+  return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false,width:720,height:Math.ceil(node.getBoundingClientRect().height),windowWidth:720})}).then(function(canvas){
   cleanup();
   canvas.toBlob(function(blob){
    if(!blob){fail();return}
@@ -666,7 +680,7 @@ function shareRender(cfg){return new Promise(function(resolve,reject){
  var imgs=[].slice.call(node.querySelectorAll('img')).map(function(i){return i.complete&&i.naturalWidth?Promise.resolve():new Promise(function(r){i.onload=i.onerror=r})}),
   fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 30px "Barlow Condensed"'),document.fonts.load('600 20px Barlow'),document.fonts.load('400 20px Barlow')]).catch(function(){}):Promise.resolve();
  Promise.all(imgs.concat([fl,(document.fonts&&document.fonts.ready)||Promise.resolve()])).then(function(){
-  ifRetitle(node);ifFit(node);return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false})}).then(function(canvas){
+  ifRetitle(node);ifFit(node);return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false,width:720,height:Math.ceil(node.getBoundingClientRect().height),windowWidth:720})}).then(function(canvas){
   cleanup();
   canvas.toBlob(function(blob){
    var fname=(cfg.file||'reporte')+'.png',file;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
