@@ -383,7 +383,7 @@ function render(){
  else if(c.y){h='<h2>Molinos · '+esc(c.y.name)+'</h2><div class="list">'+(c.y.mills.length?c.y.mills.map(function(m){return card('openM',m.id,m.name,m.weeks.length+(m.weeks.length===1?' molienda · ':' moliendas · ')+f(mKg(m),2)+' kg','delM')}).join(''):'<p class="empty">Este año está limpio. Agrega el primer molino.</p>')+'</div><button class="btn" data-act="addM">+ Agregar Molino</button>'}
  else{h='<h2>Selecciona el año</h2><div class="list">'+visYears().slice().sort(function(a,b){return a.name<b.name?-1:1}).map(function(y){return card('openY',y.id,y.name,ySub(y),'delY')}).join('')+'</div><button class="btn" data-act="addY">+ Agregar Año</button>'}
  $('app').innerHTML='<nav class="bc" aria-label="Navegación">'+b+'</nav>'+h;
- $('nav').innerHTML=(c.w&&role!=='owner')?tabs()+(nav.mode==='reg'?secBar():''):'';applySec();saveNav();
+ $('nav').innerHTML=(c.w&&role!=='owner')?tabs()+(nav.mode==='reg'?secBar():''):'';applySec();saveNav();sharePrepSoon();
  lockUI();if($('tprev'))tPrev();
  if(fsel){var fe=document.querySelector(fsel);if(fe)fe.focus();fsel=null}
 }
@@ -602,6 +602,35 @@ function shareInfo(cfg){
      ifSheet(blob,file,cfg,fname)})}   /* iOS: el gesto caducó → un toque más abre el menú nativo */
    else dl(blob,fname)
   },'image/png')}).catch(fail)}
+/* ===== Compartir con un solo toque =====
+   La imagen se genera ANTES del toque (en segundo plano, cuando cambian los datos). Así, al tocar el botón,
+   navigator.share() se llama de inmediato dentro del gesto del usuario, sin esperas, y el menú abre al primer toque. */
+var SHP={},shT=null,shBusy=false;
+function shSig(cfg){var o={};for(var k in cfg)if(k!=='btn'&&k!=='fallback')o[k]=cfg[k];try{return JSON.stringify(o)}catch(e){return'x'+Date.now()}}
+function shareRender(cfg){return new Promise(function(resolve,reject){
+ if(typeof html2canvas==='undefined'){reject();return}
+ var node=ifBuild(cfg);document.body.appendChild(node);
+ function cleanup(){if(node.parentNode)node.parentNode.removeChild(node)}
+ var imgs=[].slice.call(node.querySelectorAll('img')).map(function(i){return i.complete&&i.naturalWidth?Promise.resolve():new Promise(function(r){i.onload=i.onerror=r})}),
+  fl=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('700 30px "Barlow Condensed"'),document.fonts.load('600 20px Barlow'),document.fonts.load('400 20px Barlow')]).catch(function(){}):Promise.resolve();
+ Promise.all(imgs.concat([fl,(document.fonts&&document.fonts.ready)||Promise.resolve()])).then(function(){
+  ifFit(node);return html2canvas(node,{backgroundColor:'#010805',scale:2,useCORS:true,logging:false})}).then(function(canvas){
+  cleanup();
+  canvas.toBlob(function(blob){
+   var fname=(cfg.file||'reporte')+'.png',file;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
+   if(!blob||!file){reject();return}resolve({blob:blob,file:file,fname:fname})},'image/png')}).catch(function(){cleanup();reject()})})}
+function shareGo(key,mk){var cfg=mk();if(!cfg)return;var p=SHP[key];
+ if(p&&p.file&&p.sig===shSig(cfg)){
+  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[p.file]}))){
+   navigator.share({files:[p.file],title:cfg.shareTitle||'Reporte'}).catch(function(e){if(e&&e.name==='AbortError')return;ifSheet(p.blob,p.file,cfg,p.fname)});return}
+  var u=URL.createObjectURL(p.blob),a=document.createElement('a');a.href=u;a.download=p.fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);return}
+ shareInfo(cfg)}   /* aún no estaba lista (o cambió): se genera ahora, como antes */
+function sharePrepSoon(){clearTimeout(shT);var c;try{c=cur()}catch(e){return}
+ if(!role||!c.w||nav.mode==='reg'||typeof html2canvas==='undefined'||!navigator.share)return;shT=setTimeout(sharePrep,900)}
+function sharePrep(){if(shBusy)return;
+ var J=[['res',cfgRes,'shareRes'],['cons',cfgCons,'shareCons'],['liq',cfgLiq,'shareLiq']].filter(function(j){return document.querySelector('[data-act="'+j[2]+'"]')});
+ for(var i=0;i<J.length;i++){var key=J[i][0],cfg=J[i][1]();if(!cfg)continue;var sig=shSig(cfg);if(SHP[key]&&SHP[key].sig===sig)continue;
+  shBusy=true;(function(key,cfg,sig){shareRender(cfg).then(function(r){SHP[key]={sig:sig,blob:r.blob,file:r.file,fname:r.fname}},function(){SHP[key]={sig:sig,fail:1}}).then(function(){shBusy=false;sharePrepSoon()})})(key,cfg,sig);return}}
 /* ---- Datos comunes ---- */
 function ifSlug(c,w,p){return p+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+w.start}
 function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),l2a:'Molienda '+wnum(w),l2b:sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
@@ -609,15 +638,16 @@ function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,
  k=[{v:f(T.k,2)+' kg',l:'Producido total · '+f(T.u)+' u',c:'#4DF06A',i:'sprout'},{v:f(T.ck,2)+' kg',l:'Total salidas · '+f(T.cu)+' u',c:IF_Y,i:'truck'},{v:f(bk,2)+' kg',l:'Disponible en bodega · '+f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B,i:'warehouse'}];
  if(hasC)k.splice(1,0,{v:f(T.k/w.cw,2)+' cargas',l:'Total de cargas · '+f(w.cw,2)+' kg c/u',c:'#4DF06A',i:'box'});return k}
 /* ---- 1) Resumen ---- */
-function shareRes(){var c=cur(),w=c.w;if(!w)return;
+function cfgRes(){var c=cur(),w=c.w;if(!w)return null;
  var rows=refRows(w).map(function(r){var bu=r.u-r.cu,bk=r.k-r.ck;
   return[{img:1,b:r.name,s:r.w?f(r.w,3)+' kg c/u':''},{b:f(r.u)+' u',s:f(r.k,2)+' kg',c:IF_Y},{b:f(r.cu)+' u',s:f(r.ck,2)+' kg'},{b:f(bu)+' u',s:f(bk,2)+' kg',c:bu<0?IF_R:'#fff'}]});
  var cfg=ifHead(c,w,'Producción por producto');
  cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.15fr'},{h:'Producido',w:'1.05fr',al:'center'},{h:'Salidas',w:'.95fr',al:'center'},{h:'Bodega',w:'1fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Aún no hay referencias.';cfg.file=ifSlug(c,w,'resumen');cfg.shareTitle='Resumen de producción';cfg.btn=$('btnShareRes');
- shareInfo(cfg)}
+ return cfg}
+function shareRes(){shareGo('res',cfgRes)}
 /* ---- 2) Consolidado de cierre ---- */
-function shareCons(){var c=cur(),w=c.w;if(!w)return;
+function cfgCons(){var c=cur(),w=c.w;if(!w)return null;
  var P=prods(w),tk=0,DB={};
  (w.cd||[]).forEach(function(cg){(cg.items||[]).forEach(function(it){var u=+it.u||0,kk=iKg(it);if(!(u||kk))return;var key=(iN(it)||'Sin producto').toLowerCase(),o=DB[key]||(DB[key]={}),d=o[cg.date]||(o[cg.date]={u:0,k:0});d.u+=u;d.k+=kk})});
  var rows=P.map(function(p){var bu=p.u-p.cu,bkg=p.k-p.ck,nc=Object.keys(p.cs).length,tp=bu>0?p.u*(bkg/bu):p.k,dd=DB[p.key]||{},ks=Object.keys(dd).sort();tk+=tp;
@@ -627,9 +657,10 @@ function shareCons(){var c=cur(),w=c.w;if(!w)return;
  cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.5fr'},{h:'Producido',w:'1fr',al:'center'},{h:'Salidas',w:'1.25fr',al:'center'},{h:'Bodega',w:'.95fr',al:'center'},{h:'Total kilos',w:'1.2fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Registra producción en los bloques para ver los productos aquí.';
  cfg.file=ifSlug(c,w,'consolidado');cfg.shareTitle='Consolidado de cierre';cfg.btn=$('btnShareCons');
- shareInfo(cfg)}
+ return cfg}
+function shareCons(){shareGo('cons',cfgCons)}
 /* ---- 3) Liquidación de trabajadores ---- */
-function shareLiq(){var c=cur(),w=c.w;if(!w)return;
+function cfgLiq(){var c=cur(),w=c.w;if(!w)return null;
  var q=liqQ(w),t=0,pc=w.unit==='c',
  rows=w.g.map(function(g){var pr=gp(w,g),v=q*pr;t+=v;return[{b:g.name},{b:'$'+f(pr,2),s:pc?'por carga':'por kilo',c:IF_Y},{b:'$'+f(v,2),c:'#4DF06A'}]});
  var cfg=ifHead(c,w,'Liquidación de trabajadores');
@@ -638,7 +669,8 @@ function shareLiq(){var c=cur(),w=c.w;if(!w)return;
  cfg.rows=rows;cfg.empty='Aún no hay grupos de trabajadores.';
  cfg.file=ifSlug(c,w,'liquidacion');cfg.shareTitle='Liquidación de trabajadores';cfg.btn=document.querySelector('[data-act="shareLiq"]');
  cfg.fallback=shareLiqTxt;
- shareInfo(cfg)}
+ return cfg}
+function shareLiq(){shareGo('liq',cfgLiq)}
 /* ===== Pantalla principal (solo lectura) ===== */
 function catRO(w){var n=w.cat.length;
  return'<p class="sm" style="margin:0;color:var(--mu)">Solo lectura · '+(w.unit==='c'?'Liquidación por cargas'+(w.cw>0?' de '+f(w.cw,2)+' kg':''):'Liquidación por kilos')+'</p>'
@@ -909,9 +941,9 @@ document.addEventListener('click',function(ev){
  else if(a==='sec'){nav.sec=id;document.querySelectorAll('#nav .tabs.sec .tab').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.id===id))});applySec();saveNav();scrollTo(0,0);return}
  else if(a==='jump'){var el2=$(id);if(el2)el2.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
  else if(a==='cell'){cellView(+ds.d,+ds.s);return}
- else if(a==='shareRes'){shareRes();return}
- else if(a==='shareCons'){shareCons();return}
- else if(a==='shareLiq'){shareLiq();return}
+ else if(a==='shareRes'){ev.preventDefault();shareRes();return}
+ else if(a==='shareCons'){ev.preventDefault();shareCons();return}
+ else if(a==='shareLiq'){ev.preventDefault();shareLiq();return}
  else if(a==='copyLiq'){copyLiq(t);return}
  else if(a==='saveT'){saveT();return}
  else if(a==='cancelT'){nav.editT=null}
