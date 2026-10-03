@@ -149,7 +149,7 @@ input,select,button{min-width:0;max-width:100%}
 .ro-item span{font:600 21px var(--fn)}.ro-item b{font:500 14px var(--fb);color:var(--mu)}
 .roi{display:flex;justify-content:space-between;gap:8px;font-size:15px}.roi span:last-child{color:var(--mu);text-align:right}
 .hfil{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.hfil label{flex:1 1 150px;min-width:0;display:block}.hfil select,.hfil input{margin-top:4px}
-table.ht{min-width:680px}
+table.ht{min-width:600px}
 table.ht thead th:nth-child(n){background:var(--teal);color:#fff}
 td.l,th.l{text-align:left}td.ac{white-space:nowrap}td.ac .btn{margin-left:4px}
 .tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}.tag.t{background:#3F7F1E}.tag.c{background:#B9640F}
@@ -240,6 +240,7 @@ table.ctab tfoot td.neg b{color:#EE9993}
 .ht .hh span{font-weight:600}
 .ht .hh small{margin-top:1px}
 .ht .hr .hq{display:flex;flex-direction:column;align-items:flex-end;line-height:1.1}
+.ht .hvh{display:block;margin-top:4px;font:400 12px var(--fb);color:var(--mu)}
 .ht .hr .hq small{font:400 11px var(--fb);color:var(--mu);margin-top:2px}
 
 /* ===== Encabezado fijo + pestañas de sección ===== */
@@ -779,7 +780,7 @@ function saveT(){var w=cur().w,er=$('terr');function bad(m){er.textContent=m}
 function cForm(w){var c=nav.editC&&w.cd.find(function(x){return x.id===nav.editC}),dv=c?c.date:(nav.cDate||defDate(w));
  return'<section class="card2" id="secCargues"><h2>'+(c?'Editar cargue / salida':'Ingreso de cargues / salidas')+'</h2><p class="sm" style="margin:2px 0 8px;color:var(--mu)">Una salida puede llevar varias referencias. Se suman solas al detalle de cargues y al consolidado de la pantalla principal.</p>'+(w.cat.length?'':'<p class="sm" style="color:var(--late)">Primero crea las referencias en Gestión de productos.</p>')
  +'<div id="cform"><div class="fgrid"><label>Fecha<input id="cdate" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label><label>Hora'+tp('ctime',c&&c.time?c.time:'',false)+'</label>'
- +'<label style="grid-column:1/-1">Vehículo / Cliente (opcional)<input id="cv" type="text" placeholder="Ej. Placa ABC123 · Cliente" value="'+esc(c&&c.vh?c.vh:'')+'" autocomplete="off"></label></div>'
+ +'<label style="grid-column:1/-1">Vehículo<input id="cv" type="text" placeholder="Ej. ABC123" value="'+esc(c&&c.vh?c.vh:'')+'" autocomplete="off"></label></div>'
  +'<p class="qh">Cantidad cargada por referencia</p><div class="ql" id="cql">'+qRows(w,c?c.items:null,'u')+'</div></div>'
  +'<p class="tot" id="cprev"></p><p class="err" id="cerr" role="alert"></p><div class="actions">'+(c?'<button class="btn g" type="button" data-act="cancelC">Cancelar</button>':'')+'<button class="btn" type="button" data-act="saveC">'+(c?'Guardar cambios':'Guardar salida')+'</button></div></section>'}
 function cPrev(){var el=$('cprev');if(!el)return;var r=qCollect('cql','u'),u=0,k=0;r.items.forEach(function(it){u+=it.u;k+=it.tk!=null?it.tk:it.u*(+it.w||0)});el.textContent=u?'Total del cargue: '+f(u)+' u · '+f(k,2)+' kg':''}
@@ -810,21 +811,21 @@ function histRows(w){var R=[];
  (w.t||[]).forEach(function(t){R.push({k:'t',id:t.id,date:t.date,time:t.start,o:t})});
  w.cd.forEach(function(c){R.push({k:'c',id:c.id,date:c.date,time:c.time||'',o:c})});
  R.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:a.time<b.time?-1:a.time>b.time?1:0});return R}
-function histI(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w),pu=0,pk=0,cu=0,ck=0,h='',R=histRows(w).filter(function(r){return m==='w'||r.date===dv}),desc=nav.hs!=='asc';if(desc)R.reverse();
+function histI(w){var m=nav.hf==='d'?'d':'w',dv=nav.hd||defDate(w),pu=0,pk=0,cu=0,ck=0,h='',R=histRows(w).filter(function(r){return m==='w'||r.date===dv}),desc=nav.hs!=='asc';if(desc)R.reverse();
  var TL=bodTL(),CL=bodCL(),NM=bodNames(TL,CL);
  R.forEach(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):x.items,q=isT?tU(x):cgU(x),kg=isT?tKg(x):cgKg(x);
   if(isT){pu+=q;pk+=kg}else{cu+=q;ck+=kg}
   h+='<tr><td><span class="tag '+(isT?'t':'c')+'">'+(isT?'Turno':'Salida')+'</span></td><td class="l">'+dlab(r.date)+(x.by?'<small>'+esc(x.by)+'</small>':'')+'</td>'
    +'<td>'+(isT?'<div class="hh"><span>'+esc(f12p(x.start))+'</span><span>'+esc(f12p(x.end))+'</span><small>'+hl(tdur(x))+'</small>'+(hm(x.end)<=hm(x.start)?'<small>cruza medianoche</small>':'')+'</div>':(r.time?'<div class="hh"><span>'+esc(f12p(r.time))+'</span></div>':'–'))+'</td>'
-   +'<td class="l">'+its.map(function(it){var n=isT?+it.qty:+it.u;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+f(iw,3)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
+   +'<td class="l">'+its.map(function(it){var n=isT?+it.qty:+it.u;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+f(iw,3)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+(!isT&&x.vh&&String(x.vh).trim()?'<small class="hvh">Vehículo: '+esc(String(x.vh).trim())+'</small>':'')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
   var rows=NM.map(function(k){var sb=saldoAt(ek,TL,CL,[k]);if(!sb&&!own[k])return'';if(sb<0)ng=true;
    var nm=k;TL.concat(CL).some(function(e){return(e.t?e.t.items:e.c.items||[]).some(function(it){if(bnm(iN(it))===k){nm=iN(it).trim()||k;return true}})});
    return'<div class=\"bl\"><span>'+esc(nm)+'</span><b>'+f(sb)+' u</b></div>'}).join('');
   return'<td'+(ng?' class=\"neg\"':'')+'>'+rows+(isT?'':'<small>−'+f(q)+' u salida</small>')+'</td>'})()
-   +'<td class="l">'+(isT?'':esc(x.vh||''))+'</td><td class="ac">'+(canMod(x)?'<button class="btn g s" type="button" data-act="'+(isT?'editT':'editC')+'" data-id="'+r.id+'">Editar</button>':(role==='owner'?'':'<small>Registro de '+esc(authOf(x)||'otro usuario')+'</small>'))+(canMod(x)?'<button class="btn d s" type="button" data-own="1" data-act="'+(isT?'delT':'delC')+'" data-id="'+r.id+'">Borrar</button>':'')+'</td></tr>'});
- if(!R.length)h='<tr><td colspan="7" style="text-align:center;color:var(--mu)">Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.')+'</td></tr>';
- return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Bodega<small class="hso">saldo al cerrar (u)</small></th><th class="l">Vehículo / Cliente</th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
-function histIn(w){var m=nav.hf==='w'?'w':'d',dv=nav.hd||defDate(w);
+   +'<td class="ac">'+(canMod(x)?'<button class="btn g s" type="button" data-act="'+(isT?'editT':'editC')+'" data-id="'+r.id+'">Editar</button>':(role==='owner'?'':'<small>Registro de '+esc(authOf(x)||'otro usuario')+'</small>'))+(canMod(x)?'<button class="btn d s" type="button" data-own="1" data-act="'+(isT?'delT':'delC')+'" data-id="'+r.id+'">Borrar</button>':'')+'</td></tr>'});
+ if(!R.length)h='<tr><td colspan="6" style="text-align:center;color:var(--mu)">Sin turnos ni cargues '+(m==='d'?'en este día.':'en esta semana.')+'</td></tr>';
+ return'<p class="sm" style="margin:6px 0;color:var(--mu)">Turnos: <b style="color:var(--ink)">'+f(pu)+' u · '+f(pk,2)+' kg</b> &nbsp;|&nbsp; Salidas: <b style="color:var(--ink)">'+f(cu)+' u · '+f(ck,2)+' kg</b></p><div class="tbl2"><table class="ht"><thead><tr><th class="l">Tipo</th><th class="l">Fecha <button type="button" class="hsort" data-act="histSort" title="'+(desc?'Más recientes primero':'Más antiguos primero')+' (toca para cambiar)" aria-label="Cambiar orden: '+(desc?'más recientes primero':'más antiguos primero')+'"><span class="'+(desc?'on':'')+'">↓</span><span class="'+(desc?'':'on')+'">↑</span></button><small class="hso">'+(desc?'Más recientes primero':'Más antiguos primero')+'</small></th><th>Hora</th><th class="l">Referencia y cantidad</th><th>Bodega<small class="hso">saldo al cerrar (u)</small></th><th></th></tr></thead><tbody>'+h+'</tbody></table></div>'}
+function histIn(w){var m=nav.hf==='d'?'d':'w',dv=nav.hd||defDate(w);
  return'<h2>Historial de turnos y cargues</h2><div class="hfil"><label>Ver<select id="hf"><option value="d"'+(m==='d'?' selected':'')+'>Un día</option><option value="w"'+(m==='w'?' selected':'')+'>Toda la molienda</option></select></label>'
  +(m==='d'?'<label>Día<input id="hd" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label>':'')+'</div><div id="hist">'+histI(w)+'</div>'}
 function histH(w){return'<section class="card2" id="secHist">'+histIn(w)+'</section>'}
