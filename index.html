@@ -182,20 +182,63 @@ td.l,th.l{text-align:left}td.ac{white-space:nowrap}td.ac .btn{margin-left:4px}
 .lq{white-space:pre-wrap;background:var(--bg);border-radius:6px;padding:10px;font:14px/1.4 var(--fb);margin:0 0 12px}
 .shr3{display:flex;gap:8px;flex-wrap:wrap}.shr3 .btn{text-decoration:none;display:inline-flex;align-items:center}
 .btn.shr{display:inline-flex;align-items:center;gap:6px}
+.sumh .sumt{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+.sumh .stx{flex:0 1 auto;min-width:0}
+.sumh .sl1{display:block;font-size:15px;line-height:1.25}
+.sumh .sumt .nowb{align-self:center;flex:0 0 auto;margin:0;font-size:12px;line-height:1;padding:0 9px 1px;height:22px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
+@supports (text-box:trim-both cap alphabetic){.sumh .sumt .nowb{display:inline-block;height:auto;padding:6px 10px;text-box:trim-both cap alphabetic}}   /* recorta al alto de las mayúsculas: misma distancia arriba y abajo */.sumh .sl2{margin-top:2px;font-size:13px;color:var(--mu)}
+.sumh .shg{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.sumh .shg .btn{min-height:36px;height:36px;white-space:nowrap}.sumh .shg .btn.ico{width:36px;padding:0}.sumh .shg .btn.ico svg{margin:0;width:18px;height:18px}
+#btnShareBod{display:inline-flex;align-items:center;justify-content:center;gap:4px;flex:0 0 auto;width:auto;padding:0 12px;font-size:14px}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
 /* ===== Referencias múltiples, encadenamiento e icono ===== */
 .qh{margin:14px 0 6px;font-weight:600;font-size:15px}
 .ql{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
-.qr{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--ln);border-left:5px solid var(--cane);border-radius:6px;background:var(--bg)}
+.qr{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:6px 8px;align-items:center;padding:8px 10px;border:1px solid var(--ln);border-left:5px solid var(--cane);border-radius:6px;background:var(--bg)}
 .qr label{display:flex;flex-direction:column;min-width:0;font-size:inherit;color:var(--ink)}
 .qr label span{font:600 20px/1.1 var(--fn);overflow-wrap:anywhere}.qr label small{font-size:12px;color:var(--mu)}
 .qr input{text-align:right;padding:8px}
-.qr .stk{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding-top:6px;border-top:1px dashed var(--ln);font-size:13px;color:var(--mu)}
+.qr.over{border-left-color:var(--late)}
+/* Cabecera: kg c/u → Total estimado */
+.qr .qw{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px;margin-top:3px;font-size:12px;color:var(--mu)}
+.qr .qw em{font-style:normal}
+.qr .qw .qe{font-size:13px;font-weight:700;color:var(--mu);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qr .qw .qe.on{color:var(--st)}
+/* Disponible / Bodega / Peso */
+.qr .stk{grid-column:1/-1;display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:2px 8px;padding-top:6px;border-top:1px dashed var(--ln);font-size:13px;color:var(--mu)}
 .qr .stk b{color:var(--ink);font-weight:700}
 .qr .stk-s{opacity:.6}
 .qr .stk.neg .stk-r{color:var(--late)}
-.qr.over{border-left-color:var(--late)}
+/* ===== Cargues: peso en báscula por referencia (una sola fila compacta) ===== */
+.qr .qk{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:8px;align-items:center;padding-top:6px;border-top:1px dashed var(--ln)}
+.qr .qk label{gap:1px}
+.qr .qk label span{font:600 13px/1.15 var(--fb);color:var(--ink)}
+.qr .qk .qk-avg{margin:0;min-height:0;font-size:12px;color:var(--mu)}
+.qr .qk .qk-avg:empty::before{content:'Opcional · se completa después'}
+.qr .qk .qk-avg b{color:var(--ink);font-weight:700;font-size:13px}
+.qr .qk .qk-avg.warn{color:var(--late)}
+.qr .qk input.qkg{border-style:solid;font-weight:600;padding:6px 8px}
+.qr .stk-l{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;min-width:0}
+.qr .stk .qk-tg{flex:none;margin-left:auto;display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:2px 0 2px 4px;margin-top:-2px;margin-bottom:-2px;background:none;border:0;border-radius:4px;font:700 13px/1 var(--fb);color:var(--st);cursor:pointer;white-space:nowrap}
+.qr .stk .qk-tg:focus-visible{outline:2px solid var(--st);outline-offset:1px}
+.qr .qk-plus{display:inline-grid;place-items:center;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;font-size:13px;line-height:1;transition:transform .25s}
+.qr .qk-tg[aria-expanded="true"] .qk-plus{transform:rotate(45deg)}
+.qr .qk-wrap{grid-column:1/-1;margin-top:-6px;transition:margin-top .28s ease}
+.qr .qk-wrap.open{margin-top:0}
+.qr .qk-body{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .28s ease,opacity .2s ease,visibility 0s linear .28s}
+.qr .qk-wrap.open .qk-body{grid-template-rows:1fr;opacity:1;visibility:visible;transition:grid-template-rows .28s ease,opacity .2s ease .05s,visibility 0s}
+.qr .qk-in{overflow:hidden;min-height:0}
+.qr .qk-in .qk{border-top:0;padding-top:4px}
+@media (prefers-reduced-motion:reduce){.qr .qk-body,.qr .qk-plus,.qr .qk-wrap{transition:none}}
+/* Historial: cada producto del cargue en una línea «Producto: N u | Total: X kg (Y kg/u)» */
+.ht .hr.hc{display:block;white-space:normal;line-height:1.35;margin:2px 0}
+.ht .hr.hc .hcn{font-weight:600}
+.ht .hr.hc .hcq b{font:700 15px var(--fn)}
+.ht .hr.hc .hcs{margin:0 5px;opacity:.55}
+.ht .hr.hc .hct{color:var(--ink)}.ht .hr.hc .hct b{font:700 15px var(--fn)}
+.ht .hr.hc .hct em{font-style:normal;color:var(--mu);white-space:nowrap}
+.ht .hr.hc .hcp{color:var(--late);font-size:13px;font-weight:600}
 .qr .bod{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:8px;border-top:1px dashed var(--ln)}
 .qr .bod label{gap:4px}.qr .bod label span{font:600 14px/1.1 var(--fb);color:var(--mu)}
 .qr .bod input.bcur{border-style:solid;font-weight:600}
@@ -422,6 +465,12 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function fc(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function f(n,d){return Number(n).toLocaleString('en-US',{maximumFractionDigits:d||0})}
+/* Truncado estricto (sin redondeo) para promedios y kg c/u. 22.2667 → 22.26 · 21.5 → 21.5
+   El 1e-9 absorbe el error binario de flotantes (1.15*100 = 114.99999999999999). Solo afecta lo que se muestra: los cálculos siguen con precisión completa. */
+function truncarPromedio(valor,dec){var n=Number(valor);if(!isFinite(n))return'0';
+ var m=Math.pow(10,dec==null?2:dec);return String(Math.trunc(n*m+(n<0?-1:1)*1e-9)/m)}
+/* Para campos de entrada: vacío si no hay valor */
+function truncIn(v){return +v>0?truncarPromedio(v):''}
 function pd(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function ad(s,n){var d=pd(s);d.setDate(d.getDate()+n);return d}
@@ -483,7 +532,7 @@ function render(){
  else{h='<h2>Selecciona el año</h2><div class="list">'+visYears().slice().sort(function(a,b){return a.name<b.name?-1:1}).map(function(y){return card('openY',y.id,y.name,ySub(y),'delY')}).join('')+'</div><button class="btn" data-act="addY">+ Agregar Año</button>'}
  $('app').innerHTML='<nav class="bc" aria-label="Navegación">'+b+'</nav>'+h;
  $('nav').innerHTML=(c.w&&role!=='owner')?tabs()+(nav.mode==='reg'?secBar():''):'';applySec();saveNav();sharePrepSoon();
- lockUI();if($('tprev'))tPrev();
+ lockUI();if($('tprev'))tPrev();if($('cprev'))cPrev();
  if(fsel){var fe=document.querySelector(fsel);if(fe)fe.focus();fsel=null}
 }
 
@@ -516,14 +565,14 @@ function snapD(w,d){return !d?defDate(w):d<w.start?w.start:d>wend(w)?wend(w):d} 
 function dlab(s){var d=pd(s);return DN[(d.getDay()+6)%7]+' '+sd(d)}
 function cdSum(l){var u=0,k=0;l.forEach(function(c){u+=cgU(c);k+=cgKg(c)});return f(u)+' u · '+f(k,2)+' kg'}
 function statsI(w){var T=wTot(w),bk=T.k-T.ck;
- return'<div><b>'+f(T.k,2)+' <small>kg</small></b><span>Producido total · '+f(T.u)+' u</span></div><div><b>'+f(T.ck,2)+' <small>kg</small></b><span>Total salidas (cargues) · '+f(T.cu)+' u</span></div><div><b'+(bk<0?' style="color:var(--late)"':'')+'>'+f(bk,2)+' <small>kg</small></b><span>Disponible en bodega · '+f(T.u-T.cu)+' u</span></div>'
+ return'<div><b>'+f(T.k,2)+' <small>kg</small></b><span>Producido total</span></div><div><b>'+f(T.ck,2)+' <small>kg</small></b><span>Total salidas (cargues)</span></div><div><b'+(bk<0?' style="color:var(--late)"':'')+'>'+f(bk,2)+' <small>kg</small></b><span>Disponible en bodega</span></div>'
  +(w.unit==='c'?'<div><b>'+(w.cw>0?fc(T.k/w.cw)+' <small>cargas</small>':'-')+'</b><span>Total de cargas'+(w.cw>0?' · '+f(w.cw,2)+' kg c/u':' · ingresa los kilos por carga')+'</span></div>':'')}
 var CRED='Desarrollado por AMBV MAO';
 function consI(w){var P=prods(w),T=wTot(w),bk=T.k-T.ck,tk=0,h='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><p style="margin:0 0 2px;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--st)">'+esc(cur().m.name)+'</p><h2>Consolidado de cierre · cargues y bodega</h2></div><button class="btn g ico" type="button" id="btnShareCons" data-act="shareCons" aria-label="Compartir imagen de esta tabla" title="Compartir imagen de esta tabla">'+SHI2+'</button></div><p style="margin:2px 0 6px;font-size:12px;color:var(--mu)">Inicio: '+sdy(w.start)+' · Fin: '+sdy(wend(w))+'</p><p class="sm" style="margin:2px 0 8px;color:var(--mu)">Los productos salen de los bloques y los cargues del detalle por día. Todo se recalcula solo.</p><div class="tbl2"><table class="ctab"><thead><tr><th>Producto / Referencia</th><th>Producido total<small>u / kg</small></th><th>Salidas por día<small>cargues / despachos</small></th><th>En bodega<small>producido − salidas</small></th><th>Total kilos</th></tr></thead><tbody>';
  var DB={};(w.cd||[]).forEach(function(c){(c.items||[]).forEach(function(it){var u=+it.u||0,kk=iKg(it);if(!(u||kk))return;var key=(iN(it)||'Sin producto').toLowerCase(),o=DB[key]||(DB[key]={}),d=o[c.date]||(o[c.date]={u:0,k:0});d.u+=u;d.k+=kk})});
  if(!P.length)h+='<tr><td colspan="5" style="text-align:center;color:var(--mu)">Registra producción en los bloques para ver los productos aquí.</td></tr>';
  P.forEach(function(p){var bu=p.u-p.cu,bkg=p.k-p.ck,nc=Object.keys(p.cs).length,tp=bu>0?p.u*(bkg/bu):p.k,dd=DB[p.key]||{},ks=Object.keys(dd).sort();tk+=tp;
-  h+='<tr><td>'+esc(p.name)+(bu>0?'<small>prom. '+f(bkg/bu,2)+' kg c/u</small>':'')+'</td>'
+  h+='<tr><td>'+esc(p.name)+(bu>0?'<small>prom. '+truncarPromedio(bkg/bu)+' kg c/u</small>':'')+'</td>'
    +'<td><b>'+f(p.u)+' u</b><small>'+f(p.k,2)+' kg</small></td>'
    +'<td>'+(nc?'<b>'+f(p.cu)+' u</b><small>'+f(p.ck,2)+' kg · '+nc+' cargue'+(nc>1?'s':'')+'</small><div class="sdl">'+ks.map(function(d){return'<div><span>'+dlab(d)+'</span><span>'+f(dd[d].u)+' u · '+f(dd[d].k,2)+' kg</span></div>'}).join('')+'</div>':'<small>–</small>')+'</td>'
    +'<td'+(bu<0?' class="neg"':'')+'><b>'+f(bu)+' u</b><small>'+f(bkg,2)+' kg</small></td>'
@@ -906,7 +955,7 @@ function cargRefresh(){var bf=document.querySelector('[data-act="shareCargF"]'),
   if(gate){var cfg=cfgCarg(p[0],nav.sc),r=SHP['carg'+p[0].toUpperCase()+':'+nav.sc];ok=!cfg||!!(r&&(r.fail||(r.file&&r.sig===shSig(cfg))))}
   p[1].disabled=!ok})}
 function sharePrep(){if(shBusy)return;
- var S=[['res',cfgRes,'shareRes'],['cons',cfgCons,'shareCons'],['liq',cfgLiq,'shareLiq'],['hist',cfgHist,'shareHist']].filter(function(j){return document.querySelector('[data-act="'+j[2]+'"]')&&(j[0]!=='hist'||nav.sec==='secHist')}),
+ var S=[['res',cfgRes,'shareRes'],['cons',cfgCons,'shareCons'],['bod',cfgBod,'shareBod'],['liq',cfgLiq,'shareLiq'],['hist',cfgHist,'shareHist']].filter(function(j){return document.querySelector('[data-act="'+j[2]+'"]')&&(j[0]!=='hist'||nav.sec==='secHist')}),
   J=cargJobs().concat(S);
  for(var i=0;i<J.length;i++){var key=J[i][0],cfg=J[i][1]();if(!cfg)continue;var sig=shSig(cfg);if(SHP[key]&&SHP[key].sig===sig)continue;
   shBusy=true;(function(key,cfg,sig){shareRender(cfg).then(function(r){
@@ -918,16 +967,16 @@ function ifSlug(c,w,p){return p+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g
 function ifHead(c,w,sec){return{title:c.m.name,line2:'Molienda '+wnum(w)+' · '+sd(pd(w.start))+' – '+sdy(wend(w)),l2a:'Molienda '+wnum(w),l2b:sd(pd(w.start))+' – '+sdy(wend(w)),secTitle:sec}}
 function ifKpis(w){var T=wTot(w),bk=T.k-T.ck,hasC=w.unit==='c'&&w.cw>0,cw=+w.cw,
  /* Cuadrícula 2x2 (orden de lectura): ↖ Producido · ↗ Bodega · ↙ Resumen de cargas (solo modo Cargas) · ↘ Salidas */
- P={g:1,v:f(T.k,2)+' kg',l:'Producido total',q:f(T.u)+' u',c:'#4DF06A',i:'sprout'},
- B={g:1,v:f(bk,2)+' kg',l:'Disponible en bodega',q:f(T.u-T.cu)+' u',c:bk<0?IF_R:IF_B,i:'warehouse'},
- S={g:1,v:f(T.ck,2)+' kg',l:'Total salidas',q:f(T.cu)+' u',c:IF_Y,i:'truck'};
+ P={g:1,v:f(T.k,2)+' kg',l:'Producido total',c:'#4DF06A',i:'sprout'},
+ B={g:1,v:f(bk,2)+' kg',l:'Disponible en bodega',c:bk<0?IF_R:IF_B,i:'warehouse'},
+ S={g:1,v:f(T.ck,2)+' kg',l:'Total salidas',c:IF_Y,i:'truck'};
  if(hasC){P.q2=f(T.k/cw,2)+' cargas';S.q2=f(T.ck/cw,2)+' cargas';
   return[P,B,{g:1,v:f(bk/cw,2)+' cargas',l:'Resumen de cargas equivalentes',q2:'en bodega · a '+f(cw,2)+' kg c/u',c:'#E8FFC8',i:'scale'},S]}
  return[P,B,{g:1,e:1},S]}
 /* ---- 1) Resumen ---- */
 function cfgRes(){var c=cur(),w=c.w;if(!w)return null;
  var rows=refRows(w).map(function(r){var bu=r.u-r.cu,bk=r.k-r.ck;
-  return[{img:1,b:r.name,s:r.w?f(r.w,3)+' kg c/u':''},{b:f(r.u)+' u',s:f(r.k,2)+' kg',c:IF_Y},{b:f(r.cu)+' u',s:f(r.ck,2)+' kg'},{b:f(bu)+' u',s:f(bk,2)+' kg',c:bu<0?IF_R:'#fff'}]});
+  return[{img:1,b:r.name,s:r.w?truncarPromedio(r.w)+' kg c/u':''},{b:f(r.u)+' u',s:f(r.k,2)+' kg',c:IF_Y},{b:f(r.cu)+' u',s:f(r.ck,2)+' kg'},{b:f(bu)+' u',s:f(bk,2)+' kg',c:bu<0?IF_R:'#fff'}]});
  var cfg=ifHead(c,w,'Producción por producto');
  cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.15fr'},{h:'Producido',w:'1.05fr',al:'center'},{h:'Salidas',w:'.95fr',al:'center'},{h:'Bodega',w:'1fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Aún no hay referencias.';cfg.file=ifSlug(c,w,'resumen');cfg.shareTitle='Resumen de producción';cfg.btn=$('btnShareRes');
@@ -939,13 +988,28 @@ function cfgCons(){var c=cur(),w=c.w;if(!w)return null;
  (w.cd||[]).forEach(function(cg){(cg.items||[]).forEach(function(it){var u=+it.u||0,kk=iKg(it);if(!(u||kk))return;var key=(iN(it)||'Sin producto').toLowerCase(),o=DB[key]||(DB[key]={}),d=o[cg.date]||(o[cg.date]={u:0,k:0});d.u+=u;d.k+=kk})});
  var rows=P.map(function(p){var bu=p.u-p.cu,bkg=p.k-p.ck,nc=Object.keys(p.cs).length,tp=bu>0?p.u*(bkg/bu):p.k,dd=DB[p.key]||{},ks=Object.keys(dd).sort();tk+=tp;
   var sub=ks.length?'<div style="margin-top:8px;padding-top:7px;border-top:1px solid #1B8C32">'+ks.map(function(d,i){return'<div style="margin-top:'+(i?6:0)+'px;white-space:nowrap"><div style="font:500 15px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+esc(dlab(d))+'</div><div style="font:600 15px/1.15 Barlow,Arial,sans-serif;color:#fff">'+esc(f(dd[d].u)+' u · '+f(dd[d].k,2)+' kg')+'</div></div>'}).join('')+'</div>':'';
-  return{cells:[{img:1,b:p.name,s:bu>0?'prom. '+f(bkg/bu,2)+' kg c/u':''},{b:f(p.u)+' u',s:f(p.k,2)+' kg',c:IF_Y},{b:f(p.cu)+' u',s:nc?f(p.ck,2)+' kg':'–',s2:nc?nc+' cargue'+(nc>1?'s':''):'',x:sub},{b:f(bu)+' u',s:f(bkg,2)+' kg',c:bu<0?IF_R:'#fff'},{b:fz(tp,2),u:tp?'kg':'',nw:1,c:IF_Y}]}});
+  return{cells:[{img:1,b:p.name,s:bu>0?'prom. '+truncarPromedio(bkg/bu)+' kg c/u':''},{b:f(p.u)+' u',s:f(p.k,2)+' kg',c:IF_Y},{b:f(p.cu)+' u',s:nc?f(p.ck,2)+' kg':'–',s2:nc?nc+' cargue'+(nc>1?'s':''):'',x:sub},{b:f(bu)+' u',s:f(bkg,2)+' kg',c:bu<0?IF_R:'#fff'},{b:fz(tp,2),u:tp?'kg':'',nw:1,c:IF_Y}]}});
  var cfg=ifHead(c,w,'Inventario detallado');
  cfg.kpis=ifKpis(w);cfg.cols=[{h:'Producto',w:'1.5fr'},{h:'Producido',w:'1fr',al:'center'},{h:'Salidas',w:'1.25fr',al:'center'},{h:'Bodega',w:'.95fr',al:'center'},{h:'Total kilos',w:'1.2fr',al:'center'}];
  cfg.rows=rows;cfg.empty='Registra producción en los bloques para ver los productos aquí.';
  cfg.file=ifSlug(c,w,'consolidado');cfg.shareTitle='Consolidado de cierre';cfg.btn=$('btnShareCons');
  return cfg}
 function shareCons(){shareGo('cons',cfgCons)}
+/* ---- 3b) Existencias en bodega: solo lo disponible en este momento (corte = fecha/hora actual) ---- */
+function cfgBod(){var c=cur(),w=c.w;if(!w)return null;
+ var T=wTot(w),tu=T.u-T.cu,tk=T.k-T.ck,now=new Date(),
+  corte=dlab(iso(now))+' · '+f12p(pad2(now.getHours())+':'+pad2(now.getMinutes())),
+  rows=refRows(w).map(function(r){var bu=r.u-r.cu,bk=r.k-r.ck;return{name:r.name,bu:bu,bk:bk,pw:r.w>0?r.w:(bu>0&&bk>0?bk/bu:0)}})
+   .filter(function(r){return r.bu>0||r.bk>0})
+   .map(function(r){return[{img:1,b:r.name,s:r.pw>0?truncarPromedio(r.pw)+' kg c/u':null},{b:f(r.bu)+' u',c:IF_Y},{b:f(r.bk,2)+' kg'}]}),
+  cfg=ifHead(c,w,'Existencias en bodega');
+ cfg.l2b=corte;cfg.line2='Corte: '+corte;   /* encabezado: Molienda N + fecha/hora de corte */
+ cfg.kpis=[{v:f(tk,2)+' kg',l:'Kilos en bodega',c:tk<0?IF_R:IF_B,i:'warehouse'},{v:f(tu)+' u',l:'Unidades en bodega',c:tu<0?IF_R:IF_Y,i:'box'}];
+ cfg.cols=[{h:'Producto',w:'1.5fr'},{h:'Unidades',w:'1fr',al:'center'},{h:'Kilos est.',w:'1.1fr',al:'center'}];
+ cfg.rows=rows;cfg.empty='No hay existencias en bodega.';
+ cfg.file=ifSlug(c,w,'bodega')+'-'+iso(now);cfg.shareTitle='Existencias en bodega';cfg.btn=$('btnShareBod');
+ return cfg}
+function shareBod(){shareGo('bod',cfgBod)}
 /* ---- 3) Liquidación de trabajadores ---- */
 function cfgLiq(){var c=cur(),w=c.w;if(!w)return null;
  var q=liqQ(w),t=0,pc=w.unit==='c',
@@ -965,7 +1029,7 @@ function cfgHist(){var c=cur(),w=c.w;if(!w)return null;
  var rows=R.map(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):(x.items||[]);
   if(isT){pu+=tU(x);pk+=tKg(x)}else{cu+=cgU(x);ck+=cgKg(x)}
   var tm=isT?f12p(x.start)+' – '+f12p(x.end):(r.time?f12p(r.time):''),vh=!isT?cgPlaca(x):'';
-  var ln=its.map(function(it){var n=isT?+it.qty:+it.u,iw=iW(it);var tk=ifProdKey(iN(it)),th=IFD[tk]?'<img src="'+IFD[tk]+'" alt="" style="width:42px;height:42px;flex:0 0 42px;display:block;object-fit:contain">':'';return'<div style="margin:4px 0;display:flex;align-items:center;gap:8px">'+th+'<div style="min-width:0"><div style="font:700 23px/1.1 '+IF_FC+';color:#fff">'+esc(iN(it)||'Sin producto')+'</div><div style="font:500 17px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+f(n)+' u · '+f(isT?n*iw:iKg(it),2)+' kg</div></div></div>'}).join('');
+  var ln=its.map(function(it){var n=isT?+it.qty:+it.u,iw=iW(it);var tk=ifProdKey(iN(it)),th=IFD[tk]?'<img src="'+IFD[tk]+'" alt="" style="width:42px;height:42px;flex:0 0 42px;display:block;object-fit:contain">':'';return'<div style="margin:4px 0;display:flex;align-items:center;gap:8px">'+th+'<div style="min-width:0"><div style="font:700 23px/1.1 '+IF_FC+';color:#fff">'+esc(iN(it)||'Sin producto')+'</div><div style="font:500 17px/1.15 Barlow,Arial,sans-serif;color:'+IF_M+'">'+f(n)+' u · '+(isT?f(n*iw,2)+' kg':(it.tk!=null&&+it.tk>0&&n>0?'Total: '+f(+it.tk,2)+' kg ('+truncarPromedio(+it.tk/n)+' kg/u)':'(Pendiente peso de báscula)'))+'</div></div></div>'}).join('');
   return[{b:dlab(r.date),s:tm},{b:isT?'Turno':'Salida',c:isT?IF_Y:'#4DF06A',s:vh?'Vehículo '+vh:''},{h:ln}]});
  var cfg=ifHead(c,w,'Historial');
  cfg.kpis=[{v:f(pk,2)+' kg',l:'Producido total',q:f(pu)+' u',c:'#4DF06A',i:'sprout'},{v:f(ck,2)+' kg',l:'Total salidas',q:f(cu)+' u',c:IF_Y,i:'truck'}];
@@ -989,11 +1053,14 @@ function cgLabel(cg){return dlab(cg.date)+' · '+(cg.time?f12p(cg.time):'Sin hor
 function cfgCarg(mode,cid){var c=cur(),w=c.w;if(!w)return null;var cg=cid?(w.cd||[]).find(function(x){return x.id===cid}):cgPick(w);if(!cg)return null;
  var simple=mode==='s',vl=cgVehLines(cg),hr=cg.time?f12p(cg.time):'Sin hora',u=cgU(cg),kg=cgKg(cg),
   rows=(cg.items||[]).filter(function(it){return(+it.u||0)>0}).map(function(it){var n=+it.u||0;
-   var iw=iW(it);return[{img:1,b:iN(it)||'Sin producto',s:iw>0?f(iw,3)+' kg c/u':null},simple?{b:f(n)+' u',c:IF_Y}:{b:f(n)+' u',s:f(iKg(it),2)+' kg',c:IF_Y}]}),
+   var tkg=iKg(it),vw=(!simple&&n>0&&tkg>0)?tkg/n:0;return[{img:1,b:iN(it)||'Sin producto',s:vw>0?(Math.trunc(vw*100+1e-9)/100).toFixed(2)+' kg c/u':null},simple?{b:f(n)+' u',c:IF_Y}:{b:f(n)+' u',s:f(iKg(it),2)+' kg',c:IF_Y}]}),
   cfg=ifHead(c,w,'Detalle del cargue');
  var kL={v:dlab(cg.date),l:hr,q2:vl[0]||null,q3:vl[1]||null,c:IF_Y,i:'calendar'};
  if(simple)cfg.kpis=[kL,{v:f(u)+' u',l:'Total del cargue',c:IF_B,i:'truck'}];   /* Simple: misma simetría, solo unidades */
- else cfg.kpis=[kL,{v:f(kg,2)+' kg',l:'Total del cargue',q:f(u)+' u',c:IF_B,i:'truck'}];
+ else{var nP={};(cg.items||[]).forEach(function(it){if((+it.u||0)>0)nP[String(iN(it)||'Sin producto').trim().toLowerCase()]=1});
+  var kT={v:f(kg,2)+' kg',l:'Total del cargue',c:IF_B,i:'truck'};
+  if(Object.keys(nP).length===1)kT.q=f(u)+' u';   /* «= X u» solo si el viaje tiene UNA referencia; mixto: solo kilos (unidades van en la tabla) */
+  cfg.kpis=[kL,kT]}
  cfg.cols=[{h:'Producto',w:'1.5fr'},{h:'Cantidad',w:'1fr',al:'center',ir:1}];
  cfg.rows=rows;cfg.empty='Este cargue no tiene referencias.';
  cfg.file='cargue'+(simple?'-simple':'')+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+cg.date+(cg.time?'-'+String(cg.time).replace(/[^0-9]/g,''):'');
@@ -1011,7 +1078,7 @@ function shareCargS(){var id=nav.sc;shareGo('cargS:'+id,function(){return cfgCar
 /* ===== Pantalla principal (solo lectura) ===== */
 function catRO(w){var n=w.cat.length;
  return'<p class="sm" style="margin:0;color:var(--mu)">Solo lectura · '+(w.unit==='c'?'Liquidación por cargas'+(w.cw>0?' de '+f(w.cw,2)+' kg':''):'Liquidación por kilos')+'</p>'
- +(n?'<div class="ro-list">'+w.cat.map(function(p){var rt=refTot(w,p.name);return'<div class="ro-item"><span>'+esc(p.name)+'</span><b>'+f(p.w,3)+' kg c/u</b><span class="ro-tot">'+f(rt.u)+' u · '+f(rt.k,2)+' kg<small>producido</small></span></div>'}).join('')+'</div>':'<p class="empty">Aún no hay referencias. Créalas en Registro operativo › Gestión de productos.</p>')}
+ +(n?'<div class="ro-list">'+w.cat.map(function(p){var rt=refTot(w,p.name);return'<div class="ro-item"><span>'+esc(p.name)+'</span><b>'+truncarPromedio(p.w)+' kg c/u</b><span class="ro-tot">'+f(rt.u)+' u · '+f(rt.k,2)+' kg<small>producido</small></span></div>'}).join('')+'</div>':'<p class="empty">Aún no hay referencias. Créalas en Registro operativo › Gestión de productos.</p>')}
 function blkH(w){var kg=wKg(w),B=BL(w),h='<div class="panel" id="blk"><div class="ph"><h2>Registro por bloques</h2><span>'+f(kg,2)+' kg</span></div><p class="sm" style="margin:0 0 10px;color:#98A8B3">Se llena solo con los turnos guardados en Registro operativo. Toca un bloque para ver de dónde sale.</p><div class="tbl"><div class="tin"><div class="row hd"><i></i>'+SL.map(function(x){return'<div>'+x+'</div>'}).join('')+'<div>Total día</div></div>';
  for(var d=0,nd=wdays(w);d<nd;d++){var dd=ad(w.start,d),p=dayP(w,d);
   h+='<div class="row"><div class="dl">'+wdn(w,d)+'<b>'+dd.getDate()+'</b></div>';
@@ -1071,13 +1138,13 @@ function pjCells(w,r){var id=pjPid(w),p=id&&cp(id),kc=p?pjKc(w,id):0,
   +cell('Kilos por producir',f(Math.max(0,saldo),2)+' kg',f(r.tot,2)+' − '+f(prod,2),1)}
 function projRes(w){var r=projCalc(w);
  if(!(r.hrs>0))return'<p class="sm" style="margin:8px 0 0;color:var(--mu)">Aún no hay horas de molienda registradas. Registra turnos con hora de inicio y fin para ver la proyección.</p>';
- var a=r.cg?fc(r.avg/r.cw)+' cargas':f(r.avg,2)+' kg',t=r.cg?fc(r.tot/r.cw)+' cargas':f(r.tot,2)+' kg';
- return'<div class="pjg"><div><small>Promedio diario real</small><b>'+a+'</b><em>'+f(r.kph,1)+' kg/h × '+f(r.jh,0)+' h</em></div><div><small>Proyección total</small><b>'+t+'</b><em>'+f(r.pn,2)+' día'+(r.pn===1?'':'s')+(r.cg?' · '+f(r.tot,2)+' kg':'')+'</em></div>'+pjCells(w,r)+'</div>'}
+ var a=r.cg?fc(r.avg/r.cw)+' cargas':truncarPromedio(r.avg)+' kg',t=r.cg?fc(r.tot/r.cw)+' cargas':f(r.tot,2)+' kg';
+ return'<div class="pjg"><div><small>Promedio diario real</small><b>'+a+'</b><em>'+truncarPromedio(r.kph)+' kg/h × '+f(r.jh,0)+' h</em></div><div><small>Proyección total</small><b>'+t+'</b><em>'+f(r.pn,2)+' día'+(r.pn===1?'':'s')+(r.cg?' · '+f(r.tot,2)+' kg':'')+'</em></div>'+pjCells(w,r)+'</div>'}
 function projH(w){return'<section class="card2" id="projsec"><div class="pjt"><h2>Proyección de producción</h2><label class="pjd" title="Días de molienda">Días molienda<input id="pdays" aria-label="Días de molienda" type="number" inputmode="decimal" min="0.1" max="60" step="any" value="'+pdays(w)+'"></label></div>'
  +'<div class="pjf"><label>Producto<select id="pjpid">'+(w.cat||[]).map(function(p){return'<option value="'+p.id+'"'+(p.id===pjPid(w)?' selected':'')+'>'+esc(p.name.trim()||'(sin nombre)')+'</option>'}).join('')+'</select></label>'
- +'<label>Peso/canastilla (kg)<input id="pjkc" type="number" inputmode="decimal" min="0" step="any" placeholder="Peso del producto" value="'+(pjKc(w,pjPid(w))||'')+'"></label></div>'
+ +'<label>Peso/canastilla (kg)<input id="pjkc" type="number" inputmode="decimal" min="0" step="any" placeholder="Peso del producto" value="'+truncIn(pjKc(w,pjPid(w)))+'"></label></div>'
  +'<div id="projres">'+projRes(w)+'</div></section>'}
-function resView(w){return'<div class="sumh"><span class="sumt"><b>'+esc(cur().m.name)+'</b> · '+esc(wl(w))+(isCurW(w)?nowB():'<span class="nowb old">ANTERIOR</span>')+'</span><button class="btn g ico" type="button" id="btnShareRes" data-act="shareRes" aria-label="Compartir resumen como imagen" title="Compartir resumen como imagen">'+SHI2+'</button></div><div class="stats" id="stats">'+statsI(w)+'</div>'+empH(w)+'<section class="card2" id="catbox" style="margin:0 0 18px">'+catRO(w)+'</section>'+blkH(w)+projH(w)+cdH(w)+'<section class="card2 consd" id="cons">'+consI(w)+'</section>'+liqH(w)}
+function resView(w){return'<div class="sumh"><div class="sumt"><div class="stx"><div class="sl1"><b>'+esc(cur().m.name)+' · Molienda '+esc(wnum(w))+'</b></div><div class="sl2">'+esc(sd(pd(w.start))+' – '+sd(pd(wend(w))))+'</div></div>'+(isCurW(w)?nowB():'<span class="nowb old">ANTERIOR</span>')+'</div><div class="shg"><button class="btn g ico" type="button" id="btnShareRes" data-act="shareRes" aria-label="Compartir resumen como imagen" title="Compartir resumen como imagen">'+SHI2+'</button><button class="btn g" type="button" id="btnShareBod" data-act="shareBod" aria-label="Compartir existencias en bodega" title="Compartir existencias en bodega">📦 Bodega</button></div></div><div class="stats" id="stats">'+statsI(w)+'</div>'+empH(w)+'<section class="card2" id="catbox" style="margin:0 0 18px">'+catRO(w)+'</section>'+blkH(w)+projH(w)+cdH(w)+'<section class="card2 consd" id="cons">'+consI(w)+'</section>'+liqH(w)}
 
 /* ===== Módulo independiente: Registro detallado operativo ===== */
 function isPulv(p){return/^\s*pulverizada\s*$/i.test(p&&p.name||'')}
@@ -1105,26 +1172,81 @@ function stockU(w,p){var t=refTot(w,p.name),a=t.u-t.cu,k=String(p.name||'').trim
  ec=nav.editC&&(w.cd||[]).find(function(x){return x.id===nav.editC});
  if(ec)(ec.items||[]).forEach(function(it){if(it.pid===p.id||(!it.pid&&String(iN(it)||'').trim().toLowerCase()===k))a+=(+it.u||0)});
  return a}
-/* Línea «Disponible: X u | Quedará: Y u» bajo cada referencia del cargue */
-function stkHTML(av,v){var r=av-v;return'<div class="stk'+(r<0?' neg':'')+'" data-av="'+av+'"><span>Disponible: <b>'+f(av)+' u</b></span><span class="stk-s">|</span><span>Quedará: <b class="stk-r">'+f(r)+' u</b></span></div>'}
-/* Recalcula en vivo «Quedará» = bodega − cantidad escrita; en rojo si se pasa de lo disponible */
+/* Línea «Disponible: X u | Bodega: Y u | + ⚖️ Peso» bajo cada referencia del cargue */
+function stkHTML(av,v,p,it){var r=av-v,on=!!(it&&it.tk!=null&&+it.tk>0);
+ return'<div class="stk'+(r<0?' neg':'')+'" data-av="'+av+'"><span class="stk-l"><span>Disponible: <b>'+f(av)+' u</b></span><span class="stk-s">|</span><span>Bodega: <b class="stk-r">'+f(r)+' u</b></span></span>'
+  +(p?'<button type="button" class="qk-tg" data-act="tgKg" aria-expanded="'+on+'" aria-controls="kb_'+p.id+'"><span class="qk-plus" aria-hidden="true">+</span><span class="qk-tt">⚖️ Peso</span></button>':'')+'</div>'}
+/* Recalcula en vivo «Bodega» = bodega − cantidad escrita; en rojo si se pasa de lo disponible */
 function cStk(){document.querySelectorAll('#cql .qr[data-ref]').forEach(function(r){var s=r.querySelector('.stk'),i=r.querySelector('.qi');if(!s||!i)return;
  var av=+s.dataset.av||0,q=parseInt(i.value,10)||0,rest=av-q;s.querySelector('.stk-r').textContent=f(rest)+' u';s.classList.toggle('neg',rest<0);r.classList.toggle('over',rest<0)})}
+function estTxt(p,q){return'→ Total est: '+f((+q>0?+q*(+p.w||0):0),2)+' kg'}
 function qRows(w,items,key,t){var by={},leg=[],h='';
  (items||[]).forEach(function(it){if(it.pid&&w.cat.some(function(p){return p.id===it.pid}))by[it.pid]=it;else leg.push(it)});
  w.cat.forEach(function(p){var it=by[p.id],v=it?(+it[key]||0):0;
-  h+='<div class="qr" data-ref="'+p.id+'"><label for="q_'+p.id+'"><span>'+esc(p.name.trim()||'(sin nombre)')+'</span><small>'+f(p.w,3)+' kg c/u</small></label><input id="q_'+p.id+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"'+(key==='qty'?(t?' aria-label="Cantidad producida (valor fijo: no cambia al editar las horas)"':' readonly tabindex="-1" aria-label="Cantidad producida (calculada: bodega actual menos bodega anterior)"'):'')+'>'+(key==='qty'?bodHTML(t,p,v):'')+(key==='u'?stkHTML(stockU(w,p),v):'')+'</div>'});
+  h+='<div class="qr" data-ref="'+p.id+'"><label class="qn" for="q_'+p.id+'"><span>'+esc(p.name.trim()||'(sin nombre)')+'</span>'
+   +'<small class="qw"><em>'+truncarPromedio(p.w)+' kg c/u</em>'+(key==='u'?'<b class="qe'+(v>0?' on':'')+'">'+estTxt(p,v)+'</b>':'')+'</small></label>'
+   +'<input id="q_'+p.id+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"'+(key==='qty'?(t?' aria-label="Cantidad producida (valor fijo: no cambia al editar las horas)"':' readonly tabindex="-1" aria-label="Cantidad producida (calculada: bodega actual menos bodega anterior)"'):'')+'>'
+   +(key==='qty'?bodHTML(t,p,v):'')+(key==='u'?stkHTML(stockU(w,p),v,p,it)+kgHTML(p,it):'')+'</div>'});
  leg.forEach(function(it,i){var v=+it[key]||0;
   h+='<div class="qr" data-leg="1" data-ln="'+esc(iN(it))+'" data-lw="'+(iW(it)||0)+'"'+(it.tk!=null?' data-ltk="'+(+it.tk||0)+'" data-lu="'+v+'"':'')+'><label for="q_l'+i+'"><span>'+esc(iN(it)||'Sin producto')+'</span><small>sin catálogo</small></label><input id="q_l'+i+'" class="qi" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="'+(v||'')+'"></div>'});
  return h||'<p class="empty" style="padding:6px 0">No hay referencias. Créalas en Gestión de productos.</p>'}
-function qCollect(rootId,key){var out=[],bad=false,root=$(rootId);
+/* ===== Peso en báscula por referencia (cargues) ===== */
+/* Campo «Peso total del cargue (kg)» bajo la cantidad de cada referencia + línea en vivo «Promedio de este cargue» */
+function tgKg(btn){
+ var row=btn.closest('.qr'),wrap=row&&row.querySelector('.qk-wrap');if(!wrap)return;
+ var open=!wrap.classList.contains('open'),inp=wrap.querySelector('.qkg');
+ if(inp){
+  if(open){if(inp.value===''&&inp.dataset.prev)inp.value=inp.dataset.prev}
+  else{if(inp.value!=='')inp.dataset.prev=inp.value;inp.value=''}
+ }
+ wrap.classList.toggle('open',open);
+ btn.setAttribute('aria-expanded',open);
+ cPrev();
+ if(open&&inp&&inp.value==='')setTimeout(function(){inp.focus({preventScroll:true})},150)}
+function kgHTML(p,it){
+ var v=it&&it.tk!=null&&+it.tk>0?+it.tk:'';
+ return'<div class="qk-wrap'+(v!==''?' open':'')+'"><div class="qk-body" id="kb_'+p.id+'"><div class="qk-in">'
+  +'<div class="qk"><label for="k_'+p.id+'"><span>Peso total del cargue (kg)</span><small class="qk-avg" aria-live="polite"></small></label>'
+  +'<input id="k_'+p.id+'" class="qkg" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="'+v+'" aria-label="Peso total del cargue en kilos, según la báscula (opcional)"></div>'
+  +'</div></div></div>'}
+/* Total estimado en vivo en la cabecera de cada tarjeta de cargue */
+function cEst(){document.querySelectorAll('#cql .qr[data-ref]').forEach(function(r){
+ var e=r.querySelector('.qe'),i=r.querySelector('.qi'),p=cp(r.dataset.ref);if(!e||!i||!p)return;
+ var q=parseInt(i.value,10)||0;e.textContent=estTxt(p,q);e.classList.toggle('on',q>0)})}
+/* Recalcula en vivo «Promedio de este cargue: X.XX kg/u» = kilos de báscula ÷ unidades de esa referencia */
+function cAvg(){document.querySelectorAll('#cql .qr[data-ref]').forEach(function(r){var k=r.querySelector('.qkg'),a=r.querySelector('.qk-avg'),i=r.querySelector('.qi');if(!k||!a||!i)return;
+ var u=parseInt(i.value,10)||0,kg=parseFloat(k.value),has=String(k.value).trim()!=='';a.classList.remove('warn');
+ if(has&&!(kg>0)){a.textContent='El peso debe ser mayor que 0.';a.classList.add('warn')}
+ else if(kg>0&&u>0)a.innerHTML='Promedio de este cargue: <b>'+truncarPromedio(kg/u)+' kg/u</b>';
+ else if(kg>0){a.textContent='Escribe la cantidad (u) para calcular el promedio.';a.classList.add('warn')}
+ else a.textContent=''})}
+/* ===== Promedio ponderado por referencia de la molienda =====
+   Suma los kilos de báscula y las unidades de TODOS los cargues de la molienda que tengan peso para esa referencia:
+   promedio = Σ kilos ÷ Σ unidades. Los cargues aún sin peso no entran (no tienen kilos reales que aportar) y siguen
+   valiéndose del promedio vigente. Actualiza p.w (el «kg c/u» del catálogo), del que salen Producido, Bodega,
+   Consolidado, rendimiento y proyecciones. Si ninguna salida de esa referencia tiene peso, no se toca p.w. */
+function promRef(w,p){var K=0,U=0,nm=String(p.name||'').trim().toLowerCase();
+ (w.cd||[]).forEach(function(c){(c.items||[]).forEach(function(it){
+  var mine=it.pid?it.pid===p.id:String(it.name||'').trim().toLowerCase()===nm,u=+it.u||0,tk=it.tk!=null?+it.tk:0;
+  if(mine&&u>0&&tk>0){K+=tk;U+=u}})});
+ return U>0?{k:K,u:U,avg:K/U}:null}
+function actualizarPromedios(w,pids){var n=0,ids=pids&&pids.length?pids:(w.cat||[]).map(function(p){return p.id});
+ ids.forEach(function(id,i){if(ids.indexOf(id)!==i)return;var p=(w.cat||[]).find(function(x){return x.id===id});if(!p)return;
+  var r=promRef(w,p);if(!r)return;var avg=Math.round(r.avg*1e6)/1e6;
+  if(Math.abs((+p.w||0)-avg)>1e-9){p.w=avg;n++}});
+ return n}
+function cPids(c){return(c&&c.items||[]).map(function(it){return it.pid}).filter(Boolean)}
+function qCollect(rootId,key){var out=[],bad=false,kgBad=false,root=$(rootId);
  if(!root)return{items:out,bad:false};
  root.querySelectorAll('.qr').forEach(function(r){var inp=r.querySelector('.qi'),raw=String(inp.value).trim(),q=parseInt(raw,10);
-  if(raw!==''&&!(q>=0))bad=true;if(!(q>0))return;
+  if(raw!==''&&!(q>=0))bad=true;
+  var kin=key==='u'?r.querySelector('.qkg'):null,kraw=kin?String(kin.value).trim():'',kn=kraw===''?null:parseFloat(kraw);
+  if(kraw!==''&&!(kn>0))kgBad=true;
+  if(!(q>0)){if(kn>0)kgBad=true;return}
   var it;if(r.dataset.ref){var p=cp(r.dataset.ref);if(!p)return;it={pid:p.id,name:p.name,w:p.w}}
   else{it={pid:null,name:r.dataset.ln,w:+r.dataset.lw||0};if(r.dataset.ltk!=null&&q===+r.dataset.lu)it.tk=+r.dataset.ltk}
-  it[key]=q;out.push(it)});
- return{items:out,bad:bad}}
+  it[key]=q;if(kn>0)it.tk=Math.round(kn*100)/100;out.push(it)});
+ return{items:out,bad:bad,kgBad:kgBad}}
 /* ===== Control de empaques e inventario de vacíos =====
    Todo se guarda dentro de la molienda (w.em.ing) → cada molienda nueva arranca en 0.
    Registros: {k:'c', cls, cpp, pid, q(paquetes)} · {k:'k', sz:'p'|'g', q, date, pid?} · {k:'s', pid?, q}
@@ -1207,7 +1329,7 @@ function empH(w){var R=empInv(w);if(!(R.has.k||R.has.c||R.has.s))return'';var T=
  return'<section class="panel empc" id="empc"><div class="ph"><h2>Empaques desocupados</h2><span>vacíos en el trapiche</span></div><div class="empg">'+T.join('')+'</div></section>'}
 function catHTML(w){var n=w.cat.length,h='<div class="cath"><h2>Gestión de productos</h2><button class="btn g s btn-sm" type="button" data-act="empCfg" id="btnEmpCfg">📦 Empaques</button></div><p class="sm" style="margin:2px 0 6px;color:var(--mu)">Escribe cada referencia con sus kilos por unidad y toca «+ Agregar». Cualquier cambio se guarda y se refleja al instante en los cálculos y en el Inventario detallado. Solo la última referencia se puede eliminar (✕), y únicamente si aún no tiene movimientos.</p>';
  h+='<div class="unitrow"><label>Unidad de liquidación<select id="unitsel" aria-label="Unidad"><option value="k"'+(w.unit!=='c'?' selected':'')+'>Kilos</option><option value="c"'+(w.unit==='c'?' selected':'')+'>Cargas</option></select></label>'+(w.unit==='c'?'<label>Kilos por carga<input id="cgw" type="number" inputmode="decimal" min="0" step="any" placeholder="Ej. 65" value="'+(w.cw||'')+'"></label>':'')+'</div>';
- if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span><span></span></div>'+w.cat.map(function(p,ix){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+(p.w||'')+'" aria-label="Kilos por unidad">'+(ix===w.cat.length-1&&(canMod(p)||role==='owner')?'<button class="btn d s x" type="button" data-own="1" data-act="delCat" data-id="'+p.id+'" aria-label="Eliminar '+esc(p.name)+'" title="Eliminar la última referencia">✕</button>':'<span></span>')+'</div>'}).join('');
+ if(n)h+='<div class="cr crh"><span>Referencia</span><span>Kilos c/u</span><span></span></div>'+w.cat.map(function(p,ix){return'<div class="cr" data-pid="'+p.id+'"><input class="cnm" value="'+esc(p.name)+'" aria-label="Nombre de la referencia" autocomplete="off"><input class="cwt" type="number" inputmode="decimal" min="0" step="any" value="'+truncIn(p.w)+'" aria-label="Kilos por unidad">'+(ix===w.cat.length-1&&(canMod(p)||role==='owner')?'<button class="btn d s x" type="button" data-own="1" data-act="delCat" data-id="'+p.id+'" aria-label="Eliminar '+esc(p.name)+'" title="Eliminar la última referencia">✕</button>':'<span></span>')+'</div>'}).join('');
  return h+'<div class="cr add"><input id="cnn" placeholder="Referencia" aria-label="Nombre de la nueva referencia" autocomplete="off"><input id="cnw" type="number" inputmode="decimal" min="0" step="any" placeholder="Kilos" aria-label="Kilos por unidad"><button class="btn s" type="button" data-act="addCat">+ Agregar</button></div><p class="err" id="caterr" role="alert"></p>'}
 function tForm(w){var t=nav.editT&&(w.t||[]).find(function(x){return x.id===nav.editT}),le=t?null:tLe(w),ch=!!le&&!nav.tUnlock,cs=(t||le)?null:colSyn(w),
  dv=t?t.date:le?le.date:cs?cs.date:clampD(w,nav.tDate),sv=t?t.start:le?le.time:cs?cs.time:'',ro=ch?' readonly':'',note='';
@@ -1259,18 +1381,21 @@ function cForm(w){var c=nav.editC&&w.cd.find(function(x){return x.id===nav.editC
  return'<section class="card2" id="secCargues"><h2>'+(c?'Editar cargue / salida':'Ingreso de cargues / salidas')+'</h2><p class="sm" style="margin:2px 0 8px;color:var(--mu)">Una salida puede llevar varias referencias. Se suman solas al detalle de cargues y al consolidado de la pantalla principal.</p>'+(w.cat.length?'':'<p class="sm" style="color:var(--late)">Primero crea las referencias en Gestión de productos.</p>')
  +'<div id="cform"><div class="fgrid"><label>Fecha<input id="cdate" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label><label>Hora'+tp('ctime',c&&c.time?c.time:'',false)+'</label>'
  +'<label>Placa<input id="cv" type="text" placeholder="Ej. ABC123" value="'+esc(cgPlaca(c))+'" autocomplete="off" autocapitalize="characters" spellcheck="false"></label><label>Conductor <small style="color:var(--mu)">(opcional)</small><input id="cdr" type="text" autocapitalize="words" placeholder="Ej. Juan Pérez" value="'+esc(cgCond(c))+'" autocomplete="off"></label></div>'
- +'<p class="qh">Cantidad cargada por referencia</p><div class="ql" id="cql">'+qRows(w,c?c.items:null,'u')+'</div></div>'
+ +'<p class="qh">Cantidad cargada por referencia</p><p class="sm" style="margin:-2px 0 8px;color:var(--mu)">Basta con la cantidad (u) para descontar de bodega al instante. El peso de báscula es opcional: ingrésalo ahora o complétalo después desde Historial › Editar.</p><div class="ql" id="cql">'+qRows(w,c?c.items:null,'u')+'</div></div>'
  +'<p class="tot" id="cprev"></p><p class="err" id="cerr" role="alert"></p><div class="actions">'+(c?'<button class="btn g" type="button" data-act="cancelC">Cancelar</button>':'')+'<button class="btn" type="button" data-act="saveC">'+(c?'Guardar cambios':'Guardar salida')+'</button></div></section>'}
-function cPrev(){cStk();var el=$('cprev');if(!el)return;var r=qCollect('cql','u'),u=0,k=0;r.items.forEach(function(it){u+=it.u;k+=it.tk!=null?it.tk:it.u*(+it.w||0)});el.textContent=u?'Total del cargue: '+f(u)+' u · '+f(k,2)+' kg':''}
+function cPrev(){cStk();cEst();cAvg();var el=$('cprev');if(!el)return;var r=qCollect('cql','u'),u=0,k=0;r.items.forEach(function(it){u+=it.u;k+=it.tk!=null?it.tk:it.u*(+it.w||0)});el.textContent=u?'Total del cargue: '+f(u)+' u · '+f(k,2)+' kg':''}
 function saveC(){var w=cur().w,er=$('cerr');function bad(m){er.textContent=m}
  var date=$('cdate').value,tm=tv('ctime'),vh=fmtPlaca($('cv').value),dr=capW(($('cdr').value||'').trim()),r=qCollect('cql','u');
  if(!date||date<w.start||date>wend(w))return bad('Elige una fecha dentro de la semana ('+wl(w)+').');
  if(!tm)return bad('Ingresa la hora de la salida.');
  if(r.bad)return bad('Las cantidades deben ser números enteros, sin negativos.');
+ if(r.kgBad)return bad('El peso total (kg) debe ser mayor que 0 y solo se puede ingresar junto con la cantidad (u) de esa referencia.');
  if(!r.items.length)return bad('Ingresa la cantidad cargada de al menos una referencia.');
  var its=r.items.map(function(x){var o={id:uid(),pid:x.pid,name:x.name,u:x.u,w:x.w};if(x.tk!=null)o.tk=x.tk;return o}),old=nav.editC&&w.cd.find(function(x){return x.id===nav.editC});
  if(old&&!canMod(old))return bad('Solo puedes modificar los registros que tú creaste.');
+ var tocadas=cPids(old).concat(its.map(function(x){return x.pid}).filter(Boolean));
  if(old){old.date=date;old.time=tm;old.vh=vh;old.dr=dr;old.items=its}else w.cd.push({id:uid(),date:date,time:tm,vh:vh,dr:dr,items:its,by:opName(),creadoPor:opName(),createdAt:nowISO()});
+ actualizarPromedios(w,tocadas);   /* promedio ponderado de cada referencia tocada → catálogo (p.w) */
  nav.editC=null;nav.cDate=date;save();cloudAfterForm();fsel='#ctime_h';render()}
 /* Saldo en bodega (u) al cierre de cada registro: parte del último conteo físico (bodega actual) guardado hasta ese momento,
    suma la producción posterior y resta las salidas posteriores. Si el turno tiene su bodega actual, muestra exactamente ese valor. */
@@ -1289,13 +1414,18 @@ function histRows(w){var R=[];
  (w.t||[]).forEach(function(t){R.push({k:'t',id:t.id,date:t.date,time:t.start,o:t})});
  w.cd.forEach(function(c){R.push({k:'c',id:c.id,date:c.date,time:c.time||'',o:c})});
  R.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:a.time<b.time?-1:a.time>b.time?1:0});return R}
+/* Línea de producto de un cargue en el Historial:
+   con peso → «Pastilla: 10 u | Total: 210 kg (21.0 kg/u)» · sin peso → «Pastilla: 10 u | (Pendiente peso de báscula)» */
+function hCg(it){var u=+it.u||0,tk=it.tk!=null?+it.tk:0;
+ return'<div class=\"hr hc\"><span class=\"hcn\">'+esc(iN(it)||'Sin producto')+':</span> <span class=\"hcq\"><b>'+f(u)+'</b> u</span><span class=\"hcs\">|</span>'
+  +(tk>0&&u>0?'<span class=\"hct\">Total: <b>'+f(tk,2)+'</b> kg <em>('+truncarPromedio(tk/u)+' kg/u)</em></span>':'<span class=\"hcp\">(Pendiente peso de báscula)</span>')+'</div>'}
 function histI(w){var m=nav.hf==='d'?'d':'w',dv=clampD(w,nav.hd),pu=0,pk=0,cu=0,ck=0,h='',R=histRows(w).filter(function(r){return m==='w'||r.date===dv}),desc=nav.hs!=='asc';if(desc)R.reverse();
  var TL=bodTL(),CL=bodCL(),NM=bodNames(TL,CL);
  R.forEach(function(r){var isT=r.k==='t',x=r.o,its=isT?tItems(x):x.items,q=isT?tU(x):cgU(x),kg=isT?tKg(x):cgKg(x);
   if(isT){pu+=q;pk+=kg}else{cu+=q;ck+=kg}
   h+='<tr><td><span class="tag '+(isT?'t':'c')+'">'+(isT?'Turno':'Salida')+'</span></td><td class="l">'+dlab(r.date)+(x.by?'<small>'+esc(x.by)+'</small>':'')+'</td>'
    +'<td>'+(isT?'<div class="hh"><span>'+esc(f12p(x.start))+'</span><span>'+esc(f12p(x.end))+'</span><small>'+hl(tdur(x))+'</small>'+(hm(x.end)<=hm(x.start)?'<small>cruza medianoche</small>':'')+'</div>':(r.time?'<div class="hh"><span>'+esc(f12p(r.time))+'</span></div>':'–'))+'</td>'
-   +'<td class="l">'+its.map(function(it){var n=isT?+it.qty:+it.u;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+f(iw,3)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+(!isT&&cgPlaca(x)?'<small class="hvh">Vehículo: '+esc(cgPlaca(x))+'</small>':'')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
+   +'<td class="l">'+its.map(function(it){if(!isT)return hCg(it);var n=+it.qty;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+truncarPromedio(iw)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+(!isT&&cgPlaca(x)?'<small class="hvh">Vehículo: '+esc(cgPlaca(x))+'</small>':'')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
   var rows=NM.map(function(k){var sb=saldoAt(ek,TL,CL,[k]);if(!sb&&!own[k])return'';if(sb<0)ng=true;
    var nm=k;TL.concat(CL).some(function(e){return(e.t?e.t.items:e.c.items||[]).some(function(it){if(bnm(iN(it))===k){nm=iN(it).trim()||k;return true}})});
    return'<div class=\"bl\"><span>'+esc(nm)+'</span><b>'+f(sb)+' u</b></div>'}).join('');
@@ -1313,14 +1443,14 @@ function regView(w){
 function renBods(o,n){var ko=bnm(o),kn=bnm(n);if(ko===kn)return;var c=cur();if(!c.m)return;
  c.m.weeks.forEach(function(w){(w.t||[]).forEach(function(t){if(t.bods&&t.bods[ko]!=null&&t.bods[kn]==null){t.bods[kn]=t.bods[ko];delete t.bods[ko]}})})}
 function syncCards(){document.querySelectorAll('#tql .qr[data-ref],#cql .qr[data-ref]').forEach(function(r){var p=cp(r.dataset.ref);if(!p)return;
-  var sp=r.querySelector('label span'),sm=r.querySelector('label small'),nm=p.name.trim()||'(sin nombre)',wt=f(p.w,3)+' kg c/u';
+  var sp=r.querySelector('.qn span'),sm=r.querySelector('.qw em'),nm=p.name.trim()||'(sin nombre)',wt=truncarPromedio(p.w)+' kg c/u';
   if(sp&&sp.textContent!==nm)sp.textContent=nm;if(sm&&sm.textContent!==wt)sm.textContent=wt})}
 function catIn(t){var r=t.closest('.cr'),p=cp(r.dataset.pid),er=$('caterr');if(!p)return;if(er)er.textContent='';
  if(t.classList.contains('cnm')){var v=t.value.trim();if(!v){er.textContent='El nombre no puede quedar vacío.';return}if(catDup(v,p.id)){er.textContent='Ya existe una referencia con ese nombre.';return}renBods(p.name,v);p.name=v}
  else p.w=Math.max(0,parseFloat(t.value)||0);
  save();updWeek()}
 function updWeek(){var w=cur().w;
- ['tsel','csel'].forEach(function(id){var s=$(id);if(!s)return;for(var i=0;i<s.options.length;i++){var o=s.options[i],p=o.value&&o.value!=='_'?cp(o.value):null;if(p)o.textContent=(p.name.trim()||'(sin nombre)')+' · '+f(p.w,3)+' kg'}});
+ ['tsel','csel'].forEach(function(id){var s=$(id);if(!s)return;for(var i=0;i<s.options.length;i++){var o=s.options[i],p=o.value&&o.value!=='_'?cp(o.value):null;if(p)o.textContent=(p.name.trim()||'(sin nombre)')+' · '+truncarPromedio(p.w)+' kg'}});
  syncCards();var h=$('hist');if(h)h.innerHTML=histI(w);var pj0=$('projres');if(pj0&&w)pj0.innerHTML=projRes(w);tPrev();cPrev()}
 function tabs(){var m=nav.mode==='reg'?'reg':'res';
  return'<div class="tabs" role="tablist" aria-label="Vista de la molienda"><button class="tab" type="button" role="tab" aria-selected="'+(m==='res')+'" data-act="tab" data-id="res">Pantalla principal</button><button class="tab" type="button" role="tab" aria-selected="'+(m==='reg')+'" data-act="tab" data-id="reg">Registro operativo</button></div>'}
@@ -1620,6 +1750,7 @@ document.addEventListener('click',function(ev){
  else if(a==='cell'){cellView(+ds.d,+ds.s);return}
  else if(a==='shareRes'){ev.preventDefault();shareRes();return}
  else if(a==='shareCons'){ev.preventDefault();shareCons();return}
+ else if(a==='shareBod'){ev.preventDefault();shareBod();return}
  else if(a==='shareLiq'){ev.preventDefault();shareLiq();return}
  else if(a==='shareHist'){ev.preventDefault();shareHist();return}
  else if(a==='shareCarg'){ev.preventDefault();cargMenu(ds.d);return}
@@ -1633,10 +1764,11 @@ document.addEventListener('click',function(ev){
  else if(a==='histSort'){nav.hs=nav.hs==='asc'?'desc':'asc';var hh=$('hist');if(hh)hh.innerHTML=histI(cur().w);sharePrepSoon();return}
  else if(a==='editT'){nav.editT=id;nav.sec='secTurnos';render();scrollTo(0,0);return}
  else if(a==='delT')conf('Eliminar turno','Se quita este turno y sus horas y cantidades se descuentan de los bloques.',function(){c.w.t=c.w.t.filter(function(x){return x.id!==id});if(nav.editT===id)nav.editT=null});
+ else if(a==='tgKg'){tgKg(t);return}
  else if(a==='saveC'){saveC();return}
  else if(a==='cancelC'){nav.editC=null}
  else if(a==='editC'){nav.editC=id;nav.sec='secCargues';render();scrollTo(0,0);return}
- else if(a==='delC')conf('Eliminar cargue','Se borra este cargue y se descuenta del consolidado.',function(){c.w.cd=c.w.cd.filter(function(x){return x.id!==id});if(nav.editC===id)nav.editC=null});
+ else if(a==='delC')conf('Eliminar cargue','Se borra este cargue y se descuenta del consolidado.',function(){var gone=c.w.cd.find(function(x){return x.id===id});c.w.cd=c.w.cd.filter(function(x){return x.id!==id});actualizarPromedios(c.w,cPids(gone));if(nav.editC===id)nav.editC=null});
  else if(a==='empCfg'){empCfg(id);return}
  else if(a==='empAdd'){empAdd();return}
  else if(a==='empTab'){empTab(id);return}
@@ -1669,11 +1801,11 @@ if(t.id==='cgw'){var wq=cur().w;wq.cw=Math.max(0,parseFloat(t.value)||0);save();
 document.addEventListener('change',function(ev){var t=ev.target;
  if(t.id==='cgsel'){nav.sc=t.value;cargRefresh();sharePrepSoon(0);return}
  if(t.id==='cdate'||t.id==='tdate'||t.id==='hd'){var wr=cur().w;if(wr&&!inWeek(wr,t.value)){t.value=snapD(wr,t.value);var er0=$(t.id==='cdate'?'cerr':t.id==='tdate'?'terr':'');if(er0)er0.textContent='Esa fecha está fuera de la semana ('+wl(wr)+'). Se ajustó a '+t.value+'.'}}
- if(t.id==='pjpid'){var wp=cur().w;if(!wp)return;wp.pjp=t.value;save();var kk=$('pjkc');if(kk)kk.value=pjKc(wp,t.value)||'';var pk3=$('projres');if(pk3)pk3.innerHTML=projRes(wp);return}
+ if(t.id==='pjpid'){var wp=cur().w;if(!wp)return;wp.pjp=t.value;save();var kk=$('pjkc');if(kk)kk.value=truncIn(pjKc(wp,t.value));var pk3=$('projres');if(pk3)pk3.innerHTML=projRes(wp);return}
 if(t.id==='pdays'){var w1=cur().w;if(w1){t.value=pdays(w1);var pr=$('projres');if(pr)pr.innerHTML=projRes(w1)}return}
  if(t.id==='fs'&&D.dataset.auto==='1'&&t.value&&$('fe'))$('fe').value=iso(ad(t.value,6));
  if(t.id==='fe')D.dataset.auto='0';
- if(t.classList.contains('cnm')||t.classList.contains('cwt')){var pp=cp(t.closest('.cr').dataset.pid);if(pp)t.value=t.classList.contains('cnm')?pp.name:(pp.w||'');return}
+ if(t.classList.contains('cnm')||t.classList.contains('cwt')){var pp=cp(t.closest('.cr').dataset.pid);if(pp)t.value=t.classList.contains('cnm')?pp.name:truncIn(pp.w);return}
  if(t.closest('#tform')){tPrev(t);return}
  if(t.closest('#cform')){cPrev();return}
  var w=cur().w;if(!w)return;
@@ -1783,7 +1915,7 @@ function sha256(ascii){
  return res}
 
 var SK='gestion-moliendas-session',LK='gestion-moliendas-lock',MK='gestion-moliendas-lgmode',PH='f14f1ef625b4760ea96c2b8256dc6f284a515023b2a66d2d7c06c294a095482b',lgMode='e';
-var OWNOK={openY:1,openW:1,cell:1,shareRes:1,shareCons:1,shareLiq:1,shareCarg:1,shareCargF:1,shareCargS:1,copyLiq:1,cloudNow:1,jump:1};
+var OWNOK={openY:1,openW:1,cell:1,shareRes:1,shareCons:1,shareBod:1,shareLiq:1,shareCarg:1,shareCargF:1,shareCargS:1,copyLiq:1,cloudNow:1,jump:1};
 function nk(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim()}
 function h256(s){return sha256(unescape(encodeURIComponent(s)))}
 function findMill(code){var k=nk(code),r=null;if(!k)return null;db.years.forEach(function(y){y.mills.forEach(function(m){if(!r&&nk(m.name)===k)r=m.name})});return r}
