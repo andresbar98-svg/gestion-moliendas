@@ -1290,7 +1290,7 @@ function pwView(cid){var w=cur().w,c=w&&(w.cd||[]).find(function(x){return x.id=
  var b='<p class="sm" style="margin:0 0 6px"><b>'+esc(cgLabel(c))+'</b></p>';
  (c.items||[]).forEach(function(it,i){var a=pwArr(it);if(!a.length)return;var q=pqArr(it),us=pqSum(q),tot=pwSum(a);
   b+='<div class="pwv"><div class="pwv-h"><b>'+esc(iN(it)||'Sin producto')+'</b><small style="color:var(--mu)">'+f(+it.u||0)+' u</small></div>'
-   +'<p class="pwv-s"><b style="color:var(--ink)">'+a.length+'</b> '+(a.length===1?'pesada':'pesadas')+' · Total: <b style="color:var(--ink)">'+pwF(tot)+' kg</b> · Promedio: <b style="color:var(--ink)">'+truncarPromedio(tot/a.length)+' kg</b> por pesada'+(us>0?' · <b style="color:var(--ink)">'+f(us)+' u</b> en pesadas':'')+'</p>'
+   +'<p class="pwv-s"><b style="color:var(--ink)">'+a.length+'</b> '+(a.length===1?'pesada':'pesadas')+' · Total: <b style="color:var(--ink)">'+pwF(tot)+' kg</b> · Promedio: <b style="color:var(--ink)">'+truncarPromedio(tot/a.length)+' kg</b> por pesada'+(us>0?' · <b style="color:var(--ink)">'+f(us)+' u</b> en pesadas':'')+((us>0?us:(+it.u||0))>0?'<br>Promedio por unidad: <b style="color:var(--ink)">'+truncarPromedio(tot/(us>0?us:(+it.u||0)))+' kg c/u</b>':'')+'</p>'
    +'<ul class="pwv-l">'+a.map(function(x,j){return'<li><span>#'+(j+1)+'</span>'+(q[j]>0?'<em>'+q[j]+' u</em>':'')+'<b>'+pwF(x)+' kg</b></li>'}).join('')+'</ul>'
    +'<button class="btn" type="button" data-act="pwShare" data-id="'+c.id+'" data-i="'+i+'">🖼️ Generar comprobante (imagen)</button></div>'});
  ask('Detalle de pesadas',b,null)}
@@ -1302,7 +1302,7 @@ function cfgPes(cid,idx){var c=cur(),w=c.w;if(!w)return null;var cg=(w.cd||[]).f
   cfg=ifHead(c,w,'Pesadas · '+(nm.length>16?nm.slice(0,15).trim()+'…':nm));
  var kT={v:pwF(tot)+' kg',l:'Peso total · '+n+(n===1?' pesada':' pesadas'),c:IF_B,i:'scale'};if(hasU)kT.q=f(us)+' u';
  cfg.kpis=[{v:dlab(cg.date),l:hr,q2:vl[0]||null,q3:vl[1]||null,c:IF_Y,i:'calendar'},kT,
-  {v:truncarPromedio(tot/n)+' kg',l:'Promedio por pesada',c:IF_G,i:'hash'}];
+  (function(){var kA={v:truncarPromedio(tot/n)+' kg',l:'Promedio por pesada',c:IF_G,i:'hash'},ud=hasU?us:(+it.u||0);if(ud>0)kA.q2=truncarPromedio(tot/ud)+' kg c/u';return kA})()];
  if(n>10){var half=Math.ceil(n/2);
   cfg.cols=[{h:'Pesada',w:hasU?'1.15fr':'.7fr'},{h:'Peso (kg)',w:hasU?'.85fr':'1.3fr',al:'center'},{h:'Pesada',w:hasU?'1.15fr':'.7fr',al:'center'},{h:'Peso (kg)',w:hasU?'.85fr':'1.3fr',al:'center'}];
   var lb=function(j){return'#'+(j+1)+(hasU&&q[j]>0?' · '+q[j]+' u':'')};
@@ -2087,7 +2087,7 @@ document.addEventListener('click',function(ev){var t=ev.target.closest('[data-lg
   if(g==='out')logout();else if(g==='go')lgGo();
   else{lgMode=g;try{localStorage.setItem(MK,g)}catch(e){}lgPaint();$('lgIn').focus()}});
 $('login').addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.id==='lgIn'){ev.preventDefault();lgGo()}});
-var APP_VERSION='v1.0.18';window.APP_VERSION=APP_VERSION;
+var APP_VERSION='v1.0.20';window.APP_VERSION=APP_VERSION;
 ['appVer','lgVer'].forEach(function(i){var e=$(i);if(e)e.textContent='Gestión de moliendas · '+APP_VERSION});
 try{document.title='La Molienda '+APP_VERSION;console.info('La Molienda',APP_VERSION)}catch(e){}
 /* Pedir al navegador que NO borre los datos locales al liberar espacio o reiniciar */
