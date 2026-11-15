@@ -231,6 +231,37 @@ td.l,th.l{text-align:left}td.ac{white-space:nowrap}td.ac .btn{margin-left:4px}
 .qr .qk-in{overflow:hidden;min-height:0}
 .qr .qk-in .qk{border-top:0;padding-top:4px}
 @media (prefers-reduced-motion:reduce){.qr .qk-body,.qr .qk-plus,.qr .qk-wrap{transition:none}}
+/* ===== Cargues: pesada por pesada (detalle de báscula) ===== */
+.qr .qmode{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 2px}
+.qr .qmode-l{font:600 13px/1.15 var(--fb);color:var(--ink)}
+.qr .qseg{display:inline-flex;border:1px solid var(--ln);border-radius:8px;overflow:hidden;flex:none}
+.qr .qseg button{min-width:48px;min-height:32px;padding:4px 12px;border:0;background:var(--bg);color:var(--mu);font:700 13px/1 var(--fb);cursor:pointer}
+.qr .qseg button+button{border-left:1px solid var(--ln)}
+.qr .qseg button.on{background:var(--cane);color:#fff}
+.qr .qseg button:focus-visible{outline:2px solid var(--st);outline-offset:-2px}
+.qr .qk-wrap.det .qk input.qkg{opacity:.85;background:transparent}
+.qr .qd{display:none;padding-top:8px;margin-top:6px;border-top:1px dashed var(--ln)}
+.qr .qk-wrap.det .qd{display:block}
+.qr .qd-add{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) 52px;gap:6px;align-items:center}.qr .qd-add .btn{grid-column:auto;width:52px;min-width:0;padding:0;font-size:26px;line-height:1}.qr .qd-list li em{font-style:normal;font-size:12px;color:var(--st);flex:1 1 0;min-width:0;text-align:center;white-space:nowrap}.qr .qd-sum.warn,.qr .qd-sum.warn b{color:var(--late)}
+.qr .qd-add .btn{min-height:40px;white-space:nowrap}
+.qr .qd-err{margin:4px 0 0;min-height:0;font-size:12px;color:var(--late)}
+.qr .qd-err:empty{display:none}
+.qr .qd-list{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;max-height:236px;overflow:auto}
+.qr .qd-list li{display:flex;align-items:center;gap:2px;padding:2px 2px 2px 6px;border:1px solid var(--ln);border-radius:6px;background:var(--sf);font-size:13px;min-width:0}.qr .qd-list li.ed{border-color:var(--st);box-shadow:0 0 0 1px var(--st)}
+.qr .qd-list li span{color:var(--mu);font-size:11px;flex:none}
+.qr .qd-list li b{flex:0 0 auto;margin-left:auto;min-width:0;text-align:right;font-variant-numeric:tabular-nums;font-size:13px;padding-right:2px}
+.qr .qd-list li button{flex:none;width:24px;height:32px;border:0;border-radius:6px;background:none;color:var(--late);font:700 15px/1 var(--fb);cursor:pointer;padding:0;text-align:center}.qr .qd-list li button.pe{color:var(--st)}
+.qr .qd-sum{margin:8px 0 0;font-size:13px;color:var(--mu)}
+.qr .qd-sum b{color:var(--ink)}
+.pwb{margin-top:6px}
+.pwv{padding:8px 0;border-top:1px dashed var(--ln)}
+.pwv:first-of-type{border-top:0}
+.pwv-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pwv-s{margin:4px 0 6px;font-size:13px;color:var(--mu)}
+.pwv-l{list-style:none;margin:0 0 8px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:4px;max-height:220px;overflow:auto}
+.pwv-l li{display:flex;justify-content:space-between;gap:6px;padding:3px 8px;border:1px solid var(--ln);border-radius:6px;font-size:13px}
+.pwv-l li span{color:var(--mu)}.pwv-l li em{flex:1 1 0;text-align:center;font-style:normal;color:var(--st)}
+
 /* Historial: cada producto del cargue en una línea «Producto: N u | Total: X kg (Y kg/u)» */
 .ht .hr.hc{display:block;white-space:normal;line-height:1.35;margin:2px 0}
 .ht .hr.hc .hcn{font-weight:600}
@@ -1094,7 +1125,7 @@ function cellView(d,s){var w=cur().w,k=d+'|'+s,e=BL(w)[k],h='<p class="sm" style
    +w.e[k].items.map(function(it){return'<div class="prt"><div class="prt-h"><b>'+esc(iN(it)||'Sin producto')+':</b><em class="prt-q">'+f(it.qty)+' u</em><span class="prt-d">·</span><em class="prt-q">'+f(it.qty*iW(it),2)+' kg</em></div></div>'}).join('')}}
  ask('Bloque '+SL[s],h,'Cerrar',function(){},e&&e.man?function(){delete w.e[k];save()}:null)}
 function cdRO(c){return'<div class="cd"><div class="cdr1"><span>'+(c.time?esc(f12(c.time)):'Sin hora')+(cgPlaca(c)?' · '+esc(cgPlaca(c)):'')+'</span><span>'+cdSum([c])+'</span></div>'
- +c.items.map(function(it){var u=+it.u||0;return'<div class="roi"><span>'+esc(iN(it)||'Sin producto')+'</span><span>'+f(u)+' u · '+f(iKg(it),2)+' kg</span></div>'}).join('')+'</div>'}
+ +c.items.map(function(it){var u=+it.u||0;return'<div class="roi"><span>'+esc(iN(it)||'Sin producto')+'</span><span>'+f(u)+' u · '+f(iKg(it),2)+' kg</span></div>'}).join('')+(pwHas(c)?'<button class="btn g s pwb" type="button" data-act="pwView" data-id="'+c.id+'">⚖️ Ver detalles de pesadas</button>':'')+'</div>'}
 function cdI(w){var g={},ord=[],h='';
  w.cd.forEach(function(c){if(!g[c.date]){g[c.date]=[];ord.push(c.date)}g[c.date].push(c)});ord.sort();
  h='<div class="cath"><h2>Detalle de cargues por día</h2></div><p class="sm" style="margin:2px 0 8px;color:var(--mu)">Se actualiza solo con las salidas registradas en Registro operativo.</p>';
@@ -1196,18 +1227,101 @@ function tgKg(btn){
  var row=btn.closest('.qr'),wrap=row&&row.querySelector('.qk-wrap');if(!wrap)return;
  var open=!wrap.classList.contains('open'),inp=wrap.querySelector('.qkg');
  if(inp){
-  if(open){if(inp.value===''&&inp.dataset.prev)inp.value=inp.dataset.prev}
-  else{if(inp.value!=='')inp.dataset.prev=inp.value;inp.value=''}
+  if(open){if(inp.value===''&&inp.dataset.prev)inp.value=inp.dataset.prev;
+   if(pwGet(wrap).length===0&&wrap.dataset.pwprev){wrap.dataset.pw=wrap.dataset.pwprev;wrap.dataset.pq=wrap.dataset.pqprev||'[]'}}
+  else{if(inp.value!=='')inp.dataset.prev=inp.value;inp.value='';
+   if(pwGet(wrap).length){wrap.dataset.pwprev=wrap.dataset.pw;wrap.dataset.pqprev=wrap.dataset.pq||'[]';wrap.dataset.pw='[]';wrap.dataset.pq='[]'}}
  }
  wrap.classList.toggle('open',open);
  btn.setAttribute('aria-expanded',open);
- cPrev();
- if(open&&inp&&inp.value==='')setTimeout(function(){inp.focus({preventScroll:true})},150)}
+ pwRender(wrap);cPrev();
+ if(open&&inp&&inp.value==='')setTimeout(function(){var d=wrap.dataset.det==='1'?wrap.querySelector('.qpw-in'):inp;if(d)d.focus({preventScroll:true})},150)}
+/* ===== Modo detallado: pesada por pesada ===== */
+function pwArr(it){return Array.isArray(it&&it.pw)?it.pw.map(Number).filter(function(x){return x>0}):[]}
+function pwGet(wrap){try{return JSON.parse(wrap.dataset.pw||'[]').map(Number).filter(function(x){return x>0})}catch(e){return[]}}
+function pwSum(a){return Math.round(a.reduce(function(s,x){return s+x},0)*100)/100}
+function pwF(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function pwHas(c){return(c&&c.items||[]).some(function(it){return pwArr(it).length>0})}
+function pqGet(wrap){var a=pwGet(wrap),q;try{q=JSON.parse(wrap.dataset.pq||'[]')}catch(e){q=[]}return a.map(function(_,i){return Math.max(0,parseInt(q[i],10)||0)})}
+function pqArr(it){var a=pwArr(it),q=Array.isArray(it&&it.pq)?it.pq:[];return a.map(function(_,i){return Math.max(0,parseInt(q[i],10)||0)})}
+function pqSum(q){return q.reduce(function(s,x){return s+x},0)}
+function pwCant(wrap){var row=wrap.closest('.qr'),qi=row&&row.querySelector('.qi');return qi?(parseInt(qi.value,10)||0):0}
+function pwStat(wrap){var box=wrap&&wrap.querySelector('.qd');if(!box||wrap.dataset.det!=='1')return;
+ var a=pwGet(wrap),q=pqGet(wrap),sm=box.querySelector('.qd-sum'),cant=pwCant(wrap),us=pqSum(q),tot=pwSum(a),h='',rem=cant-us,pu=box.querySelector('.qpw-q');
+ if(!a.length)h='Aún no hay pesadas. Escribe la cantidad (u) y el peso de cada pesada y presiona «+».';
+ else{h='<b>'+a.length+'</b> '+(a.length===1?'pesada':'pesadas')+' · Total: <b>'+pwF(tot)+' kg</b> · Promedio: <b>'+truncarPromedio(tot/a.length)+' kg</b> por pesada';
+  if(us>0){h+='<br><b>'+f(us)+' u</b> en pesadas'+(cant>0?(rem===0?' · coincide con la cantidad ✓':rem>0?' · faltan <b>'+f(rem)+' u</b> de '+f(cant):' · sobran <b>'+f(-rem)+' u</b> sobre '+f(cant)):'')+' · <b>'+truncarPromedio(tot/us)+' kg/u</b>'}}
+ sm.innerHTML=h;sm.classList.toggle('warn',us>0&&cant>0&&rem!==0);
+ if(pu)pu.placeholder=cant>0&&rem>0&&a.length?'Cant. (u) · faltan '+rem:'Cant. (u)'}
+function pwStatAll(){document.querySelectorAll('#cql .qk-wrap.det').forEach(pwStat)}
+function pwRender(wrap){
+ if(!wrap)return;var det=wrap.dataset.det==='1',a=pwGet(wrap),q=pqGet(wrap),inp=wrap.querySelector('.qkg'),box=wrap.querySelector('.qd');
+ wrap.classList.toggle('det',det);
+ wrap.querySelectorAll('.qseg button').forEach(function(b){var on=(b.dataset.m==='1')===det;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
+ if(inp){inp.readOnly=det;if(det){inp.tabIndex=-1;inp.value=a.length?String(pwSum(a)):''}else inp.removeAttribute('tabindex')}
+ if(!box)return;
+ var ul=box.querySelector('.qd-list'),ei=wrap.dataset.edit!=null&&wrap.dataset.edit!==''?+wrap.dataset.edit:-1;if(ei>=a.length){ei=-1;delete wrap.dataset.edit}
+ var ab=box.querySelector('[data-act="pwAdd"]');if(ab){ab.textContent=ei>=0?'✓':'+';ab.setAttribute('aria-label',ei>=0?'Guardar cambio':'Agregar pesada');ab.title=ei>=0?'Guardar cambio':'Agregar pesada'}
+ ul.innerHTML=a.map(function(x,i){return'<li'+(i===ei?' class="ed"':'')+'><span>#'+(i+1)+'</span>'+(q[i]>0?'<em>'+q[i]+' u</em>':'')+'<b>'+pwF(x)+'</b><button type="button" class="pe" data-act="pwEdit" data-i="'+i+'" aria-label="Editar pesada '+(i+1)+'" title="Editar">✏️</button><button type="button" data-act="pwRm" data-i="'+i+'" aria-label="Quitar pesada '+(i+1)+'" title="Quitar">✕</button></li>'}).join('');
+ pwStat(wrap)}
+function pwAct(t,a){
+ var wrap=t.closest('.qk-wrap');if(!wrap)return;var er=wrap.querySelector('.qd-err');if(er)er.textContent='';
+ if(a==='pwMode'){var m=t.dataset.m==='1',was=wrap.dataset.det==='1',inp=wrap.querySelector('.qkg');
+  if(m===was)return;
+  if(m){if(inp)inp.dataset.direct=inp.value}else if(inp){inp.value=inp.dataset.direct||''}
+  wrap.dataset.det=m?'1':'0';pwRender(wrap);cPrev();
+  if(m){var pi=wrap.querySelector('.qpw-q');if(pi)setTimeout(function(){pi.focus({preventScroll:true})},60)}return}
+ if(a==='pwAdd'){var pk=wrap.querySelector('.qpw-in'),pu=wrap.querySelector('.qpw-q'),v=parseFloat(String(pk.value).replace(',','.')),
+   ur=String(pu.value).trim(),uq=ur===''?0:Number(ur),arr=pwGet(wrap),qa=pqGet(wrap);
+  if(!(v>0)){if(er)er.textContent='Escribe un peso mayor que 0.';pk.focus();return}
+  if(!(uq>=0)||uq!==Math.floor(uq)){if(er)er.textContent='La cantidad (u) debe ser un número entero.';pu.focus();return}
+  if(arr.length>=300){if(er)er.textContent='Máximo 300 pesadas por referencia.';return}
+  var ed=wrap.dataset.edit!=null&&wrap.dataset.edit!==''?+wrap.dataset.edit:-1,isEd=ed>=0&&ed<arr.length;
+  if(isEd){arr[ed]=Math.round(v*100)/100;qa[ed]=uq;delete wrap.dataset.edit}else{arr.push(Math.round(v*100)/100);qa.push(uq)}
+  if(uq>0)wrap.dataset.pqdef=uq;
+  wrap.dataset.pw=JSON.stringify(arr);wrap.dataset.pq=JSON.stringify(qa);pk.value='';pu.value='';
+  if(!isEd){var rem=pwCant(wrap)-pqSum(qa),df=+wrap.dataset.pqdef||0;if(rem>0&&df>0)pu.value=Math.min(df,rem)}
+  pwRender(wrap);cPrev();pk.focus({preventScroll:true});return}
+ if(a==='pwEdit'){var ar3=pwGet(wrap),q3=pqGet(wrap),ie=+t.dataset.i,p3=wrap.querySelector('.qpw-in'),u3=wrap.querySelector('.qpw-q');
+  if(ie>=0&&ie<ar3.length&&p3){wrap.dataset.edit=ie;p3.value=ar3[ie];u3.value=q3[ie]>0?q3[ie]:'';pwRender(wrap);p3.focus();try{p3.select()}catch(e){}}return}
+ if(a==='pwRm'){var arr2=pwGet(wrap),q2=pqGet(wrap),ix=+t.dataset.i;if(ix>=0&&ix<arr2.length){if(wrap.dataset.edit!=null){delete wrap.dataset.edit;var p4=wrap.querySelector('.qpw-in'),u4=wrap.querySelector('.qpw-q');if(p4)p4.value='';if(u4)u4.value=''}arr2.splice(ix,1);q2.splice(ix,1);wrap.dataset.pw=JSON.stringify(arr2);wrap.dataset.pq=JSON.stringify(q2);pwRender(wrap);cPrev()}return}}
+/* Detalle guardado de un cargue: listado + comprobante en imagen */
+function pwView(cid){var w=cur().w,c=w&&(w.cd||[]).find(function(x){return x.id===cid});if(!c||!pwHas(c))return;
+ var b='<p class="sm" style="margin:0 0 6px"><b>'+esc(cgLabel(c))+'</b></p>';
+ (c.items||[]).forEach(function(it,i){var a=pwArr(it);if(!a.length)return;var q=pqArr(it),us=pqSum(q),tot=pwSum(a);
+  b+='<div class="pwv"><div class="pwv-h"><b>'+esc(iN(it)||'Sin producto')+'</b><small style="color:var(--mu)">'+f(+it.u||0)+' u</small></div>'
+   +'<p class="pwv-s"><b style="color:var(--ink)">'+a.length+'</b> '+(a.length===1?'pesada':'pesadas')+' · Total: <b style="color:var(--ink)">'+pwF(tot)+' kg</b> · Promedio: <b style="color:var(--ink)">'+truncarPromedio(tot/a.length)+' kg</b> por pesada'+(us>0?' · <b style="color:var(--ink)">'+f(us)+' u</b> en pesadas':'')+'</p>'
+   +'<ul class="pwv-l">'+a.map(function(x,j){return'<li><span>#'+(j+1)+'</span>'+(q[j]>0?'<em>'+q[j]+' u</em>':'')+'<b>'+pwF(x)+' kg</b></li>'}).join('')+'</ul>'
+   +'<button class="btn" type="button" data-act="pwShare" data-id="'+c.id+'" data-i="'+i+'">🖼️ Generar comprobante (imagen)</button></div>'});
+ ask('Detalle de pesadas',b,null)}
+function pwShare(t){var cid=t.dataset.id,i=+t.dataset.i;
+ shareGo('pes:'+cid+':'+i,function(){var g=cfgPes(cid,i);if(g)g.btn=t;return g})}
+function cfgPes(cid,idx){var c=cur(),w=c.w;if(!w)return null;var cg=(w.cd||[]).find(function(x){return x.id===cid});if(!cg)return null;
+ var it=(cg.items||[])[idx];if(!it)return null;var a=pwArr(it);if(!a.length)return null;
+ var q=pqArr(it),us=pqSum(q),hasU=us>0,n=a.length,tot=pwSum(a),vl=cgVehLines(cg),hr=cg.time?f12p(cg.time):'Sin hora',nm=iN(it)||'Sin producto',
+  cfg=ifHead(c,w,'Pesadas · '+(nm.length>16?nm.slice(0,15).trim()+'…':nm));
+ var kT={v:pwF(tot)+' kg',l:'Peso total · '+n+(n===1?' pesada':' pesadas'),c:IF_B,i:'scale'};if(hasU)kT.q=f(us)+' u';
+ cfg.kpis=[{v:dlab(cg.date),l:hr,q2:vl[0]||null,q3:vl[1]||null,c:IF_Y,i:'calendar'},kT,
+  {v:truncarPromedio(tot/n)+' kg',l:'Promedio por pesada',c:IF_G,i:'hash'}];
+ if(n>10){var half=Math.ceil(n/2);
+  cfg.cols=[{h:'Pesada',w:hasU?'1.15fr':'.7fr'},{h:'Peso (kg)',w:hasU?'.85fr':'1.3fr',al:'center'},{h:'Pesada',w:hasU?'1.15fr':'.7fr',al:'center'},{h:'Peso (kg)',w:hasU?'.85fr':'1.3fr',al:'center'}];
+  var lb=function(j){return'#'+(j+1)+(hasU&&q[j]>0?' · '+q[j]+' u':'')};
+  cfg.rows=[];for(var j=0;j<half;j++){var k=j+half;cfg.rows.push([{b:lb(j)},{b:pwF(a[j]),c:IF_Y},k<n?{b:lb(k),c:IF_M}:{b:''},k<n?{b:pwF(a[k]),c:IF_Y}:{b:''}])}}
+ else if(hasU){cfg.cols=[{h:'Pesada',w:'.8fr'},{h:'Cant. (u)',w:'1fr',al:'center'},{h:'Peso (kg)',w:'1.2fr',al:'center'}];
+  cfg.rows=a.map(function(x,j){return[{b:'#'+(j+1)},{b:q[j]>0?q[j]+' u':'–',c:IF_B},{b:pwF(x),c:IF_Y}]})}
+ else{cfg.cols=[{h:'Pesada',w:'1fr'},{h:'Peso (kg)',w:'1fr',al:'center'}];
+  cfg.rows=a.map(function(x,j){return[{b:'#'+(j+1)},{b:pwF(x),c:IF_Y}]})}
+ cfg.foot={label:'Total',value:pwF(tot)+' kg',sub:n+(n===1?' pesada':' pesadas')+(hasU?' · '+f(us)+' u':'')+' · prom. '+truncarPromedio(tot/n)+' kg'};
+ cfg.empty='Sin pesadas.';
+ cfg.file='pesadas-'+nm.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+c.m.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+cg.date+(cg.time?'-'+String(cg.time).replace(/[^0-9]/g,''):'');
+ cfg.shareTitle='Pesadas '+nm+' '+dlab(cg.date);return cfg}
 function kgHTML(p,it){
- var v=it&&it.tk!=null&&+it.tk>0?+it.tk:'';
- return'<div class="qk-wrap'+(v!==''?' open':'')+'"><div class="qk-body" id="kb_'+p.id+'"><div class="qk-in">'
+ var v=it&&it.tk!=null&&+it.tk>0?+it.tk:'',pw=pwArr(it),det=pw.length>0&&v!=='';
+ return'<div class="qk-wrap'+(v!==''?' open':'')+(det?' det':'')+'" data-det="'+(det?1:0)+'" data-pw="'+esc(JSON.stringify(det?pw:[]))+'" data-pq="'+esc(JSON.stringify(det?pqArr(it):[]))+'"><div class="qk-body" id="kb_'+p.id+'"><div class="qk-in">'
+  +'<div class="qmode"><span class="qmode-l" id="qm_'+p.id+'">¿Ingresar pesada por pesada?</span><div class="qseg" role="group" aria-labelledby="qm_'+p.id+'"><button type="button" data-act="pwMode" data-m="0" class="'+(det?'':'on')+'" aria-pressed="'+(!det)+'">No</button><button type="button" data-act="pwMode" data-m="1" class="'+(det?'on':'')+'" aria-pressed="'+det+'">Sí</button></div></div>'
   +'<div class="qk"><label for="k_'+p.id+'"><span>Peso total del cargue (kg)</span><small class="qk-avg" aria-live="polite"></small></label>'
-  +'<input id="k_'+p.id+'" class="qkg" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="'+v+'" aria-label="Peso total del cargue en kilos, según la báscula (opcional)"></div>'
+  +'<input id="k_'+p.id+'" class="qkg" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="'+v+'"'+(det?' readonly tabindex="-1"':'')+' aria-label="Peso total del cargue en kilos, según la báscula (opcional)"></div>'
+  +'<div class="qd"><div class="qd-add"><input class="qpw-q" type="number" inputmode="numeric" min="0" step="1" placeholder="Cant. (u)" aria-label="Cantidad de unidades de esta pesada"><input class="qpw-in" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Peso (kg)" aria-label="Peso de una pesada en kilos"><button type="button" class="btn" data-act="pwAdd" aria-label="Agregar pesada" title="Agregar pesada">+</button></div><p class="qd-err" role="alert"></p><ul class="qd-list"></ul><p class="qd-sum"></p></div>'
   +'</div></div></div>'}
 /* Total estimado en vivo en la cabecera de cada tarjeta de cargue */
 function cEst(){document.querySelectorAll('#cql .qr[data-ref]').forEach(function(r){
@@ -1236,17 +1350,21 @@ function actualizarPromedios(w,pids){var n=0,ids=pids&&pids.length?pids:(w.cat||
   if(Math.abs((+p.w||0)-avg)>1e-9){p.w=avg;n++}});
  return n}
 function cPids(c){return(c&&c.items||[]).map(function(it){return it.pid}).filter(Boolean)}
-function qCollect(rootId,key){var out=[],bad=false,kgBad=false,root=$(rootId);
+function qCollect(rootId,key){var out=[],bad=false,kgBad=false,pend=false,root=$(rootId);
  if(!root)return{items:out,bad:false};
  root.querySelectorAll('.qr').forEach(function(r){var inp=r.querySelector('.qi'),raw=String(inp.value).trim(),q=parseInt(raw,10);
   if(raw!==''&&!(q>=0))bad=true;
-  var kin=key==='u'?r.querySelector('.qkg'):null,kraw=kin?String(kin.value).trim():'',kn=kraw===''?null:parseFloat(kraw);
+  var kin=key==='u'?r.querySelector('.qkg'):null,kraw=kin?String(kin.value).trim():'',kn=kraw===''?null:parseFloat(kraw),pwl=null,pql=null;
+  var wE=kin?r.querySelector('.qk-wrap'):null;
+  if(wE&&wE.dataset.det==='1'){var pa=pwGet(wE),pe=wE.querySelector('.qpw-in');
+   if(pe&&wE.classList.contains('open')&&(String(pe.value).trim()!==''||(wE.dataset.edit!=null&&wE.dataset.edit!=='')))pend=true;
+   if(pa.length){pwl=pa;pql=pqGet(wE);kn=pwSum(pa);kraw=String(kn)}else{kn=null;kraw=''}}
   if(kraw!==''&&!(kn>0))kgBad=true;
   if(!(q>0)){if(kn>0)kgBad=true;return}
   var it;if(r.dataset.ref){var p=cp(r.dataset.ref);if(!p)return;it={pid:p.id,name:p.name,w:p.w}}
   else{it={pid:null,name:r.dataset.ln,w:+r.dataset.lw||0};if(r.dataset.ltk!=null&&q===+r.dataset.lu)it.tk=+r.dataset.ltk}
-  it[key]=q;if(kn>0)it.tk=Math.round(kn*100)/100;out.push(it)});
- return{items:out,bad:bad,kgBad:kgBad}}
+  it[key]=q;if(kn>0){it.tk=Math.round(kn*100)/100;if(pwl){it.pw=pwl;if(pql&&pql.some(function(x){return x>0}))it.pq=pql}}out.push(it)});
+ return{items:out,bad:bad,kgBad:kgBad,pend:pend}}
 /* ===== Control de empaques e inventario de vacíos =====
    Todo se guarda dentro de la molienda (w.em.ing) → cada molienda nueva arranca en 0.
    Registros: {k:'c', cls, cpp, pid, q(paquetes)} · {k:'k', sz:'p'|'g', q, date, pid?} · {k:'s', pid?, q}
@@ -1381,17 +1499,18 @@ function cForm(w){var c=nav.editC&&w.cd.find(function(x){return x.id===nav.editC
  return'<section class="card2" id="secCargues"><h2>'+(c?'Editar cargue / salida':'Ingreso de cargues / salidas')+'</h2><p class="sm" style="margin:2px 0 8px;color:var(--mu)">Una salida puede llevar varias referencias. Se suman solas al detalle de cargues y al consolidado de la pantalla principal.</p>'+(w.cat.length?'':'<p class="sm" style="color:var(--late)">Primero crea las referencias en Gestión de productos.</p>')
  +'<div id="cform"><div class="fgrid"><label>Fecha<input id="cdate" type="date" min="'+w.start+'" max="'+wend(w)+'" value="'+dv+'"></label><label>Hora'+tp('ctime',c&&c.time?c.time:'',false)+'</label>'
  +'<label>Placa<input id="cv" type="text" placeholder="Ej. ABC123" value="'+esc(cgPlaca(c))+'" autocomplete="off" autocapitalize="characters" spellcheck="false"></label><label>Conductor <small style="color:var(--mu)">(opcional)</small><input id="cdr" type="text" autocapitalize="words" placeholder="Ej. Juan Pérez" value="'+esc(cgCond(c))+'" autocomplete="off"></label></div>'
- +'<p class="qh">Cantidad cargada por referencia</p><p class="sm" style="margin:-2px 0 8px;color:var(--mu)">Basta con la cantidad (u) para descontar de bodega al instante. El peso de báscula es opcional: ingrésalo ahora o complétalo después desde Historial › Editar.</p><div class="ql" id="cql">'+qRows(w,c?c.items:null,'u')+'</div></div>'
- +'<p class="tot" id="cprev"></p><p class="err" id="cerr" role="alert"></p><div class="actions">'+(c?'<button class="btn g" type="button" data-act="cancelC">Cancelar</button>':'')+'<button class="btn" type="button" data-act="saveC">'+(c?'Guardar cambios':'Guardar salida')+'</button></div></section>'}
-function cPrev(){cStk();cEst();cAvg();var el=$('cprev');if(!el)return;var r=qCollect('cql','u'),u=0,k=0;r.items.forEach(function(it){u+=it.u;k+=it.tk!=null?it.tk:it.u*(+it.w||0)});el.textContent=u?'Total del cargue: '+f(u)+' u · '+f(k,2)+' kg':''}
+ +'<p class="qh">Cantidad cargada por referencia</p><p class="sm" style="margin:-2px 0 8px;color:var(--mu)">Basta con la cantidad (u) para descontar de bodega al instante. El peso de báscula es opcional: ingrésalo ahora o complétalo después desde Historial › Editar. También puedes registrarlo pesada por pesada.</p><div class="ql" id="cql">'+qRows(w,c?c.items:null,'u')+'</div></div>'
+ +'<p class="tot" id="cprev"></p>'+(c&&pwHas(c)?'<button class="btn g pwb" type="button" data-act="pwView" data-id="'+c.id+'">⚖️ Ver detalles de pesadas</button>':'')+'<p class="err" id="cerr" role="alert"></p><div class="actions">'+(c?'<button class="btn g" type="button" data-act="cancelC">Cancelar</button>':'')+'<button class="btn" type="button" data-act="saveC">'+(c?'Guardar cambios':'Guardar salida')+'</button></div></section>'}
+function cPrev(){cStk();cEst();cAvg();pwStatAll();var el=$('cprev');if(!el)return;var r=qCollect('cql','u'),u=0,k=0;r.items.forEach(function(it){u+=it.u;k+=it.tk!=null?it.tk:it.u*(+it.w||0)});el.textContent=u?'Total del cargue: '+f(u)+' u · '+f(k,2)+' kg':''}
 function saveC(){var w=cur().w,er=$('cerr');function bad(m){er.textContent=m}
  var date=$('cdate').value,tm=tv('ctime'),vh=fmtPlaca($('cv').value),dr=capW(($('cdr').value||'').trim()),r=qCollect('cql','u');
  if(!date||date<w.start||date>wend(w))return bad('Elige una fecha dentro de la semana ('+wl(w)+').');
  if(!tm)return bad('Ingresa la hora de la salida.');
  if(r.bad)return bad('Las cantidades deben ser números enteros, sin negativos.');
+ if(r.pend)return bad('Tienes un peso escrito sin agregar a la lista de pesadas. Presiona «+» para agregarla o bórrala.');
  if(r.kgBad)return bad('El peso total (kg) debe ser mayor que 0 y solo se puede ingresar junto con la cantidad (u) de esa referencia.');
  if(!r.items.length)return bad('Ingresa la cantidad cargada de al menos una referencia.');
- var its=r.items.map(function(x){var o={id:uid(),pid:x.pid,name:x.name,u:x.u,w:x.w};if(x.tk!=null)o.tk=x.tk;return o}),old=nav.editC&&w.cd.find(function(x){return x.id===nav.editC});
+ var its=r.items.map(function(x){var o={id:uid(),pid:x.pid,name:x.name,u:x.u,w:x.w};if(x.tk!=null)o.tk=x.tk;if(x.pw&&x.pw.length){o.pw=x.pw;if(x.pq)o.pq=x.pq}return o}),old=nav.editC&&w.cd.find(function(x){return x.id===nav.editC});
  if(old&&!canMod(old))return bad('Solo puedes modificar los registros que tú creaste.');
  var tocadas=cPids(old).concat(its.map(function(x){return x.pid}).filter(Boolean));
  if(old){old.date=date;old.time=tm;old.vh=vh;old.dr=dr;old.items=its}else w.cd.push({id:uid(),date:date,time:tm,vh:vh,dr:dr,items:its,by:opName(),creadoPor:opName(),createdAt:nowISO()});
@@ -1425,7 +1544,7 @@ function histI(w){var m=nav.hf==='d'?'d':'w',dv=clampD(w,nav.hd),pu=0,pk=0,cu=0,
   if(isT){pu+=q;pk+=kg}else{cu+=q;ck+=kg}
   h+='<tr><td><span class="tag '+(isT?'t':'c')+'">'+(isT?'Turno':'Salida')+'</span></td><td class="l">'+dlab(r.date)+(x.by?'<small>'+esc(x.by)+'</small>':'')+'</td>'
    +'<td>'+(isT?'<div class="hh"><span>'+esc(f12p(x.start))+'</span><span>'+esc(f12p(x.end))+'</span><small>'+hl(tdur(x))+'</small>'+(hm(x.end)<=hm(x.start)?'<small>cruza medianoche</small>':'')+'</div>':(r.time?'<div class="hh"><span>'+esc(f12p(r.time))+'</span></div>':'–'))+'</td>'
-   +'<td class="l">'+its.map(function(it){if(!isT)return hCg(it);var n=+it.qty;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+truncarPromedio(iw)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+(!isT&&cgPlaca(x)?'<small class="hvh">Vehículo: '+esc(cgPlaca(x))+'</small>':'')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
+   +'<td class="l">'+its.map(function(it){if(!isT)return hCg(it);var n=+it.qty;var iw=iW(it);return'<div class="hr"><span>'+esc(iN(it)||'Sin producto')+(iw>0?'<small class="hw">'+truncarPromedio(iw)+' kg c/u</small>':'')+'</span><span class="hq"><b>'+f(n)+'</b><small>'+f(isT?n*iw:iKg(it),1)+' kg</small></span></div>'}).join('')+(!isT&&cgPlaca(x)?'<small class="hvh">Vehículo: '+esc(cgPlaca(x))+'</small>':'')+(!isT&&pwHas(x)?'<button class="btn g s pwb" type="button" data-act="pwView" data-id="'+r.id+'">⚖️ Ver detalles de pesadas</button>':'')+'</td>'+(function(){var ek=isT?bodKey(w,x):cdKey(w,x),ng=false,own={};its.forEach(function(it){own[bnm(iN(it))]=1});
   var rows=NM.map(function(k){var sb=saldoAt(ek,TL,CL,[k]);if(!sb&&!own[k])return'';if(sb<0)ng=true;
    var nm=k;TL.concat(CL).some(function(e){return(e.t?e.t.items:e.c.items||[]).some(function(it){if(bnm(iN(it))===k){nm=iN(it).trim()||k;return true}})});
    return'<div class=\"bl\"><span>'+esc(nm)+'</span><b>'+f(sb)+' u</b></div>'}).join('');
@@ -1765,6 +1884,9 @@ document.addEventListener('click',function(ev){
  else if(a==='editT'){nav.editT=id;nav.sec='secTurnos';render();scrollTo(0,0);return}
  else if(a==='delT')conf('Eliminar turno','Se quita este turno y sus horas y cantidades se descuentan de los bloques.',function(){c.w.t=c.w.t.filter(function(x){return x.id!==id});if(nav.editT===id)nav.editT=null});
  else if(a==='tgKg'){tgKg(t);return}
+ else if(a==='pwMode'||a==='pwAdd'||a==='pwRm'||a==='pwEdit'){pwAct(t,a);return}
+ else if(a==='pwView'){pwView(id);return}
+ else if(a==='pwShare'){pwShare(t);return}
  else if(a==='saveC'){saveC();return}
  else if(a==='cancelC'){nav.editC=null}
  else if(a==='editC'){nav.editC=id;nav.sec='secCargues';render();scrollTo(0,0);return}
@@ -1788,6 +1910,8 @@ document.addEventListener('click',function(ev){
  else if(a==='addG')nameForm('Nuevo grupo','Nombre del grupo','Ej. Cargadores',function(v){c.w.g.push({id:uid(),name:v,price:0,pc:0})});
  else if(a==='delG'){c.w.g=c.w.g.filter(function(g){return g.id!==id});save()}
  render();if(a.slice(0,4)==='open')scrollTo(0,0)});
+document.addEventListener('keydown',function(ev){var t=ev.target;if(ev.key==='Enter'&&t&&t.classList&&t.classList.contains('qpw-q')){ev.preventDefault();var nx=t.closest('.qd-add').querySelector('.qpw-in');if(nx)nx.focus();return}
+ if(ev.key==='Enter'&&t&&t.classList&&t.classList.contains('qpw-in')){ev.preventDefault();var b=t.closest('.qd')&&t.closest('.qd').querySelector('[data-act="pwAdd"]');if(b)pwAct(b,'pwAdd')}});
 document.addEventListener('input',function(ev){var t=ev.target;
  if(t.id==='cv'){var cs=t.selectionStart,nb=t.value.slice(0,cs).replace(/\s/g,'').length,fv=fmtPlaca(t.value);if(/\s$/.test(t.value)&&fv.indexOf(' ')<0)fv=t.value.toUpperCase();if(fv!==t.value){t.value=fv;var np=0,cnt=0;while(np<fv.length&&cnt<nb){if(!/\s/.test(fv.charAt(np)))cnt++;np++}try{t.setSelectionRange(np,np)}catch(e){}}}
  if(t.id==='cdr'){var a2=t.selectionStart,b2=t.selectionEnd,v2=capW(t.value);if(v2!==t.value){t.value=v2;try{t.setSelectionRange(a2,b2)}catch(e){}}}
@@ -1915,7 +2039,7 @@ function sha256(ascii){
  return res}
 
 var SK='gestion-moliendas-session',LK='gestion-moliendas-lock',MK='gestion-moliendas-lgmode',PH='f14f1ef625b4760ea96c2b8256dc6f284a515023b2a66d2d7c06c294a095482b',lgMode='e';
-var OWNOK={openY:1,openW:1,cell:1,shareRes:1,shareCons:1,shareBod:1,shareLiq:1,shareCarg:1,shareCargF:1,shareCargS:1,copyLiq:1,cloudNow:1,jump:1};
+var OWNOK={openY:1,openW:1,cell:1,shareRes:1,shareCons:1,shareBod:1,shareLiq:1,shareCarg:1,shareCargF:1,shareCargS:1,pwView:1,pwShare:1,copyLiq:1,cloudNow:1,jump:1};
 function nk(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim()}
 function h256(s){return sha256(unescape(encodeURIComponent(s)))}
 function findMill(code){var k=nk(code),r=null;if(!k)return null;db.years.forEach(function(y){y.mills.forEach(function(m){if(!r&&nk(m.name)===k)r=m.name})});return r}
@@ -1963,7 +2087,7 @@ document.addEventListener('click',function(ev){var t=ev.target.closest('[data-lg
   if(g==='out')logout();else if(g==='go')lgGo();
   else{lgMode=g;try{localStorage.setItem(MK,g)}catch(e){}lgPaint();$('lgIn').focus()}});
 $('login').addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.id==='lgIn'){ev.preventDefault();lgGo()}});
-var APP_VERSION='v1.0.13';window.APP_VERSION=APP_VERSION;
+var APP_VERSION='v1.0.18';window.APP_VERSION=APP_VERSION;
 ['appVer','lgVer'].forEach(function(i){var e=$(i);if(e)e.textContent='Gestión de moliendas · '+APP_VERSION});
 try{document.title='La Molienda '+APP_VERSION;console.info('La Molienda',APP_VERSION)}catch(e){}
 /* Pedir al navegador que NO borre los datos locales al liberar espacio o reiniciar */
